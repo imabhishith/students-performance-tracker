@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
@@ -53,6 +53,8 @@ app.get('/api/students', (req, res) => {
             // Only add if it has required data
             if (cleanedRow.roll && cleanedRow.name) {
                 results.push(cleanedRow);
+            } else {
+                console.warn('Skipped invalid row:', { roll: cleanedRow.roll, name: cleanedRow.name });
             }
         })
         .on('end', () => {
@@ -79,7 +81,5 @@ app.get('/api/students', (req, res) => {
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     console.log(`📊 Visit: http://localhost:${PORT}/admin.html`);
+    console.log(`👩‍🎓 Visit: http://localhost:3001/api/students`);
 });
-
-
-
