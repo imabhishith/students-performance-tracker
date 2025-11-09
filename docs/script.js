@@ -1,4 +1,3 @@
-const API_URL = 'https://students-performanxe-tracker-s2uw.onrender.com/api';
 let students = [];
 let currentExpandedRow = null;
 let currentExpandedExam = null;
@@ -28,10 +27,11 @@ function generateExamOrderAdvanced() {
     // Separate WE and RT exams
     const weExams = [];
     const rtExams = [];
+    const mtExams = [];
     const otherExams = [];
     
     examsWithData.forEach(exam => {
-        const match = exam.match(/^(WE|RT)\s*(\d+)$/);
+        const match = exam.match(/^(WE|RT|MT)\s*(\d+)$/);
         if (!match) {
             otherExams.push(exam);
             return;
@@ -44,21 +44,25 @@ function generateExamOrderAdvanced() {
             weExams.push({ name: exam, num });
         } else if (type === 'RT') {
             rtExams.push({ name: exam, num });
+        } else if (type === 'RT') {
+            mtExams.push({ name: exam, num });
         }
     });
     
     // Sort by number
     weExams.sort((a, b) => a.num - b.num);
     rtExams.sort((a, b) => a.num - b.num);
+    mtExams.sort((a, b) => a.num - b.num);
     
     // Interleave WE and RT exams intelligently
     // Pattern: WE 1-3, RT 1, WE 4-6, RT 2, WE 7-9, etc.
     const sorted = [];
     let weIndex = 0;
     let rtIndex = 0;
+    let mtIndex = 0;
     const wePerBlock = 3; // Number of WE exams before inserting RT
     
-    while (weIndex < weExams.length || rtIndex < rtExams.length) {
+    while (weIndex < weExams.length || rtIndex < rtExams.length || mtIndex < rtExams.length) {
         // Add a block of WE exams
         for (let i = 0; i < wePerBlock && weIndex < weExams.length; i++) {
             sorted.push(weExams[weIndex++].name);
@@ -67,6 +71,11 @@ function generateExamOrderAdvanced() {
         // Add one RT exam
         if (rtIndex < rtExams.length) {
             sorted.push(rtExams[rtIndex++].name);
+        }
+
+        // Add one MT exam
+        if (mtIndex < mtExams.length) {
+            sorted.push(mtExams[mtIndex++].name);
         }
     }
     
@@ -147,7 +156,7 @@ async function fetchStudentData() {
     showLoading();
     try {
         console.log('🔄 Fetching data from API...');
-        const response = await fetch(`${API_URL}/students`);
+        const response = await fetch('http://localhost:3001/api/students');
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -215,6 +224,7 @@ function filterOverallRanklist(filterType) {
     document.getElementById('overallAllBtn').classList.toggle('active', filterType === 'all');
     document.getElementById('overallRTBtn').classList.toggle('active', filterType === 'RT');
     document.getElementById('overallWEBtn').classList.toggle('active', filterType === 'WE');
+    document.getElementById('overallMTBtn').classList.toggle('active', filterType === 'MT');
 
     // Repopulate the overall ranklist with filtered data
     populateOverallFiltered(filterType);
@@ -227,6 +237,7 @@ function filterLast3Ranklist(filterType) {
     document.getElementById('last3AllBtn').classList.toggle('active', filterType === 'all');
     document.getElementById('last3RTBtn').classList.toggle('active', filterType === 'RT');
     document.getElementById('last3WEBtn').classList.toggle('active', filterType === 'WE');
+    document.getElementById('last3MTBtn').classList.toggle('active', filterType === 'MT');
 
     // Repopulate the last 3 ranklist with filtered data
     populateLast3Filtered(filterType);
@@ -239,6 +250,8 @@ function getFilteredExamsForOverall(filterType) {
         return examOrder.filter(exam => exam.startsWith('RT')); // Only RT exams
     } else if (filterType === 'WE') {
         return examOrder.filter(exam => exam.startsWith('WE')); // Only WE exams
+    } else if (filterType === 'MT') {
+        return examOrder.filter(exam => exam.startsWith('MT')); // Only MT exams
     }
     return examOrder;
 }
@@ -254,6 +267,10 @@ function getFilteredExamsForLast3(filterType) {
         // Get last 3 WE exams - WE 5, WE 6, WE 7
         const weExams = examOrder.filter(exam => exam.startsWith('WE'));
         return weExams.slice(-3); // Last 3 WEs: ['WE 5', 'WE 6', 'WE 7']
+    } else if (filterType === 'MT') {
+        // Get last 3 MT exams - MT 5, MT 6, MT 7
+        const mtExams = examOrder.filter(exam => exam.startsWith('MT'));
+        return weExams.slice(-3); // Last 3 MTs: ['MT 5', 'MT 6', 'MT 7']
     }
     return last3Exams;
 }
@@ -2451,6 +2468,8 @@ function printOverallRanklistWithFilter(filterType) {
       title += " (RT ONLY)";
     } else if (filterType === 'WE') {
       title += " (WE ONLY)";  
+    } else if (filterType === 'MT') {
+      title += " (MT ONLY)";  
     }
 
     console.log('Opening print window with title:', title);
@@ -2492,6 +2511,8 @@ function printLast3RanklistWithFilter(filterType) {
       title += " (RT ONLY)";
     } else if (filterType === 'WE') {
       title += " (WE ONLY)";
+    } else if (filterType === 'MT') {
+      title += " (MT ONLY)";
     }
 
     console.log('Opening print window with title:', title);
@@ -3131,6 +3152,8 @@ function getFilteredExamsForReport(filterType) {
         return examOrder.filter(exam => exam.startsWith('RT'));
     } else if (filterType === 'WE') {
         return examOrder.filter(exam => exam.startsWith('WE'));
+    } else if (filterType === 'MT') {
+        return examOrder.filter(exam => exam.startsWith('MT'));
     }
     return examOrder;
 }
@@ -3328,7 +3351,7 @@ function calculateExamStatistics(exams) {
 }
 
 function generateClassPerformanceHTML(filterType, exams, stats, topPerformers, atRiskStudents, subjectStats, examStats) {
-    const filterLabel = filterType === 'all' ? 'All Exams' : filterType === 'RT' ? 'Review Tests (RT)' : 'Weekly Exams (WE)';
+    const filterLabel = filterType === 'all' ? 'All Exams' : filterType === 'RT' ? 'Revision Tests (RT)' : filterType === 'WE' ? 'Weekly Exams (WE)' : 'Mega Tests (MT)';
     const currentDate = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
     
     const subjectsArray = Object.values(subjectStats);
