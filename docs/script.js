@@ -2,6 +2,7 @@ let students = [];
 let currentExpandedRow = null;
 let currentExpandedExam = null;
 let chartInstances = {};
+
 const currentDate = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: 'numeric' });
 
 const subjectNames = {
@@ -44,7 +45,7 @@ function generateExamOrderAdvanced() {
             weExams.push({ name: exam, num });
         } else if (type === 'RT') {
             rtExams.push({ name: exam, num });
-        } else if (type === 'RT') {
+        } else if (type === 'MT') {  // ✅ FIXED: Was 'RT'
             mtExams.push({ name: exam, num });
         }
     });
@@ -62,7 +63,7 @@ function generateExamOrderAdvanced() {
     let mtIndex = 0;
     const wePerBlock = 3; // Number of WE exams before inserting RT
     
-    while (weIndex < weExams.length || rtIndex < rtExams.length || mtIndex < rtExams.length) {
+    while (weIndex < weExams.length || rtIndex < rtExams.length || mtIndex < mtExams.length) {  // ✅ FIXED: Was rtExams.length
         // Add a block of WE exams
         for (let i = 0; i < wePerBlock && weIndex < weExams.length; i++) {
             sorted.push(weExams[weIndex++].name);
@@ -156,7 +157,7 @@ async function fetchStudentData() {
     showLoading();
     try {
         console.log('🔄 Fetching data from API...');
-        const response = await fetch('http://localhost:3001/api/students');
+        const response = await fetch('/api/students');
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -191,6 +192,10 @@ async function fetchStudentData() {
                     </ul>
                 </div>
             `;
+            
+            // Fallback: Set empty students to unblock UI
+            students = [];
+            processJsonData([]);  // Trigger empty data processing
         }, 500);
     } finally {
         hideLoading();
@@ -269,8 +274,8 @@ function getFilteredExamsForLast3(filterType) {
         return weExams.slice(-3); // Last 3 WEs: ['WE 5', 'WE 6', 'WE 7']
     } else if (filterType === 'MT') {
         // Get last 3 MT exams - MT 5, MT 6, MT 7
-        const mtExams = examOrder.filter(exam => exam.startsWith('MT'));
-        return weExams.slice(-3); // Last 3 MTs: ['MT 5', 'MT 6', 'MT 7']
+        const mtExams = examOrder.filter(exam => exam.startsWith('MT'));  // ✅ FIXED: Added mtExams
+        return mtExams.slice(-3); // Last 3 MTs: ['MT 5', 'MT 6', 'MT 7']
     }
     return last3Exams;
 }
@@ -335,6 +340,11 @@ const filteredStudents = students.map(stu => {
         tbody.appendChild(tr);
     });
 
+    if (students.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No students to display</td></tr>';
+    document.getElementById('overallCount').textContent = '0 students';
+    return;
+    }
     document.getElementById('overallCount').textContent = `${students.length} students`;
     addClickListeners();
 }
@@ -399,6 +409,11 @@ function populateLast3Filtered(filterType) {
         tbody.appendChild(tr);
     });
 
+    if (students.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No students to display</td></tr>';
+    document.getElementById('overallCount').textContent = '0 students';
+    return;
+    }
     document.getElementById('last3Count').textContent = `${students.length} students`;
     addClickListeners();
 }
@@ -425,8 +440,28 @@ function showStatus(message, type) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  processJsonData(sampleData);
+// Main initialization (consolidated - replace all DOMContentLoaded listeners)
+window.addEventListener('DOMContentLoaded', () => {
+    console.log('🎯 Page loaded, fetching data...');
+    
+    // Fetch data from backend
+    fetchStudentData();
+    
+    // Initialize theme
+    const themeToggleBtn = document.getElementById('themeToggle');
+    if (themeToggleBtn) {
+        setTimeout(() => themeToggleBtn.click(), 1);
+        setTimeout(() => {
+            const loading = document.getElementById('loadingOverlay');
+            if (loading) loading.style.display = 'none';
+        }, 1);
+    }
+    
+    // Initialize footer/stats after a delay
+    setTimeout(() => {
+        updateFooterStats();
+        updateHeaderAndFooterStats();
+    }, 500);
 });
 
 function processJsonData(data) {
@@ -470,6 +505,23 @@ function processJsonData(data) {
     updateLast3ExamsDisplay();
     console.log(`✅ Processed ${students.length} students`);
 
+    // Handle empty data gracefully
+    if (students.length === 0) {
+      console.warn('⚠️ No student data available');
+      // Populate empty tables with no-data message
+      const tbody = document.querySelector('#rankTable tbody');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No data available. Check CSV file.</td></tr>';
+      document.getElementById('overallCount').textContent = '0 students';
+      
+      // Similar for other tables (add if needed)
+      const last3Tbody = document.querySelector('#last3Table tbody');
+      if (last3Tbody) last3Tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No data available.</td></tr>';
+      document.getElementById('last3Count').textContent = '0 students';
+      
+      showStatus('⚠️ No data found - check CSV file', 'error');
+      return;  // Early exit
+    }
+
     // Populate all tables
     populateOverall();
     populateLast3();
@@ -485,11 +537,9 @@ function processJsonData(data) {
     hideLoading();
   }
 
-  updateFooterStats();  // ✅ Add this line 
-  showStatus('✅ All data loaded and processed!', 'success');
-
-  updateHeaderAndFooterStats();  // ✅ Add this line  
-  showStatus('✅ All data loaded and processed!', 'success');
+  updateFooterStats();
+  updateHeaderAndFooterStats();
+  showStatus('✅ All data loaded and processed!', 'success');  // ✅ Consolidated: Only once
 }
 
 // Compute cumulatives for a student (percentages, strong/weak subjects)
@@ -581,7 +631,12 @@ function populateOverall() {
 
     tbody.appendChild(tr);
   });
-
+  
+  if (students.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No students to display</td></tr>';
+    document.getElementById('overallCount').textContent = '0 students';
+    return;
+  }
   document.getElementById('overallCount').textContent = `${students.length} students`;
   addClickListeners();
 }
@@ -1568,6 +1623,11 @@ function populateLast3() {
     tbody.appendChild(tr);
   });
 
+  if (students.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No students to display</td></tr>';
+    document.getElementById('overallCount').textContent = '0 students';
+    return;
+  }
   document.getElementById('last3Count').textContent = `${students.length} students`;
 }
 
@@ -2988,7 +3048,7 @@ function printStudentProfileReport(student) {
       <div class="print-header">
         <img src="logo2.png" alt="Institute Logo">
         <h1>STUDENT PROFILE</h1>
-        <p>CRISPR Repeater's Batch 2025-26</p>
+        <p>CRISPR Year-long Batch 2025-26</p>
         <p>Student Performance Analysis Report</p>
       </div>
 
@@ -3057,7 +3117,7 @@ function printStudentProfileReport(student) {
       </div>
 
         <div class="print-footer">
-            <p><strong>CRISPR • Repeater's Batch 2025–26</strong></p>
+            <p><strong>CRISPR • Year-long Batch 2025–26</strong></p>
             <p>This is an automated report generated by the Student Performance Tracking System</p>
             <p>Generated on ${currentDate} • For queries, contact the academic administration</p>
         </div>
@@ -3600,7 +3660,7 @@ function generateClassPerformanceHTML(filterType, exams, stats, topPerformers, a
     <div class="print-header">
         <img src="logo2.png" alt="Institute Logo" onerror="this.style.display='none'">
         <h1>CLASS PERFORMANCE</h1>
-        <p>CRISPR Repeater's Batch 2025-26</p>
+        <p>CRISPR Year-long Batch 2025-26</p>
         <p><strong>Class Performance Analysis Report</strong></p>
     </div>
     
@@ -3787,7 +3847,7 @@ function generateClassPerformanceHTML(filterType, exams, stats, topPerformers, a
     </div>
   
         <div class="print-footer">
-            <p><strong>CRISPR • Repeater's Batch 2025–26</strong></p>
+            <p><strong>CRISPR • Year-long Batch 2025–26</strong></p>
             <p>This is an automated report generated by the Student Performance Tracking System</p>
             <p>Generated on ${currentDate} • For queries, contact the academic administration</p>
         </div>
@@ -4221,7 +4281,7 @@ tr:last-child td { border-bottom: none }
 <div class="print-header">
   <img src="logo2.png" onerror="this.style.display='none'">
   <h1>SUBJECT ANALYSIS</h1>
-  <p>CRISPR Repeater's Batch 2025–26</p>
+  <p>CRISPR Year-long Batch 2025–26</p>
   <p><strong>Subject Performance Report</strong></p>
 </div>
 
@@ -4313,7 +4373,7 @@ tr:last-child td { border-bottom: none }
 </div>
 
         <div class="print-footer">
-            <p><strong>CRISPR • Repeater's Batch 2025–26</strong></p>
+            <p><strong>CRISPR • Year-long Batch 2025–26</strong></p>
             <p>This is an automated report generated by the Student Performance Tracking System</p>
             <p>Generated on ${currentDate} • For queries, contact the academic administration</p>
         </div>
@@ -4693,7 +4753,7 @@ tr:last-child td{border-bottom:none}
 <div class="print-header">
   <img src="logo2.png" onerror="this.style.display='none'">
   <h1>PROGRESS REPORT</h1>
-  <p>CRISPR Repeater's Batch 2025–26</p>
+  <p>CRISPR Year-long Batch 2025–26</p>
   <p><strong>Progress Tracking Report</strong></p>
 </div>
 
@@ -4783,7 +4843,7 @@ tr:last-child td{border-bottom:none}
 </div>
 
 <div class="print-footer">
-    <p><strong>CRISPR • Repeater's Batch 2025–26</strong></p>
+    <p><strong>CRISPR • Year-long Batch 2025–26</strong></p>
     <p>This is an automated report generated by the Student Performance Tracking System</p>
     <p>Generated on ${currentDate} • For queries, contact the academic administration</p>
 </div>
@@ -5330,12 +5390,12 @@ setInterval(updateHeaderAndFooterStats, 30000);
           <div class="print-header">
             <img src="logo2.png" onerror="this.style.display='none'" alt="Logo">
             <h1>${title}</h1>
-            <p>CRISPR Repeater's Batch 2025–26</p>
+            <p>CRISPR Year-long Batch 2025–26</p>
             <p><strong>Exam Ranklist</strong></p>
           </div>
           ${tableHtml}
         <div class="print-footer">
-            <p><strong>CRISPR • Repeater's Batch 2025–26</strong></p>
+            <p><strong>CRISPR • Year-long Batch 2025–26</strong></p>
             <p>This is an automated report generated by the Student Performance Tracking System</p>
             <p>Generated on ${currentDate} • For queries, contact the academic administration</p>
         </div>
@@ -5385,4 +5445,25 @@ document.addEventListener('DOMContentLoaded', function() {
   setTimeout(() => {
     initializePrintExport();
   }, 1000);
+});
+
+/* -------------------------------------------------
+   AUTO-START IN LIGHT THEME (WHITE)
+   ------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Force light theme classes on <body>
+    document.body.classList.remove('dark-theme');
+    document.body.classList.add('light-theme');
+
+    // 2. Update the toggle button icon/text to show "dark" (because we are in light)
+    const themeBtn = document.getElementById('themeToggle');
+    if (themeBtn) {
+        // If your button uses Font-Awesome icons:
+        themeBtn.innerHTML = '<i class="fas fa-moon"></i>';   // moon = switch to dark
+        // OR if you use plain text:
+        // themeBtn.textContent = 'Dark Mode';
+    }
+
+    // 3. Store the preference (optional but recommended)
+    localStorage.setItem('theme', 'light');
 });
