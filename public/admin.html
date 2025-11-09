@@ -444,6 +444,10 @@
                             <i class="fas fa-calendar-week"></i>
                             <span>WE Only</span>
                         </button>
+                        <button id="overallMTBtn" class="filter-btn" onclick="filterOverallRanklist('MT')">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>MT Only</span>
+                        </button>
                     </div>
                 </div>
 
@@ -497,6 +501,10 @@
                         <button id="last3WEBtn" class="filter-btn" onclick="filterLast3Ranklist('WE')">
                             <i class="fas fa-calendar-week"></i>
                             <span>Last 3 WE Only</span>
+                        </button>
+                        <button id="last3MTBtn" class="filter-btn" onclick="filterLast3Ranklist('MT')">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Last 3 MT Only</span>
                         </button>
                     </div>
                 </div>
@@ -801,6 +809,10 @@
                     <label class="filter-option">
                         <input type="radio" name="printFilter" value="WE">
                         <span>WE Only</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="printFilter" value="MT">
+                        <span>MT Only</span>
                     </label>
                 </div>
             </div>
