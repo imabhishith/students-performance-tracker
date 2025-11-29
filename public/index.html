@@ -1,0 +1,2537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- Add Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #673ab7;
+            --primary-dark: #512da8;
+            --accent: #bb86fc;
+            --bg-dark: #121212;
+            --surface: #1e1e1e;
+            --text: #e0e0e0;
+            --border: #333;
+            --success: #4caf50;
+            --error: #f44336;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        body.light-theme {
+            --bg-dark: #f5f5f5;
+            --surface: #ffffff;
+            --text: #333;
+            --border: #ccc;
+        }
+
+        /* LOGIN PAGE STYLES */
+        .login-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-image: url('iiser_bg_art.png');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--bg-dark);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 420px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Logo image styles */
+        .logo-image {
+    
+            background-blend-mode: color;
+            height: 70px;
+            width: auto;
+            object-fit: var(--bg-dark);
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .logo-image {
+                height: 80px;
+            }
+        }
+
+        .login-header {
+            background:skyblue;
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .logo-placeholder {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+        }
+
+        .login-header h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.8em;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .login-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        .login-form {
+            padding: 40px 30px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: skyblue;
+            box-shadow: 0 0 0 3px rgba(58, 183, 173, 0.15);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: skyblue;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 56px;
+            position: relative;
+        }
+
+        .login-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(147, 169, 255, 0.392);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            width: 22px;
+            height: 22px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(244, 67, 54, 0.15);
+            border: 1px solid var(--error);
+            color: var(--error);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .login-footer {
+            padding: 25px 30px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            background: rgba(103, 58, 183, 0.05);
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 27px;
+            right: 3px;
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        /* DASHBOARD PAGE STYLES */
+        .dashboard-page {
+            display: none;
+            min-height: 100vh;
+            background: var(--bg-dark);
+        }
+
+        .dashboard-page.active {
+            display: block;
+        }
+
+        .dashboard-header {
+            background: var(--surface);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-section .logo-placeholder {
+            font-size: 2.5em;
+        }
+
+        .title-section h1 {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .title-section h2 {
+            font-size: 1.1em;
+            font-weight: 500;
+            margin: 0;
+            color: var(--text);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--error), #d32f2f);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 44px;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .overview-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            color: white;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .overview-header {
+            padding: 25px 30px 15px;
+        }
+
+        .overview-header h3 {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .overview-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            padding: 15px 30px 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .stat-value:hover {
+            text-decoration: none;
+            transition: all 0.3s ease;
+            color: #ffeb3b;
+            transform: scale(1.1);
+        }
+        
+        /* Clickable overall rank */
+        .clickable-rank {
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .clickable-rank:hover {
+            color: #ff0000;
+            transform: scale(1.1);
+        }
+
+        /* Clickable exams attempted */
+        .clickable-exams {
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .clickable-exams:hover {
+            color: #4caf50;
+            transform: scale(1.1);
+        }
+
+        .details-card {
+            background: var(--surface);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+
+        .details-card h3 {
+            margin-bottom: 25px;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.4em;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .personal-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .detail-section {
+            background: rgba(103, 58, 183, 0.08);
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            scrollbar-color:var(--primary-dark);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+            border-right: 4px solid var(--primary);
+        }
+
+        .detail-section h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 15px;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--text);
+            opacity: 0.8;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Enhanced subject performance with color coding */
+        .subject-performance {
+            background: linear-gradient(145deg, #2c2c2c, #1e1e1e);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+        }
+
+        .subject-performance h4 {
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .subject-card {
+            background: rgba(103, 58, 183, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid;
+            transition: all 0.3s ease;
+        }
+
+        .subject-card.strong {
+            border-color: var(--success);
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .subject-card.weak {
+            border-color: var(--error);
+            background: rgba(244, 67, 54, 0.1);
+        }
+
+        .subject-name {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .subject-name.strong {
+            color: var(--success);
+        }
+
+        .subject-name.weak {
+            color: var(--error);
+        }
+
+        .subject-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        /* Chart styles */
+        .chart-section {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .chart-header h3 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 1.4em;
+        }
+
+        .chart-toggle-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .chart-toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(103, 58, 183, 0.3);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-top: 20px;
+        }
+
+        .chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* Modal styles for exam ranklists and details */
+        .exam-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .exam-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .exam-modal-content {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px;
+            max-width: 95vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            animation: slideInScale 0.3s ease-out;
+        }
+
+        @keyframes slideInScale {
+            from { 
+                opacity: 0; 
+                transform: translateY(-50px) scale(0.9);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .exam-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .exam-modal-header h3 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: var(--error);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: #d32f2f;
+            transform: scale(1.1);
+        }
+
+        .exam-ranklist-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            margin-top: 20px;
+        }
+
+        .exam-ranklist-table th,
+        .exam-ranklist-table td {
+            padding: 12px 8px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .exam-ranklist-table th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .exam-ranklist-table tr:nth-child(even) {
+            background: rgba(103, 58, 183, 0.05);
+        }
+
+        .exam-ranklist-table tr:hover {
+            background: rgba(103, 58, 183, 0.1);
+        }
+
+        .exam-ranklist-table .top-performer {
+            background: rgba(255, 215, 0, 0.2) !important;
+            font-weight: 600;
+        }
+
+        .current-student-row {
+            background: rgba(103, 58, 183, 0.3) !important;
+            border: 2px solid var(--primary);
+        }
+
+        /* Student performance table - similar to ranklist */
+        .student-performance-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            margin-top: 20px;
+        }
+
+        .student-performance-table th,
+        .student-performance-table td {
+            padding: 12px 8px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .student-performance-table th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .student-performance-table tr:nth-child(even) {
+            background: rgba(103, 58, 183, 0.05);
+        }
+
+        .student-performance-table tr:hover {
+            background: rgba(103, 58, 183, 0.1);
+        }
+
+        .student-performance-table .best-performance {
+            background: rgba(76, 175, 80, 0.2) !important;
+            font-weight: 600;
+        }
+
+        .student-performance-table .weak-performance {
+            background: rgba(244, 67, 54, 0.1) !important;
+        }
+
+        /* Exam name clickable styles */
+        .exam-name {
+            cursor: pointer;
+            color: var(--accent);
+            transition: color 0.3s;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            background: none;
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        .exam-name:hover {
+            color: var(--primary);
+        }
+
+        .exam-name:active {
+            color: var(--primary-dark);
+        }
+
+        body.light-theme .exam-name {
+            color: var(--primary);
+        }
+
+        body.light-theme .subject-performance {
+            color: var(--primary);
+            background: linear-gradient(145deg, #ffffff, #fefefe);
+        }
+
+        body.light-theme .subject-performance:hover {
+            color: var(--primary-dark);
+        }
+
+        body.light-theme .exam-name:hover {
+            color: var(--primary-dark);
+        }
+
+        /* Strong and weak subject color coding */
+        .strong-subject {
+            color: var(--success) !important;
+            font-weight: 700;
+        }
+
+        .weak-subject {
+            color: var(--error) !important;
+            font-weight: 700;
+        }
+
+        body.light-theme .strong-subject {
+            color: #2e7d32 !important;
+        }
+
+        body.light-theme .weak-subject {
+            color: #c62828 !important;
+        }
+
+        /* Chart info box */
+        .chart-info {
+            background: rgba(103, 58, 183, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chart-info strong {
+            color: var(--primary);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .overview-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .personal-details-grid, .subject-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                width: 44px;
+                height: 44px;
+                font-size: 20px;
+            }
+
+            .exam-modal-content {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            .exam-ranklist-table th,
+            .exam-ranklist-table td,
+            .student-performance-table th,
+            .student-performance-table td {
+                padding: 8px 4px;
+                font-size: 0.85em;
+            }
+
+            .chart-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .overview-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .login-form, .login-header {
+                padding: 25px 20px;
+            }
+
+            .exam-ranklist-table,
+            .student-performance-table {
+                font-size: 0.8em;
+            }
+        }
+
+        .hidden { display: none !important; }
+        .loading { opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="login-page">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo-container">
+                    <div class="logo-placeholder"><img src="logo.png" alt="CRISPR Logo" class="logo-image"></div>
+                    <h1>STUDENT PORTAL</h1>
+                    <p>Academic Performance Dashboard</p>
+                </div>
+            </div>
+
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="rollNumber">Roll Number</label>
+                    <input type="text" 
+                           id="rollNumber" 
+                           name="rollNumber" 
+                           placeholder="Enter your roll number (e.g., CYL01)" 
+                           required 
+                           autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" 
+                           id="password" 
+                           name="password" 
+                           placeholder="Enter your password" 
+                           required 
+                           autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="login-btn" title="Click to login">
+                    <span class="btn-text">Login</span>
+                    <div class="spinner" id="loginSpinner" style="display: none;"></div>
+                </button>
+
+                <div id="errorMessage" class="error-message" style="display: none;" role="alert"></div>
+            </form>
+
+            <div class="login-footer">
+                <p>Contact your administrator if you forgot your credentials</p>
+            </div>
+        </div>
+
+        <button id="themeToggle" class="theme-toggle" title="Toggle Theme">🌙</button>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div id="dashboardPage" class="dashboard-page">
+        <div class="dashboard-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-placeholder">📚</div>
+                    <div class="title-section">
+                        <h1>STUDENT PORTAL</h1>
+                        <h2 id="studentName">Student Dashboard</h2>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <button id="dashboardThemeToggle" class="theme-toggle" title="Toggle Theme">🌙</button>
+                    <button id="logoutBtn" class="logout-btn" title="Logout from portal">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Student Overview Card -->
+            <div id="studentOverview" class="overview-card">
+                <div class="overview-header">
+                    <h3>📊 Academic Overview</h3>
+                </div>
+                <div class="overview-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Overall Rank</div>
+                        <div class="stat-value clickable-rank" id="overallRank" onclick="showOverallRanklist()" title="Click to view overall ranklist">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Total Score</div>
+                        <div class="stat-value" id="totalScore">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Percentage</div>
+                        <div class="stat-value" id="totalPercentage">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Exams Attempted</div>
+                        <div class="stat-value clickable-exams" id="examsAttempted" onclick="showExamDetails()" title="Click to view exam details">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Subject Performance Card -->
+            <div class="details-card">
+                <h3>📚 Subject-wise Performance Analysis</h3>
+                <div id="subjectPerformance" class="subject-performance">
+                    <div style="text-align: center; padding: 40px; color: var(--text);">
+                        Loading subject performance data...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Chart Section -->
+            <div class="chart-section">
+                <div class="chart-header">
+                    <h3>📈 Performance Trend Analysis</h3>
+                    <button id="chartToggleBtn" class="chart-toggle-btn" onclick="toggleChartMode()">
+                        📊 Switch to Subject-wise View
+                    </button>
+                </div>
+                <div id="chartInfo" class="chart-info">
+                    <strong>Total Percentage View:</strong> Shows your overall percentage for each exam
+                </div>
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Personal Details -->
+            <div class="details-card">
+                <h3>📝 Personal Academic Details</h3>
+                <div id="personalDetails">
+                    <div style="text-align: center; padding: 40px; color: var(--text);">
+                        Loading your academic data...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overall Ranklist Modal -->
+    <div id="overallRanklistModal" class="exam-modal">
+        <div class="exam-modal-content">
+            <div class="exam-modal-header">
+                <h3 id="overallRanklistModalTitle">Overall Class Ranklist</h3>
+                <button class="close-btn" onclick="closeOverallRanklist()" title="Close">&times;</button>
+            </div>
+            <div id="overallRanklistContent">
+                <div style="text-align: center; padding: 40px; color: var(--text);">
+                    Loading ranklist...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Ranklist Modal -->
+    <div id="examRanklistModal" class="exam-modal">
+        <div class="exam-modal-content">
+            <div class="exam-modal-header">
+                <h3 id="examRanklistModalTitle">Exam Ranklist</h3>
+                <button class="close-btn" onclick="closeExamRanklist()" title="Close">&times;</button>
+            </div>
+            <div id="examRanklistContent">
+                <div style="text-align: center; padding: 40px; color: var(--text);">
+                    Loading exam ranklist...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Details Modal -->
+    <div id="examDetailsModal" class="exam-modal">
+        <div class="exam-modal-content">
+            <div class="exam-modal-header">
+                <h3 id="examDetailsModalTitle">Your Exam Performance Details</h3>
+                <button class="close-btn" onclick="closeExamDetails()" title="Close">&times;</button>
+            </div>
+            <div id="examDetailsContent">
+                <div style="text-align: center; padding: 40px; color: var(--text);">
+                    Loading exam details...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Student Portal System with Fixed Chart Toggle and Exam Details Table
+        class StudentPortal {
+            constructor() {
+                console.log('🚀 Starting Enhanced Student Portal System...');
+                this.initializeData();
+                this.initializeElements();
+                this.setupEventListeners();
+                this.initializeTheme();
+                this.checkExistingSession();
+                this.chartMode = 'total'; // 'total' or 'subjects'
+                this.chartInstance = null;
+            }
+
+            initializeData() {
+                // Complete data from your system
+                this.data = {
+                    "users": [
+                        {"roll": "admin", "password": "Crispr_2160", "role": "admin"},
+                        {"roll": "CYL01", "password": "Cyl01@2025", "role": "student"},
+                        {"roll": "CYL02", "password": "Cyl02@2025", "role": "student"},
+                        {"roll": "CYL03", "password": "Cyl03@2025", "role": "student"},
+                        {"roll": "CYL04", "password": "Cyl04@2025", "role": "student"},
+                        {"roll": "CYL05", "password": "Cyl05@2025", "role": "student"},
+                        {"roll": "CYL06", "password": "Cyl06@2025", "role": "student"},
+                        {"roll": "CYL07", "password": "Cyl07@2025", "role": "student"},
+                        {"roll": "CYL08", "password": "Cyl08@2025", "role": "student"},
+                        {"roll": "CYL09", "password": "Cyl09@2025", "role": "student"},
+                        {"roll": "CYL10", "password": "Cyl10@2025", "role": "student"},
+                        {"roll": "CYL11", "password": "Cyl11@2025", "role": "student"},
+                        {"roll": "CYL12", "password": "Cyl12@2025", "role": "student"},
+                        {"roll": "CYL13", "password": "Cyl13@2025", "role": "student"},
+                        {"roll": "CYL14", "password": "Cyl14@2025", "role": "student"},
+                        {"roll": "CYL15", "password": "Cyl15@2025", "role": "student"},
+                        {"roll": "CYL16", "password": "Cyl16@2025", "role": "student"},
+                        {"roll": "CYL17", "password": "Cyl17@2025", "role": "student"},
+                        {"roll": "CYL18", "password": "Cyl18@2025", "role": "student"},
+                        {"roll": "CYL19", "password": "Cyl19@2025", "role": "student"},
+                        {"roll": "CYL20", "password": "Cyl20@2025", "role": "student"},
+                        {"roll": "CYL21", "password": "Cyl21@2025", "role": "student"},
+                        {"roll": "CYL22", "password": "Cyl22@2025", "role": "student"},
+                        {"roll": "CYL23", "password": "Cyl23@2025", "role": "student"},
+                        {"roll": "CYL24", "password": "Cyl24@2025", "role": "student"},
+                        {"roll": "CYL25", "password": "Cyl25@2025", "role": "student"},
+                        {"roll": "CYL26", "password": "Cyl26@2025", "role": "student"},
+                        {"roll": "CYL27", "password": "Cyl27@2025", "role": "student"},
+                        {"roll": "CYL28", "password": "Cyl28@2025", "role": "student"},
+                        {"roll": "CYL29", "password": "Cyl29@2025", "role": "student"},
+                        {"roll": "CYL30", "password": "Cyl30@2025", "role": "student"},
+                        {"roll": "CYL31", "password": "Cyl31@2025", "role": "student"},
+                        {"roll": "CYL32", "password": "Cyl32@2025", "role": "student"},
+                        {"roll": "CYL33", "password": "Cyl33@2025", "role": "student"},
+                        {"roll": "CYL34", "password": "Cyl34@2025", "role": "student"},
+                        {"roll": "CYL35", "password": "Cyl35@2025", "role": "student"},
+                        {"roll": "CYL36", "password": "Cyl36@2025", "role": "student"}
+                    ],
+                    "exams": [
+                        {"roll": "CYL12", "name": "FARHAN M", "exam": "WE 1", "chem": -5, "phy": 5, "bio": 15, "math": 5, "total": 20, "percent": 12.5, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL07", "name": "ASJAN LAHAR", "exam": "WE 1", "chem": -2, "phy": 4, "bio": 16, "math": 0, "total": 18, "percent": 11.25, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL10", "name": "DAKSHA PILLAI", "exam": "WE 1", "chem": 10, "phy": -10, "bio": 30, "math": 10, "total": 40, "percent": 25, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL32", "name": "VYDEHI NAIR", "exam": "WE 1", "chem": 4, "phy": 15, "bio": 40, "math": 28, "total": 87, "percent": 54.38, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL25", "name": "PARVATHY N P", "exam": "WE 1", "chem": 4, "phy": -3, "bio": 30, "math": 19, "total": 50, "percent": 31.25, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL02", "name": "ABHIRAMI K M", "exam": "WE 1", "chem": 4, "phy": 0, "bio": 1, "math": 8, "total": 13, "percent": 8.13, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL13", "name": "GAURAV S KRISHNAN", "exam": "WE 1", "chem": 16, "phy": 18, "bio": 26, "math": -4, "total": 56, "percent": 35, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL24", "name": "NIVEDITHA P RAVI", "exam": "WE 1", "chem": 19, "phy": 12, "bio": 30, "math": 16, "total": 77, "percent": 48.13, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL19", "name": "MIDHUN P", "exam": "WE 1", "chem": 3, "phy": 6, "bio": 30, "math": 14, "total": 53, "percent": 33.13, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL03", "name": "AISHA SHARAF S", "exam": "WE 1", "chem": 3, "phy": 0, "bio": 22, "math": 4, "total": 29, "percent": 18.13, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL06", "name": "ARAVIND R CHANDRAN", "exam": "WE 1", "chem": 32, "phy": 32, "bio": 35, "math": 18, "total": 117, "percent": 73.13, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL31", "name": "VIDHU NAMBIAR A V", "exam": "WE 1", "chem": 32, "phy": 31, "bio": 40, "math": 22, "total": 125, "percent": 78.13, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL18", "name": "KAVERY VISWANATHAN", "exam": "WE 1", "chem": 12, "phy": 20, "bio": 35, "math": 11, "total": 78, "percent": 48.75, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL21", "name": "NIDHA FATHIMA V N", "exam": "WE 1", "chem": 0, "phy": 5, "bio": 30, "math": -5, "total": 30, "percent": 18.75, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL26", "name": "PRAJUL KRISHNA", "exam": "WE 1", "chem": 6, "phy": 7, "bio": 31, "math": 15, "total": 59, "percent": 36.88, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL01", "name": "ABHI A", "exam": "WE 1", "chem": 0, "phy": -1, "bio": 4, "math": 10, "total": 13, "percent": 8.13, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL27", "name": "RAFA HANOON K", "exam": "WE 1", "chem": 13, "phy": 16, "bio": 40, "math": 17, "total": 86, "percent": 53.75, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL22", "name": "NIDHA T P", "exam": "WE 1", "chem": 8, "phy": 20, "bio": 40, "math": 20, "total": 88, "percent": 55, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL29", "name": "SHAZA FATHIMA P V", "exam": "WE 1", "chem": 24, "phy": 23, "bio": 40, "math": 23, "total": 110, "percent": 68.75, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL08", "name": "ASWITHA C K", "exam": "WE 1", "chem": 16, "phy": 12, "bio": 21, "math": 14, "total": 63, "percent": 39.38, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL23", "name": "NIMITHA K J", "exam": "WE 1", "chem": 6, "phy": 20, "bio": 35, "math": 13, "total": 74, "percent": 46.25, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL15", "name": "IHSAN HUSSAIN", "exam": "WE 1", "chem": 12, "phy": 16, "bio": 31, "math": 13, "total": 72, "percent": 45, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL20", "name": "MUHAMMED AFRAJ LATHEEF", "exam": "WE 1", "chem": 0, "phy": 3, "bio": 16, "math": 5, "total": 24, "percent": 15, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL28", "name": "RHIDHI", "exam": "WE 1", "chem": 7, "phy": 5, "bio": 27, "math": 2, "total": 41, "percent": 25.63, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL30", "name": "SUKANYA V S", "exam": "WE 1", "chem": 35, "phy": 27, "bio": 35, "math": 26, "total": 123, "percent": 76.88, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL14", "name": "GOWRI KRISHNAN M", "exam": "WE 1", "chem": 4, "phy": 8, "bio": 40, "math": 20, "total": 72, "percent": 45, "maxTotal": 160, "maxChem": 40, "maxPhy": 40, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL04", "name": "ALEENA ELIZABETH MATHEW", "exam": "WE 1", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL05", "name": "ANJANA PRASAD", "exam": "WE 1", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL09", "name": "ATUL RAJESH K", "exam": "WE 1", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL11", "name": "EESHA NAIR", "exam": "WE 1", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL16", "name": "KAILAS", "exam": "WE 1", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL17", "name": "KARTHIK SHINOJ", "exam": "WE 1", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL33", "name": "RIDHA FATHIMA", "exam": "WE 1", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL34", "name": "THAHSEEN THAJUDHEEN", "exam": "WE 1", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL35", "name": "G VRINDA", "exam": "WE 1", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL36", "name": "SREYA K SUNIL", "exam": "WE 1", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL36", "name": "SREYA K SUNIL", "exam": "WE 2", "chem": -1, "phy": 0, "bio": 26, "math": 0, "total": 25, "percent": 16.03, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL07", "name": "ASJAN LAHAR", "exam": "WE 2", "chem": 2, "phy": 6, "bio": 22, "math": 0, "total": 30, "percent": 19.23, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL12", "name": "FARHAN M", "exam": "WE 2", "chem": 15, "phy": 0, "bio": 25, "math": -4, "total": 36, "percent": 23.08, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL13", "name": "GAURAV S KRISHNAN", "exam": "WE 2", "chem": -4, "phy": 14, "bio": 27, "math": 13, "total": 50, "percent": 32.05, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL09", "name": "ATUL RAJESH K", "exam": "WE 2", "chem": 15, "phy": 14, "bio": 30, "math": -1, "total": 58, "percent": 37.18, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL01", "name": "ABHI A", "exam": "WE 2", "chem": 0, "phy": 4, "bio": 27, "math": 8, "total": 39, "percent": 25, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL25", "name": "PARVATHY N P", "exam": "WE 2", "chem": 2, "phy": 2, "bio": 25, "math": 11, "total": 40, "percent": 25.64, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL11", "name": "EESHA NAIR", "exam": "WE 2", "chem": 26, "phy": 22, "bio": 36, "math": 18, "total": 102, "percent": 65.38, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL24", "name": "NIVEDITHA P RAVI", "exam": "WE 2", "chem": 17, "phy": 19, "bio": 35, "math": 16, "total": 87, "percent": 55.77, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL32", "name": "VYDEHI NAIR", "exam": "WE 2", "chem": 24, "phy": 9, "bio": 30, "math": 7, "total": 70, "percent": 44.87, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL19", "name": "MIDHUN P", "exam": "WE 2", "chem": 12, "phy": -4, "bio": 35, "math": 3, "total": 46, "percent": 29.49, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL18", "name": "KAVERY VISWANATHAN", "exam": "WE 2", "chem": 16, "phy": 16, "bio": 35, "math": 3, "total": 70, "percent": 44.87, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL10", "name": "DAKSHA PILLAI", "exam": "WE 2", "chem": -3, "phy": 10, "bio": 15, "math": 6, "total": 28, "percent": 17.95, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL20", "name": "MUHAMMED AFRAJ LATHEEF", "exam": "WE 2", "chem": 5, "phy": 1, "bio": 10, "math": 2, "total": 18, "percent": 11.54, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL06", "name": "ARAVIND R CHANDRAN", "exam": "WE 2", "chem": 40, "phy": 27, "bio": 30, "math": 20, "total": 117, "percent": 75, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL03", "name": "AISHA SHARAF S", "exam": "WE 2", "chem": 18, "phy": 18, "bio": 30, "math": 2, "total": 68, "percent": 43.59, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL08", "name": "ASWITHA C K", "exam": "WE 2", "chem": 24, "phy": 11, "bio": 35, "math": 20, "total": 90, "percent": 57.69, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL23", "name": "NIMITHA K J", "exam": "WE 2", "chem": 22, "phy": -3, "bio": 30, "math": -1, "total": 48, "percent": 30.77, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL31", "name": "VIDHU NAMBIAR A V", "exam": "WE 2", "chem": 31, "phy": 31, "bio": 40, "math": 15, "total": 117, "percent": 75, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL29", "name": "SHAZA FATHIMA P V", "exam": "WE 2", "chem": 30, "phy": 17, "bio": 35, "math": 14, "total": 96, "percent": 61.54, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL04", "name": "ALEENA ELIZABETH MATHEW", "exam": "WE 2", "chem": 31, "phy": 19, "bio": 40, "math": 11, "total": 101, "percent": 64.74, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL22", "name": "NIDHA T P", "exam": "WE 2", "chem": 2, "phy": 13, "bio": 20, "math": -4, "total": 31, "percent": 19.87, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL28", "name": "RHIDHI", "exam": "WE 2", "chem": 19, "phy": 6, "bio": 13, "math": 2, "total": 40, "percent": 25.64, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL34", "name": "THAHSEEN THAJUDHEEN", "exam": "WE 2", "chem": 10, "phy": 0, "bio": 20, "math": -9, "total": 21, "percent": 13.46, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL27", "name": "RAFA HANOON K", "exam": "WE 2", "chem": 30, "phy": 24, "bio": 35, "math": 0, "total": 89, "percent": 57.05, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL30", "name": "SUKANYA V S", "exam": "WE 2", "chem": 31, "phy": 31, "bio": 40, "math": 26, "total": 128, "percent": 82.05, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL26", "name": "PRAJUL KRISHNA", "exam": "WE 2", "chem": 15, "phy": 9, "bio": 20, "math": 2, "total": 46, "percent": 29.49, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL16", "name": "KAILAS", "exam": "WE 2", "chem": 15, "phy": 6, "bio": 25, "math": 3, "total": 49, "percent": 31.41, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL15", "name": "IHSAN HUSSAIN", "exam": "WE 2", "chem": 27, "phy": 11, "bio": 21, "math": 3, "total": 62, "percent": 39.74, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL17", "name": "KARTHIK SHINOJ", "exam": "WE 2", "chem": 26, "phy": 13, "bio": 15, "math": 0, "total": 54, "percent": 34.62, "maxTotal": 156, "maxChem": 40, "maxPhy": 36, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL02", "name": "ABHIRAMI K M", "exam": "WE 2", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL05", "name": "ANJANA PRASAD", "exam": "WE 2", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL14", "name": "GOWRI KRISHNAN M", "exam": "WE 2", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL21", "name": "NIDHA FATHIMA V N", "exam": "WE 2", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL33", "name": "RIDHA FATHIMA", "exam": "WE 2", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL35", "name": "G VRINDA", "exam": "WE 2", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL30", "name": "SUKANYA V S", "exam": "WE 3", "chem": 35, "phy": 10, "bio": 35, "math": 25, "total": 105, "percent": 75, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL31", "name": "VIDHU NAMBIAR A V", "exam": "WE 3", "chem": 36, "phy": 16, "bio": 35, "math": 16, "total": 103, "percent": 73.57, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL29", "name": "SHAZA FATHIMA P V", "exam": "WE 3", "chem": 40, "phy": 12, "bio": 35, "math": 16, "total": 103, "percent": 73.57, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL11", "name": "EESHA NAIR", "exam": "WE 3", "chem": 36, "phy": 2, "bio": 31, "math": 28, "total": 97, "percent": 69.29, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL27", "name": "RAFA HANOON K", "exam": "WE 3", "chem": 31, "phy": 8, "bio": 28, "math": 19, "total": 86, "percent": 61.43, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL04", "name": "ALEENA ELIZABETH MATHEW", "exam": "WE 3", "chem": 35, "phy": 4, "bio": 27, "math": 20, "total": 86, "percent": 61.43, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL08", "name": "ASWITHA C K", "exam": "WE 3", "chem": 35, "phy": 0, "bio": 32, "math": 15, "total": 82, "percent": 58.57, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL28", "name": "RHIDHI", "exam": "WE 3", "chem": 15, "phy": 4, "bio": 36, "math": 23, "total": 78, "percent": 55.71, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL06", "name": "ARAVIND R CHANDRAN", "exam": "WE 3", "chem": 30, "phy": 4, "bio": 32, "math": 11, "total": 77, "percent": 55, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL15", "name": "IHSAN HUSSAIN", "exam": "WE 3", "chem": 36, "phy": 0, "bio": 30, "math": 7, "total": 73, "percent": 52.14, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL19", "name": "MIDHUN P", "exam": "WE 3", "chem": 30, "phy": 7, "bio": 13, "math": 20, "total": 70, "percent": 50, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL17", "name": "KARTHIK SHINOJ", "exam": "WE 3", "chem": 35, "phy": 4, "bio": 21, "math": 8, "total": 68, "percent": 48.57, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL26", "name": "PRAJUL KRISHNA", "exam": "WE 3", "chem": 26, "phy": 0, "bio": 23, "math": 19, "total": 68, "percent": 48.57, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL22", "name": "NIDHA T P", "exam": "WE 3", "chem": 20, "phy": 3, "bio": 30, "math": 14, "total": 67, "percent": 47.86, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL32", "name": "VYDEHI NAIR", "exam": "WE 3", "chem": 27, "phy": 4, "bio": 16, "math": 16, "total": 63, "percent": 45, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL18", "name": "KAVERY VISWANATHAN", "exam": "WE 3", "chem": 25, "phy": 0, "bio": 27, "math": 11, "total": 63, "percent": 45, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL24", "name": "NIVEDITHA P RAVI", "exam": "WE 3", "chem": 26, "phy": 3, "bio": 16, "math": 16, "total": 61, "percent": 43.57, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL33", "name": "RIDHA FATHIMA", "exam": "WE 3", "chem": 23, "phy": 4, "bio": 31, "math": 3, "total": 61, "percent": 43.57, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL13", "name": "GAURAV S KRISHNAN", "exam": "WE 3", "chem": 20, "phy": 3, "bio": 16, "math": 17, "total": 56, "percent": 40, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL23", "name": "NIMITHA K J", "exam": "WE 3", "chem": 15, "phy": -1, "bio": 26, "math": 7, "total": 47, "percent": 33.57, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL20", "name": "MUHAMMED AFRAJ LATHEEF", "exam": "WE 3", "chem": 16, "phy": 5, "bio": 15, "math": 6, "total": 42, "percent": 30, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL12", "name": "FARHAN M", "exam": "WE 3", "chem": 30, "phy": 5, "bio": 5, "math": 0, "total": 40, "percent": 28.57, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL10", "name": "DAKSHA PILLAI", "exam": "WE 3", "chem": 10, "phy": 10, "bio": 15, "math": 5, "total": 40, "percent": 28.57, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL01", "name": "ABHI A", "exam": "WE 3", "chem": 12, "phy": 0, "bio": 27, "math": 0, "total": 39, "percent": 27.86, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL03", "name": "AISHA SHARAF S", "exam": "WE 3", "chem": 21, "phy": -3, "bio": 13, "math": 0, "total": 31, "percent": 22.14, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL14", "name": "GOWRI KRISHNAN M", "exam": "WE 3", "chem": 11, "phy": 0, "bio": 13, "math": 0, "total": 24, "percent": 17.14, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL36", "name": "SREYA K SUNIL", "exam": "WE 3", "chem": 0, "phy": 0, "bio": 16, "math": 0, "total": 16, "percent": 11.43, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL34", "name": "THAHSEEN THAJUDHEEN", "exam": "WE 3", "chem": 6, "phy": 3, "bio": 2, "math": -6, "total": 5, "percent": 3.57, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL02", "name": "ABHIRAMI K M", "exam": "WE 3", "chem": -3, "phy": 7, "bio": -8, "math": -6, "total": -10, "percent": -7.14, "maxTotal": 140, "maxChem": 40, "maxPhy": 20, "maxBio": 40, "maxMath": 40},
+                        {"roll": "CYL35", "name": "G VRINDA", "exam": "WE 3", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL25", "name": "PARVATHY N P", "exam": "WE 3", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL21", "name": "NIDHA FATHIMA V N", "exam": "WE 3", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL16", "name": "KAILAS", "exam": "WE 3", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL09", "name": "ATUL RAJESH K", "exam": "WE 3", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL07", "name": "ASJAN LAHAR", "exam": "WE 3", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll": "CYL05", "name": "ANJANA PRASAD", "exam": "WE 3", "chem": 0, "phy": 0, "bio": 0, "math": 0, "total": 0, "percent": 0, "maxTotal": 0, "maxChem": 0, "maxPhy": 0, "maxBio": 0, "maxMath": 0},
+                        {"roll":"CYL01","name":"ABHI A","exam":"RT 1","chem":0,"phy":0,"bio":20,"math":0,"total":20,"percent":8.77,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL03","name":"AISHA SHARAF S","exam":"RT 1","chem":24,"phy":11,"bio":34,"math":6,"total":75,"percent":32.89,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL04","name":"ALEENA ELIZABETH MATHEW","exam":"RT 1","chem":33,"phy":21,"bio":46,"math":20,"total":120,"percent":52.63,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL06","name":"ARAVIND R CHANDRAN","exam":"RT 1","chem":48,"phy":44,"bio":51,"math":28,"total":171,"percent":75,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL08","name":"ASWITHA C K","exam":"RT 1","chem":48,"phy":32,"bio":50,"math":18,"total":148,"percent":64.91,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL09","name":"ATUL RAJESH K","exam":"RT 1","chem":30,"phy":15,"bio":47,"math":21,"total":113,"percent":49.56,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL10","name":"DAKSHA PILLAI","exam":"RT 1","chem":-5,"phy":-2,"bio":15,"math":12,"total":20,"percent":8.77,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL11","name":"EESHA NAIR","exam":"RT 1","chem":40,"phy":31,"bio":23,"math":36,"total":130,"percent":57.02,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL12","name":"FARHAN M","exam":"RT 1","chem":5,"phy":-4,"bio":20,"math":17,"total":38,"percent":16.67,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL13","name":"GAURAV S KRISHNAN","exam":"RT 1","chem":27,"phy":24,"bio":39,"math":16,"total":106,"percent":46.49,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL14","name":"GOWRI KRISHNAN M","exam":"RT 1","chem":15,"phy":2,"bio":28,"math":13,"total":58,"percent":25.44,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL15","name":"IHSAN HUSSAIN","exam":"RT 1","chem":47,"phy":13,"bio":40,"math":27,"total":127,"percent":55.7,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL17","name":"KARTHIK SHINOJ","exam":"RT 1","chem":43,"phy":15,"bio":31,"math":4,"total":93,"percent":40.79,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL18","name":"KAVERY VISWANATHAN","exam":"RT 1","chem":35,"phy":32,"bio":46,"math":36,"total":149,"percent":65.35,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL19","name":"MIDHUN P","exam":"RT 1","chem":23,"phy":17,"bio":20,"math":10,"total":70,"percent":30.7,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL20","name":"MUHAMMED AFRAJ LATHEEF","exam":"RT 1","chem":15,"phy":10,"bio":30,"math":1,"total":56,"percent":24.56,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL21","name":"NIDHA FATHIMA V N","exam":"RT 1","chem":10,"phy":11,"bio":25,"math":2,"total":48,"percent":21.05,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL22","name":"NIDHA T P","exam":"RT 1","chem":41,"phy":28,"bio":40,"math":40,"total":149,"percent":65.35,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL23","name":"NIMITHA K J","exam":"RT 1","chem":20,"phy":17,"bio":13,"math":18,"total":68,"percent":29.82,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL24","name":"NIVEDITHA P RAVI","exam":"RT 1","chem":45,"phy":26,"bio":40,"math":22,"total":133,"percent":58.33,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL26","name":"PRAJUL KRISHNA","exam":"RT 1","chem":26,"phy":32,"bio":45,"math":11,"total":114,"percent":50,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL27","name":"RAFA HANOON K","exam":"RT 1","chem":46,"phy":19,"bio":36,"math":39,"total":140,"percent":61.4,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL28","name":"RHIDHI","exam":"RT 1","chem":15,"phy":26,"bio":8,"math":35,"total":84,"percent":36.84,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL29","name":"SHAZA FATHIMA P V","exam":"RT 1","chem":52,"phy":34,"bio":45,"math":35,"total":166,"percent":72.81,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL30","name":"SUKANYA V S","exam":"RT 1","chem":40,"phy":41,"bio":55,"math":52,"total":188,"percent":82.46,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL31","name":"VIDHU NAMBIAR A V","exam":"RT 1","chem":22,"phy":36,"bio":32,"math":44,"total":134,"percent":58.77,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL32","name":"VYDEHI NAIR","exam":"RT 1","chem":40,"phy":2,"bio":42,"math":19,"total":103,"percent":45.18,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL33","name":"RIDHA FATHIMA","exam":"RT 1","chem":33,"phy":0,"bio":41,"math":8,"total":82,"percent":35.96,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL34","name":"THAHSEEN THAJUDHEEN","exam":"RT 1","chem":7,"phy":20,"bio":9,"math":-1,"total":35,"percent":15.35,"maxTotal":228,"maxChem":60,"maxPhy":56,"maxBio":60,"maxMath":52},
+                        {"roll":"CYL02","name":"ABHIRAMI K M","exam":"RT 1","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL05","name":"ANJANA PRASAD","exam":"RT 1","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL07","name":"ASJAN LAHAR","exam":"RT 1","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL16","name":"KAILAS","exam":"RT 1","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL25","name":"PARVATHY N P","exam":"RT 1","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL35","name":"G VRINDA","exam":"RT 1","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL36","name":"SREYA K SUNIL","exam":"RT 1","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL02","name":"ABHIRAMI K M","exam":"WE 4","chem":17,"phy":19,"bio":18,"math":14,"total":68,"percent":42.5,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL03","name":"AISHA SHARAF S","exam":"WE 4","chem":24,"phy":4,"bio":23,"math":0,"total":51,"percent":31.88,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL04","name":"ALEENA ELIZABETH MATHEW","exam":"WE 4","chem":32,"phy":20,"bio":36,"math":16,"total":104,"percent":65,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL06","name":"ARAVIND R CHANDRAN","exam":"WE 4","chem":32,"phy":23,"bio":24,"math":20,"total":99,"percent":61.88,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL08","name":"ASWITHA C K","exam":"WE 4","chem":32,"phy":16,"bio":31,"math":4,"total":83,"percent":51.88,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL09","name":"ATUL RAJESH K","exam":"WE 4","chem":27,"phy":24,"bio":26,"math":27,"total":104,"percent":65,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL10","name":"DAKSHA PILLAI","exam":"WE 4","chem":5,"phy":0,"bio":5,"math":-5,"total":5,"percent":3.13,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL12","name":"FARHAN M","exam":"WE 4","chem":0,"phy":0,"bio":15,"math":-5,"total":10,"percent":6.25,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL15","name":"IHSAN HUSSAIN","exam":"WE 4","chem":36,"phy":12,"bio":24,"math":6,"total":78,"percent":48.75,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL18","name":"KAVERY VISWANATHAN","exam":"WE 4","chem":31,"phy":4,"bio":28,"math":20,"total":83,"percent":51.88,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL19","name":"MIDHUN P","exam":"WE 4","chem":16,"phy":7,"bio":2,"math":2,"total":27,"percent":16.88,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL23","name":"NIMITHA K J","exam":"WE 4","chem":19,"phy":10,"bio":18,"math":4,"total":51,"percent":31.88,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL24","name":"NIVEDITHA P RAVI","exam":"WE 4","chem":32,"phy":27,"bio":31,"math":13,"total":103,"percent":64.38,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL26","name":"PRAJUL KRISHNA","exam":"WE 4","chem":20,"phy":16,"bio":24,"math":8,"total":68,"percent":42.5,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL27","name":"RAFA HANOON K","exam":"WE 4","chem":31,"phy":6,"bio":21,"math":20,"total":78,"percent":48.75,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL28","name":"RHIDHI","exam":"WE 4","chem":19,"phy":10,"bio":27,"math":7,"total":63,"percent":39.38,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL29","name":"SHAZA FATHIMA P V","exam":"WE 4","chem":40,"phy":19,"bio":35,"math":19,"total":113,"percent":70.63,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL30","name":"SUKANYA V S","exam":"WE 4","chem":35,"phy":30,"bio":40,"math":35,"total":140,"percent":87.5,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL31","name":"VIDHU NAMBIAR A V","exam":"WE 4","chem":31,"phy":27,"bio":40,"math":32,"total":130,"percent":81.25,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL32","name":"VYDEHI NAIR","exam":"WE 4","chem":28,"phy":20,"bio":24,"math":16,"total":88,"percent":55,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL33","name":"RIDHA FATHIMA","exam":"WE 4","chem":17,"phy":8,"bio":11,"math":0,"total":36,"percent":22.5,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL34","name":"THAHSEEN THAJUDHEEN","exam":"WE 4","chem":9,"phy":2,"bio":13,"math":9,"total":33,"percent":20.63,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL35","name":"G VRINDA","exam":"WE 4","chem":12,"phy":2,"bio":15,"math":-2,"total":27,"percent":16.88,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL36","name":"SREYA K SUNIL","exam":"WE 4","chem":0,"phy":0,"bio":13,"math":0,"total":13,"percent":8.13,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL01","name":"ABHI A","exam":"WE 4","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL05","name":"ANJANA PRASAD","exam":"WE 4","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL07","name":"ASJAN LAHAR","exam":"WE 4","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL11","name":"EESHA NAIR","exam":"WE 4","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL13","name":"GAURAV S KRISHNAN","exam":"WE 4","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL14","name":"GOWRI KRISHNAN M","exam":"WE 4","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL16","name":"KAILAS","exam":"WE 4","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL17","name":"KARTHIK SHINOJ","exam":"WE 4","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL20","name":"MUHAMMED AFRAJ LATHEEF","exam":"WE 4","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL21","name":"NIDHA FATHIMA V N","exam":"WE 4","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL22","name":"NIDHA T P","exam":"WE 4","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL25","name":"PARVATHY N P","exam":"WE 4","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL01","name":"ABHI A","exam":"WE 5","chem":0,"phy":0,"bio":11,"math":0,"total":11,"percent":6.88,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL03","name":"AISHA SHARAF S","exam":"WE 5","chem":4,"phy":16,"bio":25,"math":-1,"total":44,"percent":27.5,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL04","name":"ALEENA ELIZABETH MATHEW","exam":"WE 5","chem":16,"phy":8,"bio":40,"math":23,"total":87,"percent":54.38,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL06","name":"ARAVIND R CHANDRAN","exam":"WE 5","chem":32,"phy":36,"bio":36,"math":16,"total":120,"percent":75,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL08","name":"ASWITHA C K","exam":"WE 5","chem":22,"phy":24,"bio":40,"math":11,"total":97,"percent":60.63,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL10","name":"DAKSHA PILLAI","exam":"WE 5","chem":20,"phy":20,"bio":30,"math":10,"total":80,"percent":50,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL12","name":"FARHAN M","exam":"WE 5","chem":10,"phy":0,"bio":10,"math":15,"total":35,"percent":21.88,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL13","name":"GAURAV S KRISHNAN","exam":"WE 5","chem":15,"phy":13,"bio":36,"math":20,"total":84,"percent":52.5,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL14","name":"GOWRI KRISHNAN M","exam":"WE 5","chem":2,"phy":4,"bio":32,"math":0,"total":38,"percent":23.75,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL15","name":"IHSAN HUSSAIN","exam":"WE 5","chem":22,"phy":22,"bio":30,"math":2,"total":76,"percent":47.5,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL17","name":"KARTHIK SHINOJ","exam":"WE 5","chem":22,"phy":7,"bio":30,"math":0,"total":59,"percent":36.88,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL18","name":"KAVERY VISWANATHAN","exam":"WE 5","chem":28,"phy":28,"bio":40,"math":8,"total":104,"percent":65,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL19","name":"MIDHUN P","exam":"WE 5","chem":6,"phy":19,"bio":22,"math":1,"total":48,"percent":30,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL22","name":"NIDHA T P","exam":"WE 5","chem":27,"phy":32,"bio":40,"math":15,"total":114,"percent":71.25,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL23","name":"NIMITHA K J","exam":"WE 5","chem":14,"phy":24,"bio":26,"math":7,"total":71,"percent":44.38,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL24","name":"NIVEDITHA P RAVI","exam":"WE 5","chem":22,"phy":27,"bio":40,"math":12,"total":101,"percent":63.13,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL27","name":"RAFA HANOON K","exam":"WE 5","chem":32,"phy":27,"bio":40,"math":10,"total":109,"percent":68.13,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL28","name":"RHIDHI","exam":"WE 5","chem":28,"phy":31,"bio":31,"math":4,"total":94,"percent":58.75,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL29","name":"SHAZA FATHIMA P V","exam":"WE 5","chem":35,"phy":22,"bio":40,"math":3,"total":100,"percent":62.5,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL30","name":"SUKANYA V S","exam":"WE 5","chem":31,"phy":22,"bio":40,"math":31,"total":124,"percent":77.5,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL31","name":"VIDHU NAMBIAR A V","exam":"WE 5","chem":14,"phy":32,"bio":35,"math":32,"total":113,"percent":70.63,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL32","name":"VYDEHI NAIR","exam":"WE 5","chem":18,"phy":28,"bio":36,"math":15,"total":97,"percent":60.63,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL33","name":"RIDHA FATHIMA","exam":"WE 5","chem":16,"phy":-1,"bio":35,"math":0,"total":50,"percent":31.25,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL35","name":"G VRINDA","exam":"WE 5","chem":0,"phy":8,"bio":36,"math":4,"total":48,"percent":30,"maxTotal":160,"maxChem":40,"maxPhy":40,"maxBio":40,"maxMath":40},
+                        {"roll":"CYL02","name":"ABHIRAMI K M","exam":"WE 5","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL05","name":"ANJANA PRASAD","exam":"WE 5","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL07","name":"ASJAN LAHAR","exam":"WE 5","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL09","name":"ATUL RAJESH K","exam":"WE 5","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL11","name":"EESHA NAIR","exam":"WE 5","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL16","name":"KAILAS","exam":"WE 5","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL20","name":"MUHAMMED AFRAJ LATHEEF","exam":"WE 5","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL21","name":"NIDHA FATHIMA V N","exam":"WE 5","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL25","name":"PARVATHY N P","exam":"WE 5","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL26","name":"PRAJUL KRISHNA","exam":"WE 5","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL34","name":"THAHSEEN THAJUDHEEN","exam":"WE 5","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0},
+                        {"roll":"CYL36","name":"SREYA K SUNIL","exam":"WE 5","chem":0,"phy":0,"bio":0,"math":0,"total":0,"percent":0,"maxTotal":0,"maxChem":0,"maxPhy":0,"maxBio":0,"maxMath":0}
+                        // Add more exam data as needed...
+                    ]
+                };
+
+                this.subjectNames = {
+                    chem: 'Chemistry',
+                    phy: 'Physics', 
+                    bio: 'Biology',
+                    math: 'Maths'
+                };
+
+                this.currentUser = null;
+                console.log('✅ Data initialized with', this.data.users.length, 'users and', this.data.exams.length, 'exam records');
+            }
+
+            // Initialize DOM elements
+            initializeElements() {
+                // Login elements
+                this.loginPage = document.getElementById('loginPage');
+                this.dashboardPage = document.getElementById('dashboardPage');
+                this.loginForm = document.getElementById('loginForm');
+                this.rollNumberInput = document.getElementById('rollNumber');
+                this.passwordInput = document.getElementById('password');
+                this.errorMessage = document.getElementById('errorMessage');
+                this.loginSpinner = document.getElementById('loginSpinner');
+                this.btnText = document.querySelector('.btn-text');
+                this.loginBtn = this.loginForm.querySelector('.login-btn');
+
+                // Dashboard elements
+                this.studentNameEl = document.getElementById('studentName');
+                this.overallRankEl = document.getElementById('overallRank');
+                this.totalScoreEl = document.getElementById('totalScore');
+                this.totalPercentageEl = document.getElementById('totalPercentage');
+                this.examsAttemptedEl = document.getElementById('examsAttempted');
+                this.personalDetailsEl = document.getElementById('personalDetails');
+                this.subjectPerformanceEl = document.getElementById('subjectPerformance');
+
+                // Chart elements
+                this.chartToggleBtn = document.getElementById('chartToggleBtn');
+                this.chartInfo = document.getElementById('chartInfo');
+                this.performanceChart = document.getElementById('performanceChart');
+
+                // Modal elements
+                this.overallRanklistModal = document.getElementById('overallRanklistModal');
+                this.examRanklistModal = document.getElementById('examRanklistModal');
+                this.examDetailsModal = document.getElementById('examDetailsModal');
+
+                // Theme toggles
+                this.themeToggle = document.getElementById('themeToggle');
+                this.dashboardThemeToggle = document.getElementById('dashboardThemeToggle');
+
+                // Other elements
+                this.logoutBtn = document.getElementById('logoutBtn');
+
+                console.log('✅ DOM elements initialized');
+            }
+
+            setupEventListeners() {
+                // Login form
+                this.loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+
+                // Theme toggles
+                this.themeToggle?.addEventListener('click', () => this.toggleTheme());
+                this.dashboardThemeToggle?.addEventListener('click', () => this.toggleTheme());
+
+                // Logout
+                this.logoutBtn?.addEventListener('click', () => this.logout());
+
+                // Modal close on outside click
+                this.overallRanklistModal?.addEventListener('click', (e) => {
+                    if (e.target === this.overallRanklistModal) {
+                        closeOverallRanklist();
+                    }
+                });
+
+                this.examRanklistModal?.addEventListener('click', (e) => {
+                    if (e.target === this.examRanklistModal) {
+                        closeExamRanklist();
+                    }
+                });
+
+                this.examDetailsModal?.addEventListener('click', (e) => {
+                    if (e.target === this.examDetailsModal) {
+                        closeExamDetails();
+                    }
+                });
+
+                // Keyboard navigation
+                this.rollNumberInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.passwordInput.focus();
+                    }
+                });
+
+                // ESC key to close modal
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        if (this.overallRanklistModal?.classList.contains('show')) {
+                            closeOverallRanklist();
+                        }
+                        if (this.examRanklistModal?.classList.contains('show')) {
+                            closeExamRanklist();
+                        }
+                        if (this.examDetailsModal?.classList.contains('show')) {
+                            closeExamDetails();
+                        }
+                    }
+                });
+
+                console.log('✅ Event listeners setup');
+            }
+
+            checkExistingSession() {
+                try {
+                    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null');
+                    const loginTime = sessionStorage.getItem('loginTime');
+
+                    if (loggedInUser && loginTime) {
+                        const timeElapsed = Date.now() - parseInt(loginTime);
+                        const sessionDuration = 24 * 60 * 60 * 1000; // 24 hours
+
+                        if (timeElapsed < sessionDuration) {
+                            console.log('✅ Valid session found, loading dashboard');
+                            this.loadDashboard(loggedInUser);
+                            return;
+                        } else {
+                            console.log('⏰ Session expired');
+                            sessionStorage.clear();
+                        }
+                    }
+                } catch (error) {
+                    console.log('❌ Error checking session:', error);
+                    sessionStorage.clear();
+                }
+
+                console.log('📋 Showing login page');
+                this.showLoginPage();
+            }
+
+            async handleLogin(event) {
+                event.preventDefault();
+                console.log('🔐 Login attempt started');
+
+                const rollNumber = this.rollNumberInput.value.trim().toUpperCase();
+                const password = this.passwordInput.value.trim();
+
+                if (!rollNumber || !password) {
+                    this.showError('Please enter both roll number and password');
+                    return;
+                }
+
+                this.setLoading(true);
+                this.hideError();
+
+                // Simulate authentication delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                const user = this.data.users.find(u => u.roll.toUpperCase() === rollNumber);
+
+                if (!user) {
+                    console.log('❌ User not found:', rollNumber);
+                    this.showError('Invalid roll number. Please check your credentials.');
+                    this.setLoading(false);
+                    return;
+                }
+
+                if (user.password !== password) {
+                    console.log('❌ Invalid password for user:', rollNumber);
+                    this.showError('Incorrect password. Please try again.');
+                    this.setLoading(false);
+                    return;
+                }
+
+                if (user.role === 'admin') {
+                    // Redirect admin to index.html
+                    window.location.href = 'admin.html';
+                    return;
+                } else if (user.role !== 'student') {
+                    this.showError('Unauthorized role.');
+                    this.setLoading(false);
+                    return;
+                }
+
+                console.log('✅ Login successful for:', rollNumber);
+                this.handleSuccessfulLogin(user);
+            }
+
+            handleSuccessfulLogin(user) {
+                try {
+                    // Store session data
+                    sessionStorage.setItem('loggedInUser', JSON.stringify(user));
+                    sessionStorage.setItem('loginTime', Date.now().toString());
+    
+
+                    // Get student exam data
+                    const studentExams = this.data.exams.filter(exam => exam.roll === user.roll);
+                    sessionStorage.setItem('studentExams', JSON.stringify(studentExams));
+                    sessionStorage.setItem('allData', JSON.stringify(this.data));
+
+                    console.log('✅ Session stored:', {
+                        user: user.roll,
+                        examRecords: studentExams.length
+                    });
+
+                    // Show success animation
+                    this.btnText.textContent = 'Login Successful!';
+                    this.loginBtn.style.background = 'linear-gradient(135deg, #4caf50, #388e3c)';
+
+                    // Switch to dashboard
+                    setTimeout(() => {
+                        this.loadDashboard(user);
+                    }, 1000);
+
+                } catch (error) {
+                    console.error('❌ Session storage error:', error);
+                    this.showError('Login successful but failed to store session. Please try again.');
+                    this.setLoading(false);
+                }
+            }
+
+            loadDashboard(user) {
+                console.log('🏠 Loading dashboard for:', user.roll);
+
+                try {
+                    // Store current user
+                    this.currentUser = user;
+
+                    // Switch pages
+                    this.showDashboardPage();
+
+                    // Get data from session
+                    const studentExams = JSON.parse(sessionStorage.getItem('studentExams')) || [];
+                    const allData = JSON.parse(sessionStorage.getItem('allData')) || this.data;
+
+                    // Calculate student stats
+                    const studentStats = this.calculateStudentStats(user, studentExams, allData);
+
+                    // Update dashboard UI
+                    this.updateDashboardUI(studentStats);
+
+                    // Initialize chart
+                    this.initializeChart(studentStats);
+
+                    console.log('✅ Dashboard loaded successfully');
+
+                } catch (error) {
+                    console.error('❌ Dashboard loading error:', error);
+                    this.showError('Failed to load dashboard. Please try logging in again.');
+                    this.logout();
+                }
+            }
+
+            calculateStudentStats(user, studentExams, allData) {
+                const validExams = studentExams.filter(exam => exam.maxTotal > 0);
+
+                // Calculate totals
+                const totalScore = validExams.reduce((sum, exam) => sum + exam.total, 0);
+                const totalMax = validExams.reduce((sum, exam) => sum + exam.maxTotal, 0);
+                const percentage = totalMax > 0 ? (totalScore / totalMax * 100).toFixed(2) : 0;
+
+                // Calculate subject performance
+                const subjectTotals = { chem: 0, phy: 0, bio: 0, math: 0 };
+                const subjectMax = { chem: 0, phy: 0, bio: 0, math: 0 };
+
+                validExams.forEach(exam => {
+                    Object.keys(subjectTotals).forEach(subject => {
+                        subjectTotals[subject] += exam[subject];
+                        subjectMax[subject] += exam[`max${subject.charAt(0).toUpperCase() + subject.slice(1)}`] || 0;
+                    });
+                });
+
+                const subjectPercentages = {};
+                Object.keys(subjectTotals).forEach(subject => {
+                    subjectPercentages[subject] = subjectMax[subject] > 0 ? 
+                        ((subjectTotals[subject] / subjectMax[subject]) * 100).toFixed(2) : 0;
+                });
+
+                // Determine strong and weak subjects
+                const subjects = ['chem', 'phy', 'bio', 'math'];
+                const subjectPcts = subjects.map(sub => ({ 
+                    subject: sub, 
+                    percentage: parseFloat(subjectPercentages[sub]) 
+                })).filter(s => s.percentage > 0);
+
+                subjectPcts.sort((a, b) => b.percentage - a.percentage);
+
+                const strongSubjects = subjectPcts.length > 0 ? [subjectPcts[0].subject] : [];
+                const weakSubjects = subjectPcts.length > 0 ? [subjectPcts[subjectPcts.length - 1].subject] : [];
+
+                // Calculate rank
+                const allStudents = this.getAllStudents(allData);
+                const sortedStudents = allStudents.filter(s => s.total > 0).sort((a, b) => b.total - a.total);
+                const rank = sortedStudents.findIndex(s => s.roll === user.roll) + 1;
+
+                return {
+                    user,
+                    validExams,
+                    totalScore,
+                    totalMax,
+                    percentage,
+                    rank,
+                    subjectTotals,
+                    subjectMax,
+                    subjectPercentages,
+                    strongSubjects,
+                    weakSubjects,
+                    studentName: validExams.length > 0 ? validExams[0].name : user.roll,
+                    allData,
+                    allStudents
+                };
+            }
+
+            getAllStudents(allData) {
+                const studentMap = new Map();
+
+                allData.users.filter(user => user.role === 'student').forEach(user => {
+                    studentMap.set(user.roll, {
+                        roll: user.roll,
+                        name: user.roll,
+                        total: 0,
+                        max: 0,
+                        exams: 0
+                    });
+                });
+
+                allData.exams.forEach(exam => {
+                    if (exam.maxTotal > 0 && studentMap.has(exam.roll)) {
+                        const student = studentMap.get(exam.roll);
+                        student.name = exam.name;
+                        student.total += exam.total;
+                        student.max += exam.maxTotal;
+                        student.exams++;
+                    }
+                });
+
+                return Array.from(studentMap.values());
+            }
+
+            updateDashboardUI(stats) {
+                // Update header
+                if (this.studentNameEl) {
+                    this.studentNameEl.textContent = stats.studentName;
+                }
+
+                // Update overview stats
+                if (this.overallRankEl) this.overallRankEl.textContent = stats.rank > 0 ? `#${stats.rank}` : '-';
+                if (this.totalScoreEl) this.totalScoreEl.textContent = stats.totalMax > 0 ? `${stats.totalScore}/${stats.totalMax}` : '-';
+                if (this.totalPercentageEl) this.totalPercentageEl.textContent = stats.totalMax > 0 ? `${stats.percentage}%` : '-';
+                if (this.examsAttemptedEl) this.examsAttemptedEl.textContent = stats.validExams.length;
+
+                // Update subject performance
+                this.updateSubjectPerformance(stats);
+
+                // Update personal details
+                this.updatePersonalDetails(stats);
+
+                // Store stats for exam details modal
+                this.studentStats = stats;
+            }
+
+           updateSubjectPerformance(stats) {
+    const subjects = ['chem', 'phy', 'bio', 'math'];
+    
+    let html = '<div class="subject-grid">';
+    
+    subjects.forEach(subject => {
+        const isStrong = stats.strongSubjects.includes(subject);
+        const isWeak = stats.weakSubjects.includes(subject);
+        
+        let cardClass = 'subject-card';
+        let nameClass = 'subject-name';
+        
+        if (isStrong) {
+            cardClass += ' strong';
+            nameClass += ' strong';
+        } else if (isWeak) {
+            cardClass += ' weak';
+            nameClass += ' weak';
+        }
+
+        const totalMarks = stats.subjectTotals[subject];
+        const maxMarks = stats.subjectMax[subject];
+        const percentage = stats.subjectPercentages[subject];
+
+        // Function to get performance description based on percentage
+        const getPerformanceDescription = (percentage) => {
+            if (percentage >= 90) {
+                return 'Exemplary 🌟';
+            } else if (percentage >= 80) {
+                return 'Excellent 🎯';
+            } else if (percentage >= 70) {
+                return 'Good 📈';
+            } else if (percentage >= 60) {
+                return 'Satisfactory 💪';
+            } else if (percentage >= 50) {
+                return 'Average 📚';
+            } else if (percentage >= 40) {
+                return 'Needs support ⚠️';
+            } else if (percentage >= 30) {
+                return 'Needs help 📋';
+            } else if (percentage >= 20) {
+                return 'Struggling 🚨';
+            } else if (percentage >= 10) {
+                return 'Severe issues 🔥';
+            } else {
+                return 'Urgent help 🆘';
+            }
+        };
+
+        const performanceDescription = getPerformanceDescription(percentage);
+
+        html += `
+            <div class="${cardClass}">
+                <div class="${nameClass}">${this.subjectNames[subject]}</div>
+                <div class="subject-stats">
+                    <div class="stat-row">
+                        <span>Total Marks:</span>
+                        <span><strong>${totalMarks}/${maxMarks}</strong></span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Percentage:</span>
+                        <span><strong>${percentage}%</strong></span>
+                    </div>
+                    <div class="stat-row performance-description">
+                        <span>Analysis:</span>
+                        <span class="performance-text"><strong>${performanceDescription}</strong></span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+
+                html += '</div>';
+
+                if (this.subjectPerformanceEl) {
+                    this.subjectPerformanceEl.innerHTML = html;
+                }
+            }
+
+            updatePersonalDetails(stats) {
+                const strongSubjectNames = stats.strongSubjects.map(s => this.subjectNames[s]).join(', ');
+                const weakSubjectNames = stats.weakSubjects.map(s => this.subjectNames[s]).join(', ');
+
+                const detailsHtml = `
+                    <div class="personal-details-grid">
+                        <div class="detail-section">
+                            <h4>📋 Basic Information</h4>
+                            <div class="detail-item">
+                                <span class="detail-label">Roll Number:</span>
+                                <span class="detail-value">${stats.user.roll}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Name:</span>
+                                <span class="detail-value">${stats.studentName}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Overall Rank:</span>
+                                <span class="detail-value clickable-rank" onclick="showOverallRanklist()" style="cursor: pointer; text-decoration: none;">${stats.rank > 0 ? '#' + stats.rank : 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Exams Attempted:</span>
+                                <span class="detail-value">${stats.validExams.length}</span>
+                            </div>
+                        </div>
+
+                        <div class="detail-section">
+                            <h4>📈 Subject Performance</h4>
+                            ${Object.entries(this.subjectNames).map(([key, name]) => `
+                                <div class="detail-item">
+                                    <span class="detail-label">${name}:</span>
+                                    <span class="detail-value">${stats.subjectTotals[key]}/${stats.subjectMax[key]} (${stats.subjectPercentages[key]}%)</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="detail-section">
+                            <h4>📚 Exam History</h4>
+                            ${stats.validExams.length > 0 ? stats.validExams.map(exam => `
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        <button class="exam-name" onclick="showExamRanklist('${exam.exam}')">
+                                            ${exam.exam}
+                                        </button>:
+                                    </span>
+                                    <span class="detail-value">${exam.total}/${exam.maxTotal} (${exam.percent}%)</span>
+                                </div>
+                            `).join('') : '<div style="text-align: center; padding: 20px; color: var(--text); font-style: italic;">No exam data available</div>'}
+                        </div>
+                    </div>
+                `;
+
+                if (this.personalDetailsEl) {
+                    this.personalDetailsEl.innerHTML = detailsHtml;
+                }
+            }
+
+            // Show exam details modal with table format
+            showExamDetails() {
+                console.log('📊 Showing exam details modal');
+
+                if (!this.studentStats || !this.studentStats.validExams.length) {
+                    alert('No exam data available.');
+                    return;
+                }
+
+                try {
+                    const examDetailsHtml = this.generateExamDetailsTableHTML(this.studentStats);
+                    
+                    document.getElementById('examDetailsModalTitle').textContent = `Your Exam Performance Details`;
+                    document.getElementById('examDetailsContent').innerHTML = examDetailsHtml;
+                    
+                    this.examDetailsModal.classList.add('show');
+
+                } catch (error) {
+                    console.error('❌ Error showing exam details:', error);
+                    alert('Failed to load exam details.');
+                }
+            }
+
+            generateExamDetailsTableHTML(stats) {
+                const validExams = stats.validExams;
+
+                // Calculate which exam was the best and worst performance
+                let bestPerformance = null;
+                let worstPerformance = null;
+                let bestPercent = -1;
+                let worstPercent = 101;
+
+                validExams.forEach(exam => {
+                    if (exam.percent > bestPercent) {
+                        bestPercent = exam.percent;
+                        bestPerformance = exam.exam;
+                    }
+                    if (exam.percent < worstPercent) {
+                        worstPercent = exam.percent;
+                        worstPerformance = exam.exam;
+                    }
+                });
+
+                let html = `
+                    <div style="margin-bottom: 20px; text-align: center; color: var(--text);">
+                        <strong>Total Exams: ${validExams.length}</strong> | 
+                        <strong>Your Individual Exam Performance Summary</strong>
+                    </div>
+                    
+                    <table class="student-performance-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Exam</th>
+                                <th>Chemistry</th>
+                                <th>Biology</th>
+                                <th>Maths</th>
+                                <th>Physics</th>
+                                <th>Total Mark</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                validExams.forEach((exam, index) => {
+                    // Calculate rank for this specific exam
+                    const allExamData = stats.allData.exams.filter(e => 
+                        e.exam === exam.exam && e.maxTotal > 0
+                    ).sort((a, b) => b.total - a.total);
+                    
+                    const examRank = allExamData.findIndex(e => e.roll === exam.roll) + 1;
+                    
+                    let rowClass = '';
+                    if (exam.exam === bestPerformance) rowClass += ' best-performance';
+                    if (exam.exam === worstPerformance && validExams.length > 1) rowClass += ' weak-performance';
+
+                    html += `
+                        <tr class="${rowClass}">
+                            <td><strong>#${examRank}</strong></td>
+                            <td style="text-align: left; font-weight: 600;">${exam.exam}</td>
+                            <td>${exam.chem}/${exam.maxChem}</td>
+                            <td>${exam.bio}/${exam.maxBio}</td>
+                            <td>${exam.math}/${exam.maxMath}</td>
+                            <td>${exam.phy}/${exam.maxPhy}</td>
+                            <td><strong>${exam.total}/${exam.maxTotal}</strong></td>
+                            <td><strong>${exam.percent}%</strong></td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                        </tbody>
+                    </table>
+                    <div style="margin-top: 20px; text-align: center; font-size: 0.9em; color: var(--text); opacity: 0.8;">
+                        🏆 Green highlight indicates your best performance | 
+                        ⚠️ Light red highlight shows areas needing improvement<br>
+                        📊 Click on individual exam names in personal details to see class rankings
+                    </div>
+                `;
+
+                return html;
+            }
+
+            // FIXED CHART FUNCTIONALITY
+            initializeChart(stats) {
+                this.studentStats = stats;
+                this.createChart();
+            }
+
+            createChart() {
+                if (!this.studentStats || !this.studentStats.validExams.length) {
+                    // No data to show
+                    const ctx = this.performanceChart.getContext('2d');
+                    if (this.chartInstance) {
+                        this.chartInstance.destroy();
+                    }
+                    
+                    this.chartInstance = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['No Data'],
+                            datasets: [{
+                                label: 'No exam data available',
+                                data: [0],
+                                borderColor: '#bb86fc',
+                                backgroundColor: 'rgba(187, 134, 252, 0.1)',
+                                tension: 0.4
+                            }]
+                        },
+                        options: this.getChartOptions()
+                    });
+                    return;
+                }
+
+                console.log('🎨 Creating chart in mode:', this.chartMode);
+
+                const ctx = this.performanceChart.getContext('2d');
+                
+                // Destroy existing chart
+                if (this.chartInstance) {
+                    this.chartInstance.destroy();
+                }
+
+                const validExams = this.studentStats.validExams;
+                
+                const labels = validExams.map(exam => exam.exam);
+                let datasets = [];
+
+                if (this.chartMode === 'total') {
+                    // TOTAL PERCENTAGE VIEW - Shows overall percentage for each exam
+                    datasets = [{
+                        label: 'Total Percentage',
+                        data: validExams.map(exam => {
+                            return parseFloat(exam.percent.toFixed(2));
+                        }),
+                        borderColor: '#bb86fc',
+                        backgroundColor: 'rgba(187, 134, 252, 0.1)',
+                        borderWidth: 4,
+                        pointRadius: 8,
+                        pointHoverRadius: 12,
+                        pointBackgroundColor: '#bb86fc',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }];
+
+                    // Update info text and button
+                    if (this.chartInfo) {
+                        this.chartInfo.innerHTML = '<strong>Total Percentage View:</strong> Shows your overall percentage for each exam';
+                    }
+                    if (this.chartToggleBtn) {
+                        this.chartToggleBtn.innerHTML = '📊 Switch to Subject-wise View';
+                    }
+
+                } else {
+                    // SUBJECT-WISE VIEW - Shows individual subject percentages
+                    datasets = [
+                        {
+                            label: 'Chemistry %',
+                            data: validExams.map(exam => {
+                                const pct = exam.maxChem > 0 ? ((exam.chem / exam.maxChem) * 100) : 0;
+                                return parseFloat(pct.toFixed(2));
+                            }),
+                            borderColor: '#f44336',
+                            backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                            borderWidth: 3,
+                            pointRadius: 6,
+                            pointHoverRadius: 10,
+                            pointBackgroundColor: '#f44336',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Physics %',
+                            data: validExams.map(exam => {
+                                const pct = exam.maxPhy > 0 ? ((exam.phy / exam.maxPhy) * 100) : 0;
+                                return parseFloat(pct.toFixed(2));
+                            }),
+                            borderColor: '#2196f3',
+                            backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                            borderWidth: 3,
+                            pointRadius: 6,
+                            pointHoverRadius: 10,
+                            pointBackgroundColor: '#2196f3',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Biology %',
+                            data: validExams.map(exam => {
+                                const pct = exam.maxBio > 0 ? ((exam.bio / exam.maxBio) * 100) : 0;
+                                return parseFloat(pct.toFixed(2));
+                            }),
+                            borderColor: '#4caf50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            borderWidth: 3,
+                            pointRadius: 6,
+                            pointHoverRadius: 10,
+                            pointBackgroundColor: '#4caf50',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Maths %',
+                            data: validExams.map(exam => {
+                                const pct = exam.maxMath > 0 ? ((exam.math / exam.maxMath) * 100) : 0;
+                                return parseFloat(pct.toFixed(2));
+                            }),
+                            borderColor: '#ffeb3b',
+                            backgroundColor: 'rgba(255, 235, 59, 0.1)',
+                            borderWidth: 3,
+                            pointRadius: 6,
+                            pointHoverRadius: 10,
+                            pointBackgroundColor: '#ffeb3b',
+                            pointBorderColor: '#333333',
+                            pointBorderWidth: 2,
+                            tension: 0.4
+                        }
+                    ];
+
+                    // Update info text and button
+                    if (this.chartInfo) {
+                        this.chartInfo.innerHTML = '<strong>Subject-wise View:</strong> Shows percentage performance for each subject across exams';
+                    }
+                    if (this.chartToggleBtn) {
+                        this.chartToggleBtn.innerHTML = '📈 Switch to Total Percentage View';
+                    }
+                }
+
+                // Create the chart
+                this.chartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: { labels, datasets },
+                    options: this.getChartOptions()
+                });
+
+                console.log('📊 Chart created successfully with', datasets.length, 'datasets');
+            }
+
+            getChartOptions() {
+                const isLightTheme = document.body.classList.contains('light-theme');
+                const textColor = isLightTheme ? '#333' : '#e0e0e0';
+                const gridColor = isLightTheme ? '#ddd' : '#404040';
+
+                return {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: textColor,
+                                font: { size: 14, weight: '600' },
+                                usePointStyle: true,
+                                padding: 25,
+                                boxWidth: 20,
+                                boxHeight: 20
+                            },
+                            position: 'top'
+                        },
+                        tooltip: {
+                            backgroundColor: isLightTheme ? 'rgba(255, 255, 255, 0.95)' : 'rgba(30, 30, 30, 0.95)',
+                            titleColor: isLightTheme ? '#333' : '#bb86fc',
+                            bodyColor: isLightTheme ? '#333' : '#e0e0e0',
+                            borderColor: '#bb86fc',
+                            borderWidth: 2,
+                            cornerRadius: 8,
+                            displayColors: true,
+                            bodyFont: { size: 13, weight: '600' },
+                            titleFont: { size: 14, weight: '700' },
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Exams',
+                                color: textColor,
+                                font: { size: 14, weight: '700' }
+                            },
+                            ticks: {
+                                color: textColor,
+                                font: { size: 12, weight: '600' },
+                                maxRotation: 45,
+                                minRotation: 0
+                            },
+                            grid: {
+                                color: gridColor,
+                                lineWidth: 1
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Percentage (%)',
+                                color: textColor,
+                                font: { size: 14, weight: '700' }
+                            },
+                            ticks: {
+                                color: textColor,
+                                font: { size: 12, weight: '600' },
+                                stepSize: 10,
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            },
+                            grid: {
+                                color: gridColor,
+                                lineWidth: 1
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    elements: {
+                        point: {
+                            hoverBorderWidth: 4
+                        }
+                    }
+                };
+            }
+
+            // Show exam ranklist modal
+            showExamRanklist(examName) {
+                console.log('📊 Showing ranklist for exam:', examName);
+
+                try {
+                    const allData = JSON.parse(sessionStorage.getItem('allData')) || this.data;
+
+                    // Get all exam data for this specific exam
+                    const examData = allData.exams.filter(exam => 
+                        exam.exam === examName && exam.maxTotal > 0
+                    );
+
+                    if (examData.length === 0) {
+                        alert('No data available for this exam.');
+                        return;
+                    }
+
+                    // Sort by total score
+                    const sortedExamData = examData.sort((a, b) => b.total - a.total);
+
+                    // Generate ranklist HTML
+                    const ranklistHtml = this.generateExamRanklistHTML(examName, sortedExamData);
+
+                    // Update modal
+                    document.getElementById('examRanklistModalTitle').textContent = `${examName} - Class Ranklist`;
+                    document.getElementById('examRanklistContent').innerHTML = ranklistHtml;
+
+                    // Show modal
+                    this.examRanklistModal.classList.add('show');
+
+                } catch (error) {
+                    console.error('❌ Error showing exam ranklist:', error);
+                    alert('Failed to load exam ranklist.');
+                }
+            }
+
+            generateExamRanklistHTML(examName, examData) {
+                const currentUserRoll = this.currentUser?.roll;
+
+                let html = `
+                    <div style="margin-bottom: 15px; text-align: center; color: var(--text);">
+                        <strong>Total Students: ${examData.length}</strong> | 
+                        <strong>Exam: ${examName}</strong>
+                    </div>
+                    <table class="exam-ranklist-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Roll No</th>
+                                <th>Name</th>
+                                <th>Chem</th>
+                                <th>Physics</th>
+                                <th>Biology</th>
+                                <th>Maths</th>
+                                <th>Total</th>
+                                <th>%</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                examData.forEach((student, index) => {
+                    const rank = student.total > 0 ? index + 1 : '-';
+                    const isCurrentStudent = student.roll === currentUserRoll;
+                    const isTopPerformer = rank <= 3 && rank !== '-';
+
+                    let rowClass = '';
+                    if (isCurrentStudent) rowClass += ' current-student-row';
+                    if (isTopPerformer) rowClass += ' top-performer';
+
+                    const cPct = student.maxChem > 0 ? (student.chem / student.maxChem * 100).toFixed(1) : '0.0';
+                    const pPct = student.maxPhy > 0 ? (student.phy / student.maxPhy * 100).toFixed(1) : '0.0';
+                    const bPct = student.maxBio > 0 ? (student.bio / student.maxBio * 100).toFixed(1) : '0.0';
+                    const mPct = student.maxMath > 0 ? (student.math / student.maxMath * 100).toFixed(1) : '0.0';
+
+                    html += `
+                        <tr class="${rowClass}">
+                            <td><strong>${rank}</strong></td>
+                            <td>${student.roll}</td>
+                            <td style="text-align: left; font-weight: 600;">${student.name}</td>
+                            <td>${student.chem} (${cPct}%)</td>
+                            <td>${student.phy} (${pPct}%)</td>
+                            <td>${student.bio} (${bPct}%)</td>
+                            <td>${student.math} (${mPct}%)</td>
+                            <td><strong>${student.total}</strong></td>
+                            <td><strong>${student.percent}%</strong></td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                        </tbody>
+                    </table>
+                    <div style="margin-top: 15px; text-align: center; font-size: 0.9em; color: var(--text); opacity: 0.8;">
+                        🏆 Gold highlight indicates top 3 positions | 
+                        🎯 Blue highlight shows your position
+                    </div>
+                `;
+
+                return html;
+            }
+
+            // Rest of the methods (showLoginPage, showDashboardPage, setLoading, showError, etc.)
+            showLoginPage() {
+                this.loginPage.style.display = 'flex';
+                this.dashboardPage.style.display = 'none';
+                document.title = 'Student Portal - Login';
+            }
+
+            showDashboardPage() {
+                this.loginPage.style.display = 'none';
+                this.dashboardPage.style.display = 'block';
+                document.title = 'Student Portal - Dashboard';
+            }
+
+            setLoading(loading) {
+                if (loading) {
+                    this.loginBtn.disabled = true;
+                    this.loginBtn.classList.add('loading');
+                    this.loginSpinner.style.display = 'block';
+                    this.btnText.textContent = 'Signing In...';
+                } else {
+                    this.loginBtn.disabled = false;
+                    this.loginBtn.classList.remove('loading');
+                    this.loginSpinner.style.display = 'none';
+                    this.btnText.textContent = 'Login';
+                    // Reset button style
+                    this.loginBtn.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
+                }
+            }
+
+            showError(message) {
+                this.errorMessage.textContent = message;
+                this.errorMessage.style.display = 'block';
+                console.log('⚠️ Error shown:', message);
+            }
+
+            hideError() {
+                this.errorMessage.style.display = 'none';
+            }
+
+            logout() {
+                if (confirm('Are you sure you want to logout?')) {
+                    console.log('🚪 Logging out user');
+                    sessionStorage.clear();
+                    this.currentUser = null;
+                    if (this.chartInstance) {
+                        this.chartInstance.destroy();
+                        this.chartInstance = null;
+                    }
+                    this.showLoginPage();
+                    this.resetLoginForm();
+                }
+            }
+
+            resetLoginForm() {
+                this.rollNumberInput.value = '';
+                this.passwordInput.value = '';
+                this.hideError();
+                this.setLoading(false);
+            }
+
+            initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                if (savedTheme === 'light') {
+                    document.body.classList.add('light-theme');
+                    if (this.themeToggle) this.themeToggle.textContent = '☀️';
+                    if (this.dashboardThemeToggle) this.dashboardThemeToggle.textContent = '☀️';
+                }
+                console.log('✅ Theme initialized:', savedTheme);
+            }
+
+            toggleTheme() {
+                const isLight = document.body.classList.toggle('light-theme');
+                localStorage.setItem('theme', isLight ? 'light' : 'dark');
+                const icon = isLight ? '☀️' : '🌙';
+                if (this.themeToggle) this.themeToggle.textContent = icon;
+                if (this.dashboardThemeToggle) this.dashboardThemeToggle.textContent = icon;
+                
+                // Update chart colors if chart exists
+                if (this.chartInstance) {
+                    this.chartInstance.options = this.getChartOptions();
+                    this.chartInstance.update('none'); // Update without animation
+                }
+                
+                console.log('🎨 Theme changed to:', isLight ? 'light' : 'dark');
+            }
+        }
+
+        // Global functions with FIXED toggle functionality
+        function toggleChartMode() {
+            if (window.studentPortal && window.studentPortal.studentStats) {
+                const prevMode = window.studentPortal.chartMode;
+                
+                // Toggle between 'total' and 'subjects'
+                window.studentPortal.chartMode = window.studentPortal.chartMode === 'total' ? 'subjects' : 'total';
+                
+                console.log('🔄 Toggling chart mode from', prevMode, 'to', window.studentPortal.chartMode);
+                
+                // Recreate the chart with new mode
+                window.studentPortal.createChart();
+            }
+        }
+
+        function showOverallRanklist() {
+            if (!window.studentPortal || !window.studentPortal.currentUser) return;
+
+            console.log('📊 Showing overall ranklist');
+
+            const allData = JSON.parse(sessionStorage.getItem('allData'));
+            if (!allData) return;
+
+            const allStudents = window.studentPortal.getAllStudents(allData);
+            const sortedStudents = allStudents.filter(s => s.total > 0).sort((a, b) => b.total - a.total);
+
+            const modal = document.getElementById('overallRanklistModal');
+            const content = document.getElementById('overallRanklistContent');
+
+            if (!modal || !content) return;
+
+            let html = `
+                <div style="margin-bottom: 20px; text-align: center; color: var(--text);">
+                    <strong>Total Students: ${sortedStudents.length}</strong> | 
+                    <strong>Overall Class Rankings</strong>
+                </div>
+                <table class="exam-ranklist-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Roll No</th>
+                            <th>Name</th>
+                            <th>Total Score</th>
+                            <th>Max Score</th>
+                            <th>Percentage</th>
+                            <th>Exams</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            sortedStudents.forEach((student, index) => {
+                const rank = index + 1;
+                const percentage = student.max > 0 ? ((student.total / student.max) * 100).toFixed(2) : 0;
+                const isCurrentStudent = student.roll === window.studentPortal.currentUser.roll;
+                const isTopPerformer = rank <= 3;
+
+                let rowClass = '';
+                if (isCurrentStudent) rowClass += ' current-student-row';
+                if (isTopPerformer) rowClass += ' top-performer';
+
+                html += `
+                    <tr class="${rowClass}">
+                        <td><strong>${rank}</strong></td>
+                        <td>${student.roll}</td>
+                        <td style="text-align: left; font-weight: 600;">${student.name}</td>
+                        <td><strong>${student.total}</strong></td>
+                        <td>${student.max}</td>
+                        <td><strong>${percentage}%</strong></td>
+                        <td>${student.exams}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+                <div style="margin-top: 20px; text-align: center; font-size: 0.9em; color: var(--text); opacity: 0.8;">
+                    🏆 Gold highlight indicates top 3 positions | 
+                    🎯 Blue highlight shows your position
+                </div>
+            `;
+
+            content.innerHTML = html;
+            modal.classList.add('show');
+        }
+
+        function closeOverallRanklist() {
+            const modal = document.getElementById('overallRanklistModal');
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        }
+
+        function showExamRanklist(examName) {
+            if (window.studentPortal) {
+                window.studentPortal.showExamRanklist(examName);
+            }
+        }
+
+        function closeExamRanklist() {
+            const modal = document.getElementById('examRanklistModal');
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        }
+
+        function showExamDetails() {
+            if (window.studentPortal) {
+                window.studentPortal.showExamDetails();
+            }
+        }
+
+        function closeExamDetails() {
+            const modal = document.getElementById('examDetailsModal');
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        }
+
+        // Initialize system
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🌐 DOM Ready - Starting Enhanced Student Portal...');
+            try {
+                window.studentPortal = new StudentPortal();
+                console.log('✅ Enhanced Student Portal System Ready!');
+            } catch (error) {
+                console.error('💥 System initialization failed:', error);
+                alert('System failed to start. Please refresh the page.');
+            }
+        });
+
+        // Session monitoring
+        setInterval(() => {
+            const loginTime = sessionStorage.getItem('loginTime');
+            if (loginTime) {
+                const timeElapsed = Date.now() - parseInt(loginTime);
+                const sessionDuration = 24 * 60 * 60 * 1000;
+
+                if (timeElapsed > sessionDuration) {
+                    alert('Session expired. Please login again.');
+                    sessionStorage.clear();
+                    location.reload();
+                }
+            }
+        }, 5 * 60 * 1000); // Check every 5 minutes
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+

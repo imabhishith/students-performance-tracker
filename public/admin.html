@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YEAR-LONG BATCH 2025-26 - Enhanced Analytics Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Enhanced Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+            </div>
+            <div class="loading-text">
+                <h3>Processing Analytics Data</h3>
+                <p>Analyzing student performance metrics...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Header -->
+    <header id="header" class="main-header">
+        <!-- Floating Controls -->
+        <div class="header-controls">
+            <button id="themeToggle" class="control-btn theme-toggle" title="Toggle Theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button id="logoutBtn" class="control-btn logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+
+        <!-- Header Content -->
+        <div class="header-content">
+            <div class="logo-container">
+                <img id="logo" src="logo.png" alt="Institute Logo">
+                <div class="logo-badge">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+            </div>
+            <div class="header-text">
+                <h1 class="main-title">YEAR-LONG BATCH 2025-26</h1>
+                <p class="header-subtitle">Student Performance Analytics Portal</p>
+                <div class="header-stats">
+                    <div class="stat-pill">
+                        <i class="fas fa-users"></i>
+                        <span>39 Students</span>
+                    </div>
+                    <div class="stat-pill">
+                        <i class="fas fa-chart-line"></i>
+                        <span>11 Exams</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Enhanced Search Section -->
+    <section id="searchSection" class="search-section">
+        <div class="search-container">
+            <div class="search-header">
+                <h2><i class="fas fa-search"></i> Student Search</h2>
+                <p>Find students by name or roll number</p>
+            </div>
+            <div class="search-wrapper">
+                <div class="search-input-group">
+                    <div class="search-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <input type="text" id="search" placeholder="Search by Name or Roll Number..." class="search-input">
+                </div>
+                <div class="search-actions">
+                    <button id="searchButton" class="btn btn-primary search-btn">
+                        <i class="fas fa-search"></i>
+                        Search
+                    </button>
+                    <button id="clearSearchButton" class="btn btn-secondary clear-btn">
+                        <i class="fas fa-times"></i>
+                        Clear
+                    </button>
+                </div>
+            </div>
+            <a href="data-manager.html" class="btn btn-primary search-btn" style="margin-top:15px;">
+    <i class="fas fa-database"></i> Data Manager
+</a>
+        </div>
+
+        <!-- Enhanced Search Results -->
+        <div id="searchResults" class="search-results">
+            <div class="results-header">
+                <div class="results-title">
+                    <h3><i class="fas fa-list-ul"></i> Search Results</h3>
+                    <span id="searchCount" class="results-count">0 results</span>
+                </div>
+            </div>
+            <div class="results-table-container">
+                <table id="searchTable" class="enhanced-table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-user"></i> S No</th>
+                            <th><i class="fas fa-id-card"></i> Roll No</th>
+                            <th class="name-col"><i class="fas fa-user"></i> Name</th>
+                            <th><i class="fas fa-clipboard-list"></i> Exams</th>
+                            <th><i class="fas fa-calculator"></i> Total Score</th>
+                            <th><i class="fas fa-percentage"></i> Score%</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Navigation Tabs -->
+    <nav id="tabs" class="navigation-tabs">
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="showTab('overall')" data-tab="overall">
+                <div class="tab-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="btn-content">
+                    <span class="tab-title">Overall Stats</span>
+                    <span class="tab-subtitle">Complete Analytics</span>
+                </div>
+            </button>
+            <button class="tab-btn" onclick="showTab('overallRank')" data-tab="overallRank">
+                <div class="tab-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="btn-content">
+                    <span class="tab-title">Overall Ranking</span>
+                    <span class="tab-subtitle">Student Rankings</span>
+                </div>
+            </button>
+            <button class="tab-btn" onclick="showTab('last3Rank')" data-tab="last3Rank">
+                <div class="tab-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="btn-content">
+                    <span class="tab-title">Last 3 Exams</span>
+                    <span class="tab-subtitle">Recent Performance</span>
+                </div>
+            </button>
+            <button class="tab-btn" onclick="showTab('subjects')" data-tab="subjects">
+                <div class="tab-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="btn-content">
+                    <span class="tab-title">Subject Analysis</span>
+                    <span class="tab-subtitle">Subject-wise Stats</span>
+                </div>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Enhanced Tab Content -->
+    <main id="tabContent" class="main-content">
+        <!-- Overall Stats Tab -->
+        <div id="overall" class="tab-content active">
+            <!-- Enhanced Stats Overview -->
+            <div class="stats-overview">
+                <div class="stats-header">
+                    <h2><i class="fas fa-analytics"></i> Performance Overview</h2>
+                    <p>Comprehensive analytics dashboard for student performance tracking</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card exams-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalExams">0</div>
+                            <div class="stat-label">Total Exams</div>
+                            <div class="stat-trend">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Active</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card students-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalStudents">0</div>
+                            <div class="stat-label">Total Students</div>
+                            <div class="stat-trend">
+                                <i class="fas fa-user-graduate"></i>
+                                <span>Enrolled</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card average-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="avgScore">0</div>
+                            <div class="stat-label">Average Score%</div>
+                            <div class="stat-trend">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Class Avg</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Action Buttons -->
+                <div class="action-buttons-section">
+                    <h3><i class="fas fa-tools"></i> Analytics Tools</h3>
+                    <div class="action-buttons">
+                        <button id="subjectDifficultyBtn" class="action-btn subject-btn">
+                            <div class="btn-icon">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <div class="btn-content">
+                                <span class="btn-title">Subject Analysis</span>
+                                <span class="btn-subtitle">Difficulty & Performance</span>
+                            </div>
+                        </button>
+                        <button id="examDetailsBtn" class="action-btn exam-btn">
+                            <div class="btn-icon">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <div class="btn-content">
+                                <span class="btn-title">Exam Details</span>
+                                <span class="btn-subtitle">Participation Stats</span>
+                            </div>
+                        </button>
+                        <button id="studentDetailsBtn" class="action-btn student-btn">
+                            <div class="btn-icon">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <div class="btn-content">
+                                <span class="btn-title">Student Analysis</span>
+                                <span class="btn-subtitle">Individual Performance</span>
+                            </div>
+                        </button>
+                        <button id="examDifficultyBtn" class="action-btn difficulty-btn" onclick="toggleExamDifficultyAnalysis()">
+                            <div class="btn-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div class="btn-content">
+                                <span class="btn-title">Difficulty Analysis</span>
+                                <span class="btn-subtitle">Exam Complexity</span>
+                            </div>
+                        </button>
+                        <button id="studentCategorizationBtn" class="action-btn category-btn" onclick="toggleStudentCategorization()">
+                            <div class="btn-icon">
+                                <i class="fas fa-users-cog"></i>
+                            </div>
+                            <div class="btn-content">
+                                <span class="btn-title">Student Categories</span>
+                                <span class="btn-subtitle">Performance Groups</span>
+                            </div>
+                        </button>
+                        <button id="performanceAlertsBtn" class="action-btn alerts-btn" onclick="togglePerformanceAlerts()">
+                            <div class="btn-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="btn-content">
+                                <span class="btn-title">Performance Alerts</span>
+                                <span class="btn-subtitle">Risk Assessment</span>
+                            </div>
+                        </button>
+                        <button id="printExportBtn" class="action-btn print-export-btn">
+                            <div class="btn-icon">
+                                <i class="fas fa-print"></i>
+                            </div>
+                            <div class="btn-content">
+                                <span class="btn-title">Print & Export</span>
+                                <span class="btn-subtitle">Reports & Profiles</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Detail Panels -->
+            <div id="subjectDifficultyDetails" class="detail-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-book-open"></i> Subject Difficulty Analysis</h3>
+                    <button class="panel-close" onclick="this.parentElement.parentElement.style.display='none'">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <div class="table-container">
+                        <table class="enhanced-table">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Average %</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="examDetails" class="detail-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-clipboard-check"></i> Exam Participation Details</h3>
+                    <button class="panel-close" onclick="this.parentElement.parentElement.style.display='none'">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <div class="table-container">
+                        <table class="enhanced-table">
+                            <thead>
+                                <tr>
+                                    <th>Exam</th>
+                                    <th>Students Attempted</th>
+                                    <th>Participation %</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="studentDetails" class="detail-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-user-chart"></i> Student Performance Analysis</h3>
+                    <button class="panel-close" onclick="this.parentElement.parentElement.style.display='none'">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <div class="table-container">
+                        <table class="enhanced-table">
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Roll No</th>
+                                    <th class="name-col">Name</th>
+                                    <th>Strong Subject</th>
+                                    <th>Weak Subject</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="examDifficultyDetails" class="detail-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-chart-bar"></i> Exam Difficulty Analysis</h3>
+                    <button class="panel-close" onclick="this.parentElement.parentElement.style.display='none'">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <div class="table-container">
+                        <table class="enhanced-table">
+                            <thead>
+                                <tr>
+                                    <th>Exam Name</th>
+                                    <th>Chem %</th>
+                                    <th>Phy %</th>
+                                    <th>Bio %</th>
+                                    <th>Math %</th>
+                                    <th>Difficulty Score</th>
+                                    <th>Remark</th>
+                                </tr>
+                            </thead>
+                            <tbody id="examDifficultyTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="studentCategorization" class="detail-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-users-cog"></i> Student Categorization Analysis</h3>
+                    <button class="panel-close" onclick="this.parentElement.parentElement.style.display='none'">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <div class="categorization-content">
+                        <!-- Content will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="performanceAlerts" class="detail-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Performance Alert System</h3>
+                    <button class="panel-close" onclick="this.parentElement.parentElement.style.display='none'">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="panel-content">
+                    <div class="alerts-content">
+                        <!-- Content will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Overall Ranking Tab -->
+        <div id="overallRank" class="tab-content">
+            <div class="table-section">
+                <div class="section-header">
+                    <div class="header-content">
+                        <h2><i class="fas fa-trophy"></i> Overall Ranking</h2>
+                        <p>Complete student performance rankings</p>
+                    </div>
+                    <div class="header-actions">
+                        <span id="overallCount" class="count-badge">0 students</span>
+                    </div>
+                </div>
+
+                <!-- NEW: Filter Buttons for Overall Ranking -->
+                <div class="filter-buttons-container">
+                    <div class="filter-buttons">
+                        <button id="overallAllBtn" class="filter-btn active" onclick="filterOverallRanklist('all')">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>All Exams</span>
+                        </button>
+                        <button id="overallRTBtn" class="filter-btn" onclick="filterOverallRanklist('RT')">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>RT Only</span>
+                        </button>
+                        <button id="overallWEBtn" class="filter-btn" onclick="filterOverallRanklist('WE')">
+                            <i class="fas fa-calendar-week"></i>
+                            <span>WE Only</span>
+                        </button>
+                        <button id="overallMTBtn" class="filter-btn" onclick="filterOverallRanklist('MT')">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>MT Only</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table id="rankTable" class="enhanced-table">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-trophy"></i> Rank</th>
+                                <th><i class="fas fa-id-card"></i> Roll No</th>
+                                <th class="name-col"><i class="fas fa-user"></i> Name</th>
+                                <th><i class="fas fa-clipboard-list"></i> Exams</th>
+                                <th><i class="fas fa-calculator"></i> Total Score</th>
+                                <th><i class="fas fa-percentage"></i> Score%</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Last 3 Exams Tab -->
+        <div id="last3Rank" class="tab-content">
+            <div class="table-section">
+                <div class="section-header">
+                    <div class="header-content">
+                        <h2><i class="fas fa-calendar-alt"></i> Last 3 Exams Ranking</h2>
+                        <p>Recent performance analysis (WE 7, WE 8, WE 9)</p>
+                    </div>
+                    <div class="header-actions">
+                        <span id="last3Count" class="count-badge">0 students</span>
+                        <div class="exam-pills">
+                            <span class="exam-pill">WE 7</span>
+                            <span class="exam-pill">WE 8</span>
+                            <span class="exam-pill">WE 9</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEW: Filter Buttons for Last 3 Exams -->
+                <div class="filter-buttons-container">
+                    <div class="filter-buttons">
+                        <button id="last3AllBtn" class="filter-btn active" onclick="filterLast3Ranklist('all')">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>All Last 3</span>
+                        </button>
+                        <button id="last3RTBtn" class="filter-btn" onclick="filterLast3Ranklist('RT')">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Last 3 RT Only</span>
+                        </button>
+                        <button id="last3WEBtn" class="filter-btn" onclick="filterLast3Ranklist('WE')">
+                            <i class="fas fa-calendar-week"></i>
+                            <span>Last 3 WE Only</span>
+                        </button>
+                        <button id="last3MTBtn" class="filter-btn" onclick="filterLast3Ranklist('MT')">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Last 3 MT Only</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table id="last3Table" class="enhanced-table">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-trophy"></i> Rank</th>
+                                <th><i class="fas fa-id-card"></i> Roll No</th>
+                                <th class="name-col"><i class="fas fa-user"></i> Name</th>
+                                <th><i class="fas fa-clipboard-list"></i> Exams</th>
+                                <th><i class="fas fa-calculator"></i> Total Score</th>
+                                <th><i class="fas fa-percentage"></i> Score%</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Subject-wise Tab -->
+        <div id="subjects" class="tab-content">
+            <div class="subjects-container">
+                <div class="subjects-header">
+                    <h2><i class="fas fa-book"></i> Subject-wise Performance Analysis</h2>
+                    <p>Detailed breakdown by individual subjects</p>
+                </div>
+
+                <div class="subject-section">
+                    <div class="subject-header" onclick="toggleSubject('chem')">
+                        <div class="subject-info">
+                            <div class="subject-icon chemistry">
+                                <i class="fas fa-flask"></i>
+                            </div>
+                            <div class="subject-details">
+                                <h3>Chemistry</h3>
+                            </div>
+                        </div>
+                        <div class="toggle-controls">
+                            <i class="fas fa-chevron-down toggle-arrow"></i>
+                        </div>
+                    </div>
+                    <div id="chem" class="subject-content">
+                        <div class="table-container">
+                            <table id="chemTable" class="enhanced-table">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-trophy"></i> Rank</th>
+                                        <th><i class="fas fa-id-card"></i> Roll No</th>
+                                        <th class="name-col"><i class="fas fa-user"></i> Name</th>
+                                        <th><i class="fas fa-clipboard-list"></i> Exams</th>
+                                        <th><i class="fas fa-calculator"></i> Total Score</th>
+                                        <th><i class="fas fa-percentage"></i> Avg %</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subject-section">
+                    <div class="subject-header" onclick="toggleSubject('phy')">
+                        <div class="subject-info">
+                            <div class="subject-icon physics">
+                                <i class="fas fa-atom"></i>
+                            </div>
+                            <div class="subject-details">
+                                <h3>Physics</h3>
+                            </div>
+                        </div>
+                        <div class="toggle-controls">
+                            <i class="fas fa-chevron-down toggle-arrow"></i>
+                        </div>
+                    </div>
+                    <div id="phy" class="subject-content">
+                        <div class="table-container">
+                            <table id="phyTable" class="enhanced-table">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-trophy"></i> Rank</th>
+                                        <th><i class="fas fa-id-card"></i> Roll No</th>
+                                        <th class="name-col"><i class="fas fa-user"></i> Name</th>
+                                        <th><i class="fas fa-clipboard-list"></i> Exams</th>
+                                        <th><i class="fas fa-calculator"></i> Total Score</th>
+                                        <th><i class="fas fa-percentage"></i> Avg %</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subject-section">
+                    <div class="subject-header" onclick="toggleSubject('bio')">
+                        <div class="subject-info">
+                            <div class="subject-icon biology">
+                                <i class="fas fa-dna"></i>
+                            </div>
+                            <div class="subject-details">
+                                <h3>Biology</h3>
+                            </div>
+                        </div>
+                        <div class="toggle-controls">
+                            <i class="fas fa-chevron-down toggle-arrow"></i>
+                        </div>
+                    </div>
+                    <div id="bio" class="subject-content">
+                        <div class="table-container">
+                            <table id="bioTable" class="enhanced-table">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-trophy"></i> Rank</th>
+                                        <th><i class="fas fa-id-card"></i> Roll No</th>
+                                        <th class="name-col"><i class="fas fa-user"></i> Name</th>
+                                        <th><i class="fas fa-clipboard-list"></i> Exams</th>
+                                        <th><i class="fas fa-calculator"></i> Total Score</th>
+                                        <th><i class="fas fa-percentage"></i> Avg %</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subject-section">
+                    <div class="subject-header" onclick="toggleSubject('math')">
+                        <div class="subject-info">
+                            <div class="subject-icon mathematics">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <div class="subject-details">
+                                <h3>Mathematics</h3>
+                            </div>
+                        </div>
+                        <div class="toggle-controls">
+                            <i class="fas fa-chevron-down toggle-arrow"></i>
+                        </div>
+                    </div>
+                    <div id="math" class="subject-content">
+                        <div class="table-container">
+                            <table id="mathTable" class="enhanced-table">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-trophy"></i> Rank</th>
+                                        <th><i class="fas fa-id-card"></i> Roll No</th>
+                                        <th class="name-col"><i class="fas fa-user"></i> Name</th>
+                                        <th><i class="fas fa-clipboard-list"></i> Exams</th>
+                                        <th><i class="fas fa-calculator"></i> Total Score</th>
+                                        <th><i class="fas fa-percentage"></i> Avg %</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Status Messages -->
+    <div id="dataStatus" class="status-message"></div>
+
+    <script src="script.js"></script>
+
+    <!-- Print & Export Modal -->
+    <div class="modal" id="printExportModal" style="display: none;">
+        <div class="modal-overlay" onclick="closePrintExportModal()"></div>
+        <div class="modal-container print-export-modal">
+            <div class="modal-header">
+                <h2>
+                    <i class="fas fa-print"></i>
+                    Print & Export Options
+                </h2>
+                <button class="modal-close" onclick="closePrintExportModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="print-options-grid">
+                    <div class="print-option-card" onclick="openOverallPrintDialog()">
+                        <div class="option-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="option-content">
+                            <h4>Overall Ranking</h4>
+                            <p>Print complete student rankings</p>
+                        </div>
+                    </div>
+                    <div class="print-option-card" onclick="openLast3PrintDialog()">
+                        <div class="option-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="option-content">
+                            <h4>Last 3 Exams</h4>
+                            <p>Print recent performance rankings</p>
+                        </div>
+                    </div>
+                    <div class="print-option-card" onclick="openExamSelectionDialog()">
+                        <div class="option-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="option-content">
+                            <h4>Exam Ranklist</h4>
+                            <p>Select specific exam to print</p>
+                        </div>
+                    </div>
+                    <div class="print-option-card" onclick="selectStudentForProfile()">
+                        <div class="option-icon">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="option-content">
+                            <h4>Student Profile</h4>
+                            <p>Print individual student report</p>
+                        </div>
+                    </div>
+                    <div class="print-option-card" onclick="openClassPerformanceModal()">
+                        <div class="option-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="option-content">
+                            <h4>Class Performance Summary</h4>
+                            <p>Overall class analytics</p>
+                        </div>
+                    </div>
+                    <div class="print-option-card" onclick="openSubjectSpecificModal()">
+                        <div class="option-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="option-content">
+                            <h4>Subject-Specific Reports</h4>
+                            <p>Select subjects to analyze</p>
+                        </div>
+                    </div>
+                    <div class="print-option-card" onclick="openStudentSelectionModal('progress')">
+                        <div class="option-icon">
+                            <i class="fas fa-chart-area"></i>
+                        </div>
+                        <div class="option-content">
+                            <h4>Progress Tracking Reports</h4>
+                            <p>Select students for progress</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Profile Selection Modal -->
+    <div class="modal" id="studentProfileModal" style="display: none;">
+        <div class="modal-overlay" onclick="closeStudentProfileModal()"></div>
+        <div class="modal-container student-profile-modal">
+            <div class="modal-header">
+                <h2>
+                    <i class="fas fa-user-graduate"></i>
+                    Select Student for Profile
+                </h2>
+                <button class="modal-close" onclick="closeStudentProfileModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="student-selection">
+                    <label for="studentProfileSelect">Choose Student:</label>
+                    <select id="studentProfileSelect" class="form-select">
+                        <option value="">Select a student...</option>
+                    </select>
+                    <button class="btn btn-primary" id="printStudentProfileBtn">
+                        <i class="fas fa-print"></i>
+                        Print Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Filter Dialog -->
+    <div id="printFilterDialog" class="modal-overlay" style="display: none;">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="printDialogTitle">Print Ranklist</h3>
+                <button class="modal-close" onclick="closePrintFilterDialog()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <p>Select filter type for printing:</p>
+                <div class="filter-options">
+                    <label class="filter-option">
+                        <input type="radio" name="printFilter" value="all" checked>
+                        <span>All Exams</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="printFilter" value="RT">
+                        <span>RT Only</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="printFilter" value="WE">
+                        <span>WE Only</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="printFilter" value="MT">
+                        <span>MT Only</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="executePrint()">
+                    <i class="fas fa-print"></i>
+                    Print
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Selection Dialog -->
+    <div id="examSelectionDialog" class="modal-overlay" style="display: none;">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>Select Exam to Print</h3>
+                <button class="modal-close" onclick="closeExamSelectionDialog()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <p>Choose an exam to generate its ranklist:</p>
+                <div class="exam-selection-grid" id="examSelectionGrid">
+                    <!-- Exam buttons will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeExamSelectionDialog()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Footer -->
+<footer class="main-footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <div class="footer-logo">
+                <div class="footer-logo-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="footer-logo-text">
+                    <h3>CRISPR YEAR-LONG BATCH</h3>
+                    <span>2025-26</span>
+                </div>
+            </div>
+            <p class="footer-description">
+                Advanced Student Performance Analytics Platform designed to track, analyze, and enhance academic excellence for the students.
+            </p>
+            <div class="footer-stats">
+                <div class="footer-stat">
+                    <i class="fas fa-users"></i>
+                    <span id="footerStudentCount">39 Students</span>
+                </div>
+                <div class="footer-stat">
+                    <i class="fas fa-chart-line"></i>
+                    <span id="footerExamCount">11 Exams</span>
+                </div>
+                <div class="footer-stat">
+                    <i class="fas fa-trophy"></i>
+                    <span>Excellence Focused</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <h4><i class="fas fa-tools"></i> Quick Actions</h4>
+            <ul class="footer-links">
+                <li><a href="#" onclick="showTab('overallRank')" class="footer-link">
+                    <i class="fas fa-trophy"></i> Student Rankings
+                </a></li>
+                <li><a href="#" onclick="showTab('last3Rank')" class="footer-link">
+                    <i class="fas fa-calendar-alt"></i> Recent Exams
+                </a></li>
+                <li><a href="#" onclick="showTab('subjects')" class="footer-link">
+                    <i class="fas fa-book"></i> Subject Analysis
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h4><i class="fas fa-chart-line"></i> Analytics</h4>
+            <ul class="footer-links">
+                <li><a href="#" onclick="toggleExamDifficultyAnalysis()" class="footer-link">
+                    <i class="fas fa-brain"></i> Exam Difficulty
+                </a></li>
+                <li><a href="#" onclick="toggleStudentCategorization()" class="footer-link">
+                    <i class="fas fa-users-cog"></i> Student Categories
+                </a></li>
+                <li><a href="#" onclick="togglePerformanceAlerts()" class="footer-link">
+                    <i class="fas fa-exclamation-triangle"></i> Performance Alerts
+                </a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h4><i class="fas fa-info-circle"></i> System Info</h4>
+            <div class="system-info">
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Last Updated: <span class="lastUpdated">25-10-2025 17:10</span></span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-database"></i>
+                    <span>Total Records: <span class="totalRecords">290</span></span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-server"></i>
+                    <span>System Status: <span class="status-online">Online</span></span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Data Security: <span class="status-secure">Secured</span></span>
+                </div>
+            </div>
+            <div class="footer-actions">
+                <button class="footer-btn" onclick="refreshAllData()">
+                    <i class="fas fa-sync-alt"></i> Refresh Data
+                </button>
+                <button class="footer-btn" onclick="exportAllData()">
+                    <i class="fas fa-download"></i> Export All
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="footer-bottom-content">
+            <div class="copyright">
+                <i class="fas fa-copyright"></i>
+                <span>2025 CRISPR Analytics Platform. All rights reserved.</span>
+            </div>
+            <div class="footer-meta">
+                <span class="version">Version 2.2.1</span>
+                <span class="divider">•</span>
+                <span>Built with <i class="fas fa-heart text-red"></i> for Academic Excellence</span>
+                <span class="divider">•</span>
+                <span class="update-time">Updated: Oct 2025</span>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
