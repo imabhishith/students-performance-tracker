@@ -83,4 +83,3 @@ app.listen(PORT, () => {
     console.log(`📊 Visit: http://localhost:${PORT}/admin.html`);
     console.log(`👩‍🎓 Visit: http://localhost:3001/api/students`);
 });
-
