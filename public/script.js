@@ -731,22 +731,30 @@ mostTr.innerHTML = `
 `;
 subjectTbody.appendChild(mostTr);
 
-  // Populate exam participation table
-  const examTbody = document.querySelector('#examDetails tbody');
-  examTbody.innerHTML = '';
+// ✅ Populate exam participation table - ONLY enrolled students
+const examTbody = document.querySelector('#examDetails tbody');
+examTbody.innerHTML = '';
 
-  examOrder.forEach(exam => {
-    const attempted = students.filter(stu => stu.exams.some(ex => ex.exam === exam && ex.maxTotal > 0)).length;
-    const participationRate = totalStudents > 0 ? ((attempted / totalStudents) * 100).toFixed(1) : 0;
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-    <td class="exam-name" data-exam="${exam}">${exam}</td>
-    <td>${attempted}</td>
-    <td>${participationRate}%</td>
-    `;
-    examTbody.appendChild(tr);
-  });
+examOrder.forEach(exam => {
+  // Count ONLY enrolled students for this exam
+  const enrolledStudents = students.filter(stu => 
+    stu.exams.some(ex => ex.exam === exam && ex.maxTotal >= 0)
+  );
+  
+  const enrolledCount = enrolledStudents.length;
+  
+  // Count those who actually appeared (took the exam)
+  const attempted = enrolledStudents.filter(stu => 
+    stu.exams.some(ex => ex.exam === exam && ex.total > 0)
+  ).length;
+  
+  // Participation % = appeared / enrolled
+  const participationRate = enrolledCount > 0 ? (attempted / enrolledCount) * 100 : 0;
+  
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td class="exam-name" data-exam="${exam}">${exam}</td><td>${attempted} / ${enrolledCount}</td><td>${participationRate.toFixed(1)}%</td>`;
+  examTbody.appendChild(tr);
+});
 
   // Populate student details table
   const studentTbody = document.querySelector('#studentDetails tbody');
