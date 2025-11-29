@@ -16,87 +16,40 @@ const subjectNames = {
 // DYNAMIC EXAM ORDERING - AUTO-UPDATED FROM BACKEND
 // ============================================
 
+// ============================================
+// SIMPLE EXAM ORDERING - FOLLOWS DATA ORDER
+// ============================================
 function generateExamOrderAdvanced() {
-    // Get all unique exam names
-    const uniqueExams = [...new Set(students.flatMap(s => s.exams.map(e => e.exam)))];
-    
-    // Filter only exams with data
-    const examsWithData = uniqueExams.filter(exam => 
-        students.some(s => s.exams.some(ex => ex.exam === exam && ex.maxTotal > 0))
-    );
-    
-    // Separate WE and RT exams
-    const weExams = [];
-    const rtExams = [];
-    const mtExams = [];
-    const otherExams = [];
-    
-    examsWithData.forEach(exam => {
-        const match = exam.match(/^(WE|RT|MT)\s*(\d+)$/);
-        if (!match) {
-            otherExams.push(exam);
-            return;
+  // Exam order is already set from processJsonData
+  // Just validate and update display
+  
+  if (examOrder.length === 0) {
+    // Fallback if not set (shouldn't happen)
+    const uniqueExams = [];
+    const seenExams = new Set();
+    students.forEach(student => {
+      student.exams.forEach(exam => {
+        if (exam.maxTotal > 0 && !seenExams.has(exam.exam)) {
+          uniqueExams.push(exam.exam);
+          seenExams.add(exam.exam);
         }
-        
-        const type = match[1];
-        const num = parseInt(match[2]);
-        
-        if (type === 'WE') {
-            weExams.push({ name: exam, num });
-        } else if (type === 'RT') {
-            rtExams.push({ name: exam, num });
-        } else if (type === 'MT') {  
-            mtExams.push({ name: exam, num });
-        }
+      });
     });
-    
-    // Sort by number
-    weExams.sort((a, b) => a.num - b.num);
-    rtExams.sort((a, b) => a.num - b.num);
-    mtExams.sort((a, b) => a.num - b.num);
-    
-    // Interleave WE and RT exams intelligently
-    // Pattern: WE 1-3, RT 1, WE 4-6, RT 2, WE 7-9, etc.
-    const sorted = [];
-    let weIndex = 0;
-    let rtIndex = 0;
-    let mtIndex = 0;
-    const wePerBlock = 3; // Number of WE exams before inserting RT
-    
-    while (weIndex < weExams.length || rtIndex < rtExams.length || mtIndex < mtExams.length) {  // ✅ FIXED: Was rtExams.length
-        // Add a block of WE exams
-        for (let i = 0; i < wePerBlock && weIndex < weExams.length; i++) {
-            sorted.push(weExams[weIndex++].name);
-        }
-        
-        // Add one RT exam
-        if (rtIndex < rtExams.length) {
-            sorted.push(rtExams[rtIndex++].name);
-        }
-
-        // Add one MT exam
-        if (mtIndex < mtExams.length) {
-            sorted.push(mtExams[mtIndex++].name);
-        }
-    }
-    
-    // Add any other exams at the end
-    sorted.push(...otherExams);
-    
-    // Update global variables
-    examOrder = sorted;
-    last3Exams = sorted.slice(-3);
-    
-    console.log('✅ Advanced exam order generated:', {
-        examOrder: examOrder,
-        last3Exams: last3Exams,
-        total: sorted.length
-    });
-    
-    updateLast3ExamsDisplay();
-    
-    return { examOrder, last3Exams };
+    examOrder = uniqueExams;
+  }
+  
+  last3Exams = examOrder.slice(-3);
+  
+  console.log('✅ Exam order (from data):', {
+    examOrder: examOrder,
+    last3Exams: last3Exams,
+    total: examOrder.length
+  });
+  
+  updateLast3ExamsDisplay();
+  return { examOrder, last3Exams };
 }
+
 
 // ============================================
 // AUTO-UPDATE LAST 3 EXAMS DISPLAY (Pills & Brackets)
@@ -464,23 +417,36 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 500);
 });
 
+// Track exam order from data (first appearance order)
+const examOrderFromData = [];
+const seenExams = new Set();
+
 function processJsonData(data) {
   showLoading();
-
   try {
     const studentMap = {};
-
+    examOrderFromData.length = 0;  // Reset
+    seenExams.clear();
+    
     data.forEach(row => {
       const roll = row.roll.trim();
       const name = row.name.trim();
-
-      if (!studentMap[roll]) {
-        studentMap[roll] = { roll, name, exams: [] };
+      const examName = row.exam.trim();
+      
+      // Track exam order as it appears in data
+      if (!seenExams.has(examName) && row.maxTotal > 0) {
+        examOrderFromData.push(examName);
+        seenExams.add(examName);
       }
-
-      studentMap[roll].name = name;
+      
+      if (!studentMap[roll]) {
+        studentMap[roll] = {roll, name, exams: []};
+      } else {
+        studentMap[roll].name = name;
+      }
+      
       studentMap[roll].exams.push({
-        exam: row.exam.trim(),
+        exam: examName,
         scores: {
           chem: parseFloat(row.chem) || 0,
           phy: parseFloat(row.phy) || 0,
@@ -498,10 +464,14 @@ function processJsonData(data) {
         maxTotal: parseFloat(row.maxTotal) || 0
       });
     });
-
+    
     students = Object.values(studentMap);
     students.forEach(computeCumulatives);
-    generateExamOrderAdvanced();
+    
+    // Use the data-based exam order
+    examOrder = [...examOrderFromData];
+    last3Exams = examOrder.slice(-3);
+    
     updateLast3ExamsDisplay();
     console.log(`✅ Processed ${students.length} students`);
 
