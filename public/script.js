@@ -3370,7 +3370,7 @@ function calculateExamStatistics(exams) {
                 if (exam.total < lowestScore) lowestScore = exam.total;
             }
         });
-        
+        const enrolledCount = students.filter(stu => stu.exams.some(ex => ex.exam === examName && ex.maxTotal >= 0)).length;
         const avgPercentage = maxScore > 0 ? (totalScore / maxScore) * 100 : 0;
         const avgScore = studentCount > 0 ? (totalScore / studentCount).toFixed(2) : 0;
         
@@ -3388,6 +3388,7 @@ function calculateExamStatistics(exams) {
             name: examName,
             avgPercentage: avgPercentage.toFixed(2),
             studentCount,
+            enrolledCount,
             totalStudents: students.length,
             participationRate: ((studentCount / students.length) * 100).toFixed(2),
             highestScore: highestScore === -Infinity ? 0 : highestScore,
@@ -3794,7 +3795,7 @@ function generateClassPerformanceHTML(filterType, exams, stats, topPerformers, a
                     return `
                         <tr>
                             <td><strong>${exam.name}</strong></td>
-                            <td>${exam.studentCount} / ${exam.totalStudents}</td>
+                            <td>${exam.studentCount} / ${exam.enrolledCount}</td>
                             <td>${exam.avgScore}</td>
                             <td><strong>${exam.avgPercentage}%</strong></td>
                             <td>${exam.highestScore}</td>
