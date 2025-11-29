@@ -4,10 +4,8 @@ const { parse } = require('csv-parse');
 const cors = require('cors');
 const path = require('path');
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const app = express();
+const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
@@ -85,3 +83,4 @@ app.listen(PORT, () => {
     console.log(`📊 Visit: http://localhost:${PORT}/admin.html`);
     console.log(`👩‍🎓 Visit: http://localhost:3001/api/students`);
 });
+
