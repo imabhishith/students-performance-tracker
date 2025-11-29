@@ -2137,7 +2137,6 @@ function generatePerformanceAlerts() {
     const overallPercentage = parseFloat(student.cumPercent) || 0;
     const validExams = student.exams.filter(ex => ex.maxTotal > 0);
     const attemptedExams = validExams.map(ex => ex.exam);
-    const missedExams = examOrder.filter(exam => !attemptedExams.includes(exam));
 
     // Calculate recent decline
     let recentDecline = 0;
@@ -2193,14 +2192,25 @@ function generatePerformanceAlerts() {
       });
     }
     // Missing exam alerts
-    if (missedExams.length >= 2) {
+    const enrolledButMissedExams = examOrder.filter(exam => {
+      const hasEnrollmentData = students.some(s => 
+        s.roll === student.roll && 
+        s.exams.some(ex => ex.exam === exam && ex.maxTotal >= 0)
+      );
+      
+      return hasEnrollmentData && !attemptedExams.includes(exam);
+    });
+
+    // Missing exam alerts - ONLY for enrolled exams
+    if (enrolledButMissedExams.length >= 1) {
       alerts.missingExam.push({
         student,
         severity: 'MEDIUM',
-        message: `${student.name} (${student.roll}) has missed ${missedExams.length} exams: ${missedExams.join(', ')}`,
+        message: `${student.name} (${student.roll}) has missed ${enrolledButMissedExams.length} enrolled exams: ${enrolledButMissedExams.join(', ')}`,
         action: 'Contact student/parents immediately and arrange makeup exams if possible'
       });
     }
+
   });
 
   return alerts;

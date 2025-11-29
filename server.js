@@ -5,11 +5,7 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-<<<<<<< HEAD
 const PORT = process.env.PORT || 3000;
-=======
-const PORT = process.env.PORT || 3001;
->>>>>>> 05eefb6 (Your commit message here)
 
 app.use(cors());
 app.use(express.json());
