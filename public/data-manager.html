@@ -6,7 +6,6 @@
     <title>Data Manager - CRISPR Student Portal</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Global Styles - Matched to Main Page Theme (Gradients, Shadows, Segoe UI, Animations) */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -14,615 +13,634 @@
             color: #1f2937; 
             min-height: 100vh; 
             padding: 20px; 
-            transition: all 0.3s ease; /* Smooth theme transitions */
+            transition: all 0.3s ease;
         }
-        .container { max-width: 1200px; margin: 0 auto; }
+        .container { max-width: 1400px; margin: 0 auto; }
+
         .header { 
             text-align: center; margin-bottom: 30px; 
-            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #ec4899 100%); /* Main page gradient */
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #ec4899 100%);
             color: white; padding: 20px; border-radius: 12px; 
-            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3); /* Matched shadow */
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
             position: relative; overflow: hidden; 
-            transform: skew(0deg); transition: transform 0.3s ease; /* Skew animation like tables */
         }
-        .header:hover { transform: skew(-1deg); } /* Subtle hover animation */
         .header h1 { font-size: 28px; margin-bottom: 5px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
         .header p { font-size: 14px; opacity: 0.9; }
+
         .back-btn { 
             position: absolute; left: 20px; top: 20px; 
             background: rgba(255,255,255,0.2); border: none; color: white; 
             padding: 12px; border-radius: 50%; cursor: pointer; font-size: 18px; 
-            transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.2); /* Main page button style */
-            transform: skew(0deg);
+            transition: all 0.3s ease;
         }
-        .back-btn:hover { background: rgba(255,255,255,0.3); transform: skew(-2deg) translateY(-2px); }
-        .tabs { 
-            display: flex; background: white; border-radius: 10px; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; margin-bottom: 20px; 
-            transform: skew(0deg); transition: transform 0.3s ease;
+        .back-btn:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
         }
-        .tabs:hover { transform: skew(-1deg); }
-        .tab-btn { 
-            flex: 1; padding: 15px; background: none; border: none; 
-            cursor: pointer; font-weight: 600; transition: all 0.3s ease; 
-            border-bottom: 3px solid transparent; color: #6b7280;
+
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
-        .tab-btn:hover { color: #4f46e5; transform: translateY(-1px); }
-        .tab-btn.active { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-bottom-color: #2563eb; color: #2563eb; }
-        .tab-content { display: none; background: white; border-radius: 10px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: all 0.3s ease; }
-        .tab-content.active { display: block; transform: skew(1deg); } /* Skew for consistency */
-        /* Upload Tab Styles */
-        .upload-zone { 
-            border: 2px dashed #cbd5e1; border-radius: 12px; padding: 40px; 
-            text-align: center; cursor: pointer; transition: all 0.3s ease; 
-            background: #f8fafc; margin-bottom: 20px; transform: skew(0deg);
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
         }
-        .upload-zone:hover, .upload-zone.dragover { 
-            border-color: #2563eb; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); 
-            transform: skew(-1deg) scale(1.02);
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
-        .upload-zone i { font-size: 48px; color: #9ca3af; margin-bottom: 10px; transition: color 0.3s; }
-        .upload-zone:hover i { color: #2563eb; }
-        .upload-zone h3 { color: #4b5563; margin-bottom: 10px; }
-        .upload-zone p { color: #6b7280; }
-        .file-input { display: none; }
-        .upload-btn { 
-            background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; 
-            border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; 
-            font-weight: 600; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
-            transform: skew(0deg);
+        .btn-primary:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
         }
-        .upload-btn:hover { transform: skew(-2deg) translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); }
-        .upload-status { margin-top: 20px; padding: 10px; border-radius: 6px; display: none; font-weight: 500; }
-        .upload-status.success { background: #d1fae5; color: #065f46; border: 1px solid #10b981; }
-        .upload-status.error { background: #fee2e2; color: #991b1b; border: 1px solid #ef4444; }
-        /* Data Table Tab Styles */
-        .data-table-wrapper { overflow-x: auto; }
-        .table-controls { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap; }
-        .filter-input { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; min-width: 200px; }
-        .toggle-hide { background: #f3f4f6; border: 1px solid #d1d5db; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.3s; }
-        .toggle-hide:hover { background: #e5e7eb; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e5e7eb; transform: skew(0deg); transition: all 0.3s; }
-        th { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); font-weight: 600; color: #374151; text-transform: uppercase; letter-spacing: 0.5px; }
-        tr:hover { background: #f9fafb; transform: skew(-1deg); }
-        tr.hidden { display: none; }
-        .actions { display: flex; gap: 8px; }
-        .btn { 
-            padding: 6px 10px; border: none; border-radius: 6px; cursor: pointer; 
-            font-size: 12px; font-weight: 600; transition: all 0.3s ease; 
-            transform: skew(0deg);
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            color: #2563eb;
+            border: 2px solid #2563eb;
         }
-        .btn-view { background: #dbeafe; color: #1d4ed8; }
-        .btn-edit { background: #fef3c7; color: #d97706; }
-        .btn-delete { background: #fee2e2; color: #dc2626; }
-        .btn:hover { transform: skew(-2deg) translateY(-1px); opacity: 0.9; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .readonly { background: #f9fafb; color: #6b7280; font-style: italic; }
-        .no-data { text-align: center; padding: 40px; color: #6b7280; font-style: italic; }
-        /* Max Totals Tab Styles */
-        .max-totals-form { display: grid; gap: 15px; max-width: 600px; }
-        .form-group { display: flex; flex-direction: column; }
-        .form-group label { font-weight: 600; margin-bottom: 5px; color: #374151; }
-        .exam-row { display: flex; gap: 10px; align-items: center; padding: 10px; background: #f8fafc; border-radius: 6px; margin-bottom: 10px; }
-        .exam-input { flex: 1; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; }
-        .remove-exam { background: #ef4444; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; }
-        .add-exam-btn { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
-        .add-exam-btn:hover { background: #059669; transform: translateY(-1px); }
-        /* Modals - Matched Animations */
-        .modal { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.5); z-index: 1000; animation: fadeIn 0.3s ease; 
+        .btn-secondary:hover { 
+            background: #2563eb;
+            color: white;
         }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .modal-content { 
-            background: white; margin: 5% auto; padding: 30px; border-radius: 12px; 
-            width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3); transform: scale(0.9); 
-            animation: slideIn 0.3s ease forwards; 
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
-        @keyframes slideIn { to { transform: scale(1); } }
-        .close { float: right; font-size: 28px; cursor: pointer; color: #6b7280; transition: color 0.3s; }
-        .close:hover { color: #374151; transform: rotate(90deg); }
-        form { display: flex; flex-direction: column; gap: 15px; }
-        input, select { padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; transition: border-color 0.3s; }
-        input:focus { border-color: #2563eb; outline: none; }
-        input[readonly] { background: #f3f4f6; color: #6b7280; cursor: not-allowed; }
-        .save-btn { 
-            background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 12px; border: none; 
-            border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s; 
-            transform: skew(0deg);
+        .btn-success:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
         }
-        .save-btn:hover { transform: skew(-2deg) translateY(-2px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
-        /* Responsive */
-        @media (max-width: 768px) { 
-            .tabs { flex-direction: column; } 
-            .tab-btn { border-bottom: none; border-right: 3px solid transparent; } 
-            .tab-btn.active { border-right-color: #2563eb; } 
-            table { font-size: 12px; } 
-            th, td { padding: 8px; } 
-            .table-controls { flex-direction: column; align-items: stretch; }
-            .filter-input { min-width: auto; }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+        .btn-danger:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+        }
+
+        .file-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            padding: 8px;
+            border: 2px solid #2563eb;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-loaded {
+            background: rgba(16, 185, 129, 0.2);
+            color: #065f46;
+        }
+
+        .status-empty {
+            background: rgba(239, 68, 68, 0.2);
+            color: #991b1b;
+        }
+
+        .table-wrapper {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        table th {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            color: white;
+            padding: 16px;
+            text-align: left;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        table tbody tr:nth-child(even) {
+            background: rgba(37, 99, 235, 0.02);
+        }
+
+        table input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        table input:focus {
+            border-color: #2563eb;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        table input.edited {
+            border-color: #ec4899;
+            background: rgba(236, 72, 153, 0.05);
+        }
+
+        .row-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-mini {
+            padding: 6px 10px;
+            font-size: 11px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-reset-mini {
+            background: #fbbf24;
+            color: white;
+        }
+        .btn-reset-mini:hover {
+            background: #f59e0b;
+        }
+
+        .alert {
+            padding: 16px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.15);
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+
+        .alert-info {
+            background: rgba(37, 99, 235, 0.15);
+            color: #1e40af;
+            border-left: 4px solid #2563eb;
+        }
+
+        .row-number {
+            background: rgba(37, 99, 235, 0.1);
+            color: #2563eb;
+            font-weight: 700;
+            text-align: center;
+            width: 40px;
+        }
+
+        .changed-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ec4899;
+            display: inline-block;
+            margin-left: 6px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .table-wrapper {
+                overflow-x: auto;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            table th, table td {
+                padding: 10px 8px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .control-group {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <button class="back-btn" onclick="window.location.href='index.html'" title="Back to Main Dashboard">
-            <i class="fas fa-arrow-left"></i>
-        </button>
         <div class="header">
+            <button class="back-btn" onclick="history.back()" title="Go back">
+                <i class="fas fa-arrow-left"></i>
+            </button>
             <h1><i class="fas fa-database"></i> Data Manager</h1>
-            <p>Manage student data uploads, edits, and exam configurations</p>
+            <p>Edit student data directly - All changes saved to CSV file</p>
         </div>
 
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('upload')"><i class="fas fa-upload"></i> Upload CSV</button>
-            <button class="tab-btn" onclick="switchTab('data')"><i class="fas fa-table"></i> View & Edit Data</button>
-            <button class="tab-btn" onclick="switchTab('maxTotals')"><i class="fas fa-cog"></i> Exam Max Totals</button>
-        </div>
-
-        <!-- Upload Tab -->
-        <div id="upload" class="tab-content active">
-            <div class="upload-zone" id="uploadZone">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <h3>Drop CSV file here or click to browse</h3>
-                <p>Supports .csv files. This will replace the existing data.</p>
-                <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
-                    <i class="fas fa-folder-open"></i> Browse CSV Files
-                </button>
-                <input type="file" id="fileInput" class="file-input" accept=".csv" />
-            </div>
-            <div id="uploadStatus" class="upload-status"></div>
-        </div>
-
-        <!-- Data View Tab -->
-        <div id="data" class="tab-content">
-            <div class="table-controls">
-                <input type="text" id="examFilter" class="filter-input" placeholder="Filter by Exam Name..." oninput="applyFilters()">
-                <input type="text" id="rollFilter" class="filter-input" placeholder="Filter by Roll Number..." oninput="applyFilters()">
-                <select id="sortSelect" class="filter-input" onchange="applyFilters()">
-                    <option value="roll-asc">Sort by Roll (A-Z)</option>
-                    <option value="roll-desc">Sort by Roll (Z-A)</option>
-                    <option value="exam-asc">Sort by Exam (A-Z)</option>
-                    <option value="exam-desc">Sort by Exam (Z-A)</option>
-                    <option value="total-desc">Sort by Total (High to Low)</option>
-                </select>
-                <button class="toggle-hide" id="toggleHide" onclick="toggleHiddenRows()">
-                    <i class="fas fa-eye-slash"></i> Hide Unattempted (maxTotal=0)
+        <!-- Controls -->
+        <div class="controls">
+            <div class="control-group file-input-wrapper">
+                <i class="fas fa-file-csv" style="color: #2563eb; font-size: 20px;"></i>
+                <input type="file" id="csvFile" accept=".csv" />
+                <button class="btn btn-primary" onclick="loadCSV()">
+                    <i class="fas fa-upload"></i> Load CSV
                 </button>
             </div>
-            <div class="data-table-wrapper">
-                <table id="dataTable">
-                    <thead>
-                        <tr>
-                            <th>Roll</th>
-                            <th>Name</th>
-                            <th>Exam</th>
-                            <th>Chem</th>
-                            <th>Phy</th>
-                            <th>Bio</th>
-                            <th>Math</th>
-                            <th>Total (Auto)</th>
-                            <th>Percent (Auto)</th>
-                            <th>Max Total</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dataTbody">
-                        <tr><td colspan="11" class="no-data">Loading data...</td></tr>
-                    </tbody>
-                </table>
+
+            <div style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
+                <div id="statusBadge" class="status-badge status-empty">
+                    <i class="fas fa-circle"></i> No data loaded
+                </div>
             </div>
         </div>
 
-        <!-- Max Totals Tab -->
-        <div id="maxTotals" class="tab-content">
-            <h3>Configure Max Scores per Exam</h3>
-            <p>Add or edit max totals for each exam and subjects. These apply globally unless student maxTotal=0.</p>
-            <button class="add-exam-btn" onclick="addExamRow()"><i class="fas fa-plus"></i> Add New Exam</button>
-            <form id="maxTotalsForm" class="max-totals-form">
-                <div id="examRows"></div>
-                <button type="submit" class="save-btn"><i class="fas fa-save"></i> Save Configurations</button>
-            </form>
+        <!-- Alerts -->
+        <div id="alertContainer"></div>
+
+        <!-- Data Table -->
+        <div id="tableContainer" class="table-wrapper" style="display: none;">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;">#</th>
+                        <th>Roll</th>
+                        <th>Name</th>
+                        <th>Exam</th>
+                        <th>Chem</th>
+                        <th>Phy</th>
+                        <th>Bio</th>
+                        <th>Math</th>
+                        <th>Total</th>
+                        <th>Percent</th>
+                        <th>Max Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>No data loaded yet</p>
+            <p style="font-size: 14px; color: #9ca3af;">Select a CSV file to begin editing student data</p>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div id="bottomControls" style="display: none; gap: 15px; display: flex; flex-wrap: wrap;">
+            <button class="btn btn-success" onclick="downloadCSV()">
+                <i class="fas fa-download"></i> Download Updated CSV
+            </button>
+            <button class="btn btn-secondary" onclick="reloadData()">
+                <i class="fas fa-redo"></i> Reset Changes
+            </button>
         </div>
     </div>
-
-    <!-- View Modal -->
-    <div id="viewModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('viewModal')">&times;</span>
-            <h2><i class="fas fa-eye"></i> View Record</h2>
-            <div id="viewContent"></div>
-        </div>
-    </div>
-
-    <!-- Edit Modal -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('editModal')">&times;</span>
-            <h2><i class="fas fa-edit"></i> Edit Record</h2>
-            <form id="editForm">
-                <input type="hidden" id="editIndex">
-                <input type="text" id="editRoll" placeholder="Roll" required>
-                <input type="text" id="editName" placeholder="Name" required>
-                <input type="text" id="editExam" placeholder="Exam" required>
-                <input type="number" id="editChem" placeholder="Chemistry Score" min="0" required>
-                <input type="number" id="editPhy" placeholder="Physics Score" min="0" required>
-                <input type="number" id="editBio" placeholder="Biology Score" min="0" required>
-                <input type="number" id="editMath" placeholder="Math Score" min="0" required>
-                <input type="number" id="editTotal" placeholder="Total (Auto-calculated)" readonly class="readonly">
-                <input type="number" id="editPercent" placeholder="Percent (Auto-calculated)" readonly class="readonly">
-                <input type="number" id="editMaxTotal" placeholder="Max Total (Don't change if 0)" min="0">
-                <button type="submit" class="save-btn">Save Changes</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Coming Soon Modal -->
-<div id="comingSoonModal" class="modal" style="display: none;">
-    <div class="modal-content" style="max-width: 500px; text-align: center;">
-        <span class="close" onclick="closeComingSoonModal()" style="font-size: 28px; cursor: pointer; color: #6b7280; float: right; transition: color 0.3s;">&times;</span>
-        <i class="fas fa-tools" style="font-size: 64px; color: #f59e0b; margin-bottom: 20px;"></i>
-        <h2 style="color: #1f2937; margin-bottom: 10px; font-size: 24px;">Coming Soon!</h2>
-        <p style="color: #6b7280; margin-bottom: 20px; font-size: 16px;">The Data Manager is under maintenance. We'll have full upload, edit, and config features ready shortly.</p>
-        <p style="color: #10b981; font-weight: 600;">Stay tuned – back in a flash! 🚀</p>
-        <button onclick="closeComingSoonModal()" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 20px; transition: all 0.3s; transform: skew(0deg);">Got It</button>
-    </div>
-</div>
 
     <script>
-        // Global Variables
-        let allData = [];
-        let filteredData = [];
-        let hideUnattempted = true;
-        let examMaxConfig = {}; // { 'WE 1': { maxTotal: 400, chem: 100, phy: 100, bio: 100, math: 100 } }
+        let originalData = [];
+        let currentData = [];
+        let changedRows = new Set();
 
-        // Tab Switching
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-            if (tabName === 'data') loadDataTable();
-            if (tabName === 'maxTotals') loadExamMaxConfig();
-        }
+        const DB_KEY = 'studentDataCSV';
+        const HEADERS = ['roll', 'name', 'exam', 'chem', 'phy', 'bio', 'math', 'total', 'percent', 'maxTotal'];
 
-        // Drag & Drop Upload for CSV
-        const uploadZone = document.getElementById('uploadZone');
-        const fileInput = document.getElementById('fileInput');
+        // ============================================================
+        // CSV LOADING & PARSING
+        // ============================================================
+        function loadCSV() {
+            const fileInput = document.getElementById('csvFile');
+            const file = fileInput.files[0];
 
-        uploadZone.addEventListener('click', () => fileInput.click());
-        uploadZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadZone.classList.add('dragover');
-        });
-        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
-        uploadZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadZone.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) handleFile(files[0]);
-        });
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) handleFile(e.target.files[0]);
-        });
-
-        async function handleFile(file) {
-            if (!file.name.match(/\.csv$/)) {
-                showStatus('Please select a CSV file (.csv)', 'error');
+            if (!file) {
+                showAlert('Please select a CSV file', 'error');
                 return;
             }
+
             const reader = new FileReader();
-            reader.onload = async (e) => {
-                const csvContent = e.target.result;
-                const lines = csvContent.split('\n').map(line => line.split(',').map(cell => cell.trim().replace(/"/g, '')));
-                const headers = lines[0];
-                const jsonData = lines.slice(1).map(row => {
-                    let obj = {};
-                    headers.forEach((header, i) => obj[header] = row[i] || '');
-                    return obj;
-                }).filter(row => row.roll && row.name); // Filter valid rows
-                
-                // Send to backend
+            reader.onload = (e) => {
                 try {
-                    const response = await fetch('/api/upload', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ data: jsonData, format: 'csv' })
-                    });
-                    if (response.ok) {
-                        showStatus('CSV uploaded and replaced successfully! Refresh the main page to see changes.', 'success');
-                        loadDataTable(); // Reload table if on data tab
-                    } else {
-                        throw new Error('Upload failed');
-                    }
+                    const csv = e.target.result;
+                    parseCSV(csv);
                 } catch (err) {
-                    showStatus('Upload error: ' + err.message, 'error');
+                    showAlert('Error reading file: ' + err.message, 'error');
                 }
             };
             reader.readAsText(file);
         }
 
-        function showStatus(message, type) {
-            const status = document.getElementById('uploadStatus');
-            status.textContent = message;
-            status.className = `upload-status ${type}`;
-            status.style.display = 'block';
-            if (type === 'success') setTimeout(() => status.style.display = 'none', 5000);
-        }
-
-        // Load Data Table with Filters/Sort/Hide
-        async function loadDataTable() {
-            try {
-                const response = await fetch('/api/students');
-                const result = await response.json();
-                allData = result.data || [];
-                filteredData = [...allData];
-                renderTable();
-                applyFilters(); // Initial apply
-            } catch (err) {
-                document.getElementById('dataTbody').innerHTML = '<tr><td colspan="11" class="no-data">Error loading data</td></tr>';
-                console.error('Load error:', err);
+        function parseCSV(csv) {
+            const lines = csv.trim().split('\n');
+            if (lines.length < 2) {
+                showAlert('CSV file is empty or invalid', 'error');
+                return;
             }
+
+            originalData = [];
+            currentData = [];
+            changedRows.clear();
+
+            // Parse rows (skip header)
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+
+                const values = lines[i].split(',').map(v => v.trim());
+
+                // CRITICAL: Preserve maxTotal exactly as in CSV (including 0)
+                const maxTotalValue = parseInt(values[9]);
+                const maxTotal = isNaN(maxTotalValue) ? 400 : maxTotalValue;
+
+                const row = {
+                    roll: values[0] || '',
+                    name: values[1] || '',
+                    exam: values[2] || '',
+                    chem: parseInt(values[3]) || 0,
+                    phy: parseInt(values[4]) || 0,
+                    bio: parseInt(values[5]) || 0,
+                    math: parseInt(values[6]) || 0,
+                    total: parseInt(values[7]) || 0,
+                    percent: parseInt(values[8]) || 0,
+                    maxTotal: maxTotal
+                };
+
+                // Auto-calculate if needed (but respect original maxTotal)
+                row.total = row.chem + row.phy + row.bio + row.math;
+                if (row.maxTotal === 0) {
+                    row.percent = 0;
+                } else if (row.maxTotal > 0) {
+                    row.percent = Math.round((row.total / row.maxTotal) * 100);
+                }
+
+                originalData.push(JSON.parse(JSON.stringify(row)));
+                currentData.push(row);
+            }
+
+            localStorage.setItem(DB_KEY, JSON.stringify(currentData));
+            renderTable();
+            updateStatus();
+            document.getElementById('csvFile').value = '';
+            showAlert(`Loaded ${currentData.length} records successfully`, 'success');
         }
 
+        // ============================================================
+        // TABLE RENDERING
+        // ============================================================
         function renderTable() {
-            const tbody = document.getElementById('dataTbody');
-            tbody.innerHTML = filteredData.length === 0 
-                ? '<tr><td colspan="11" class="no-data">No data available</td></tr>'
-                : filteredData.map((row, index) => {
-                    const globalIndex = allData.indexOf(row); // For actions
-                    const isHidden = hideUnattempted && parseInt(row.maxTotal) === 0;
-                    return `
-                        <tr ${isHidden ? 'class="hidden"' : ''}>
-                            <td>${row.roll || ''}</td>
-                            <td>${row.name || ''}</td>
-                            <td>${row.exam || ''}</td>
-                            <td>${row.chem || 0}</td>
-                            <td>${row.phy || 0}</td>
-                            <td>${row.bio || 0}</td>
-                            <td>${row.math || 0}</td>
-                            <td class="readonly">${(parseInt(row.chem || 0) + parseInt(row.phy || 0) + parseInt(row.bio || 0) + parseInt(row.math || 0))}</td>
-                            <td class="readonly">${row.maxTotal ? (parseInt(row.total || 0) / parseInt(row.maxTotal) * 100).toFixed(2) : 'N/A'}%</td>
-                            <td>${row.maxTotal || 0}</td>
-                            <td>
-                                <div class="actions">
-                                    <button class="btn btn-view" onclick="viewRecord(${globalIndex})" ${isHidden ? 'disabled' : ''}><i class="fas fa-eye"></i></button>
-                                    <button class="btn btn-edit" onclick="editRecord(${globalIndex})" ${isHidden ? 'disabled' : ''}><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-delete" onclick="deleteRecord(${globalIndex})" ${isHidden ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            if (currentData.length === 0) {
+                document.getElementById('tableContainer').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('bottomControls').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('tableContainer').style.display = 'block';
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('bottomControls').style.display = 'flex';
+
+            currentData.forEach((row, index) => {
+                const isChanged = changedRows.has(index);
+                const tr = document.createElement('tr');
+                tr.className = isChanged ? 'changed' : '';
+
+                tr.innerHTML = `
+                    <td class="row-number">${index + 1}</td>
+                    <td><input type="text" value="${row.roll}" onchange="updateField(${index}, 'roll', this.value)" /></td>
+                    <td><input type="text" value="${row.name}" onchange="updateField(${index}, 'name', this.value)" /></td>
+                    <td><input type="text" value="${row.exam}" onchange="updateField(${index}, 'exam', this.value)" /></td>
+                    <td><input type="number" value="${row.chem}" onchange="updateField(${index}, 'chem', this.value)" /></td>
+                    <td><input type="number" value="${row.phy}" onchange="updateField(${index}, 'phy', this.value)" /></td>
+                    <td><input type="number" value="${row.bio}" onchange="updateField(${index}, 'bio', this.value)" /></td>
+                    <td><input type="number" value="${row.math}" onchange="updateField(${index}, 'math', this.value)" /></td>
+                    <td><strong>${row.total}</strong></td>
+                    <td><strong>${row.percent}%</strong></td>
+                    <td><input type="number" value="${row.maxTotal}" onchange="updateField(${index}, 'maxTotal', this.value)" /></td>
+                    <td class="row-actions">
+                        <button class="btn-mini btn-reset-mini" onclick="resetRow(${index})" title="Reset this row">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
         }
 
-        function applyFilters() {
-            const examFilter = document.getElementById('examFilter').value.toLowerCase();
-            const rollFilter = document.getElementById('rollFilter').value.toLowerCase();
-            const sortValue = document.getElementById('sortSelect').value;
+        // ============================================================
+        // FIELD UPDATES
+        // ============================================================
+        function updateField(rowIndex, field, value) {
+            const row = currentData[rowIndex];
 
-            filteredData = allData.filter(row => 
-                (!examFilter || row.exam.toLowerCase().includes(examFilter)) &&
-                (!rollFilter || row.roll.toLowerCase().includes(rollFilter))
-            );
+            if (field === 'chem') row.chem = parseInt(value) || 0;
+            if (field === 'phy') row.phy = parseInt(value) || 0;
+            if (field === 'bio') row.bio = parseInt(value) || 0;
+            if (field === 'math') row.math = parseInt(value) || 0;
+            if (field === 'maxTotal') row.maxTotal = parseInt(value) || 0;  // CRITICAL: Allow 0 to stay as 0
+            if (field === 'roll') row.roll = value;
+            if (field === 'name') row.name = value;
+            if (field === 'exam') row.exam = value;
 
-            // Sort
-            filteredData.sort((a, b) => {
-                let valA, valB;
-                if (sortValue.includes('roll')) {
-                    valA = a.roll; valB = b.roll;
-                    return sortValue.endsWith('asc') ? valA.localeCompare(valB) : valB.localeCompare(valA);
-                } else if (sortValue.includes('exam')) {
-                    valA = a.exam; valB = b.exam;
-                    return sortValue.endsWith('asc') ? valA.localeCompare(valB) : valB.localeCompare(valA);
-                } else if (sortValue.includes('total')) {
-                    valA = parseInt(a.total || 0); valB = parseInt(b.total || 0);
-                    return valB - valA; // Desc by default
-                }
-                return 0;
-            });
+            // Auto-calculate totals
+            row.total = row.chem + row.phy + row.bio + row.math;
 
+            // CRITICAL: Respect maxTotal=0 (don't calculate percent if maxTotal is 0)
+            if (row.maxTotal === 0) {
+                row.percent = 0;
+            } else if (row.maxTotal > 0) {
+                row.percent = Math.round((row.total / row.maxTotal) * 100);
+            }
+
+            // Mark as changed
+            changedRows.add(rowIndex);
+            localStorage.setItem(DB_KEY, JSON.stringify(currentData));
             renderTable();
         }
 
-        function toggleHiddenRows() {
-            hideUnattempted = !hideUnattempted;
-            const btn = document.getElementById('toggleHide');
-            btn.innerHTML = hideUnattempted ? '<i class="fas fa-eye-slash"></i> Hide Unattempted' : '<i class="fas fa-eye"></i> Show All';
-            renderTable();
+        function resetRow(rowIndex) {
+            if (confirm('Reset this row to original values?')) {
+                currentData[rowIndex] = JSON.parse(JSON.stringify(originalData[rowIndex]));
+                changedRows.delete(rowIndex);
+                localStorage.setItem(DB_KEY, JSON.stringify(currentData));
+                renderTable();
+                showAlert('Row reset successfully', 'info');
+            }
         }
 
-        // View Record
-        function viewRecord(index) {
-            const row = allData[index];
-            const total = parseInt(row.chem || 0) + parseInt(row.phy || 0) + parseInt(row.bio || 0) + parseInt(row.math || 0);
-            const percent = row.maxTotal ? (total / parseInt(row.maxTotal) * 100).toFixed(2) : 'N/A';
-            document.getElementById('viewContent').innerHTML = `
-                <p><strong>Roll:</strong> ${row.roll}</p>
-                <p><strong>Name:</strong> ${row.name}</p>
-                <p><strong>Exam:</strong> ${row.exam}</p>
-                <p><strong>Scores:</strong> Chem: ${row.chem}, Phy: ${row.phy}, Bio: ${row.bio}, Math: ${row.math}</p>
-                <p><strong>Total:</strong> ${total} / ${row.maxTotal || 0} (${percent}%)</p>
+        // ============================================================
+        // CSV DOWNLOAD
+        // ============================================================
+        function downloadCSV() {
+            if (currentData.length === 0) {
+                showAlert('No data to download', 'error');
+                return;
+            }
+
+            const header = 'Roll,Name,Exam,Chem,Phy,Bio,Math,Total,Percent,MaxTotal\n';
+            const rows = currentData.map(r => 
+                `${r.roll},${r.name},${r.exam},${r.chem},${r.phy},${r.bio},${r.math},${r.total},${r.percent},${r.maxTotal}`
+            ).join('\n');
+
+            const csv = header + rows;
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+
+            link.setAttribute('href', url);
+            link.setAttribute('download', `student_data_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showAlert('CSV downloaded successfully', 'success');
+        }
+
+        // ============================================================
+        // UI UTILITIES
+        // ============================================================
+        function updateStatus() {
+            const badge = document.getElementById('statusBadge');
+            if (currentData.length === 0) {
+                badge.innerHTML = '<i class="fas fa-circle"></i> No data loaded';
+                badge.className = 'status-badge status-empty';
+            } else {
+                badge.innerHTML = `<i class="fas fa-circle"></i> ${currentData.length} records loaded`;
+                badge.className = 'status-badge status-loaded';
+            }
+        }
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
             `;
-            document.getElementById('viewModal').style.display = 'block';
+            container.appendChild(alert);
+
+            setTimeout(() => {
+                alert.remove();
+            }, 4000);
         }
 
-        // Edit Record (Auto-calc total/percent, preserve maxTotal=0)
-        function editRecord(index) {
-            const row = allData[index];
-            document.getElementById('editIndex').value = index;
-            document.getElementById('editRoll').value = row.roll || '';
-            document.getElementById('editName').value = row.name || '';
-            document.getElementById('editExam').value = row.exam || '';
-            document.getElementById('editChem').value = row.chem || 0;
-            document.getElementById('editPhy').value = row.phy || 0;
-            document.getElementById('editBio').value = row.bio || 0;
-            document.getElementById('editMath').value = row.math || 0;
-            // Auto-calc
-            updateAutoCalc();
-            document.getElementById('editMaxTotal').value = row.maxTotal || 0;
-            document.getElementById('editModal').style.display = 'block';
-        }
-
-        // Auto-calc on subject input change
-        ['editChem', 'editPhy', 'editBio', 'editMath'].forEach(id => {
-            document.getElementById(id).addEventListener('input', updateAutoCalc);
-        });
-
-        function updateAutoCalc() {
-            const chem = parseInt(document.getElementById('editChem').value) || 0;
-            const phy = parseInt(document.getElementById('editPhy').value) || 0;
-            const bio = parseInt(document.getElementById('editBio').value) || 0;
-            const math = parseInt(document.getElementById('editMath').value) || 0;
-            const total = chem + phy + bio + math;
-            const maxTotal = parseInt(document.getElementById('editMaxTotal').value) || 0;
-            document.getElementById('editTotal').value = total;
-            document.getElementById('editPercent').value = maxTotal > 0 ? (total / maxTotal * 100).toFixed(2) : 'N/A';
-        }
-
-        // Save Edit (Update CSV, preserve all data)
-        document.getElementById('editForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const index = parseInt(document.getElementById('editIndex').value);
-            const maxTotal = parseInt(allData[index].maxTotal || 0); // Preserve original if 0
-            const updatedRow = {
-                roll: document.getElementById('editRoll').value,
-                name: document.getElementById('editName').value,
-                exam: document.getElementById('editExam').value,
-                chem: parseInt(document.getElementById('editChem').value) || 0,
-                phy: parseInt(document.getElementById('editPhy').value) || 0,
-                bio: parseInt(document.getElementById('editBio').value) || 0,
-                math: parseInt(document.getElementById('editMath').value) || 0,
-                total: document.getElementById('editTotal').value, // Auto
-                percent: document.getElementById('editPercent').value.replace('%', ''), // Auto
-                maxTotal: maxTotal === 0 ? 0 : (parseInt(document.getElementById('editMaxTotal').value) || maxTotal), // Preserve 0
-                maxChem: 100, maxPhy: 100, maxBio: 100, maxMath: 100 // Defaults
-            };
-            try {
-                const response = await fetch('/api/update', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ index, data: updatedRow })
-                });
-                if (response.ok) {
-                    closeModal('editModal');
-                    loadDataTable();  // Reload to reflect changes
-                } else {
-                    alert('Update failed');
-                }
-            } catch (err) {
-                alert('Error: ' + err.message);
-            }
-        });
-
-        // Delete Record (Preserves others)
-        async function deleteRecord(index) {
-            if (!confirm('Delete this record? This will not affect other data.')) return;
-            try {
-                const response = await fetch('/api/delete', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ index })
-                });
-                if (response.ok) {
-                    loadDataTable();  // Reload
-                } else {
-                    alert('Delete failed');
-                }
-            } catch (err) {
-                alert('Error: ' + err.message);
+        function reloadData() {
+            if (confirm('Reset all changes and reload original data?')) {
+                currentData = JSON.parse(JSON.stringify(originalData));
+                changedRows.clear();
+                localStorage.setItem(DB_KEY, JSON.stringify(currentData));
+                renderTable();
+                showAlert('All changes reset', 'info');
             }
         }
 
-        // Max Totals Tab
-        function loadExamMaxConfig() {
-            // Fetch or load config (for now, derive from data)
-            const uniqueExams = [...new Set(allData.map(d => d.exam).filter(Boolean))];
-            const rows = document.getElementById('examRows');
-            rows.innerHTML = uniqueExams.map(exam => `
-                <div class="exam-row">
-                    <input type="text" class="exam-input" value="${exam}" readonly>
-                    <input type="number" class="exam-input" placeholder="Max Total" id="maxTotal_${exam.replace(/\s+/g, '_')}" value="${examMaxConfig[exam]?.maxTotal || 400}">
-                    <input type="number" class="exam-input" placeholder="Chem Max" value="${examMaxConfig[exam]?.chem || 100}">
-                    <input type="number" class="exam-input" placeholder="Phy Max" value="${examMaxConfig[exam]?.phy || 100}">
-                    <input type="number" class="exam-input" placeholder="Bio Max" value="${examMaxConfig[exam]?.bio || 100}">
-                    <input type="number" class="exam-input" placeholder="Math Max" value="${examMaxConfig[exam]?.math || 100}">
-                    <button type="button" class="remove-exam" onclick="removeExamRow(this)">×</button>
-                </div>
-            `).join('');
-            if (uniqueExams.length === 0) rows.innerHTML = '<p class="no-data">No exams found. Upload data first.</p>';
-        }
-
-        function addExamRow() {
-            const examName = prompt('Enter exam name (e.g., WE 1):');
-            if (!examName) return;
-            const rows = document.getElementById('examRows');
-            const newRow = document.createElement('div');
-            newRow.className = 'exam-row';
-            newRow.innerHTML = `
-                <input type="text" class="exam-input" value="${examName}" id="examName_${Date.now()}">
-                <input type="number" class="exam-input" placeholder="Max Total" value="400">
-                <input type="number" class="exam-input" placeholder="Chem Max" value="100">
-                <input type="number" class="exam-input" placeholder="Phy Max" value="100">
-                <input type="number" class="exam-input" placeholder="Bio Max" value="100">
-                <input type="number" class="exam-input" placeholder="Math Max" value="100">
-                <button type="button" class="remove-exam" onclick="removeExamRow(this)">×</button>
-            `;
-            rows.appendChild(newRow);
-        }
-
-        function removeExamRow(btn) {
-            if (confirm('Remove this exam config?')) btn.closest('.exam-row').remove();
-        }
-
-        document.getElementById('maxTotalsForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const rows = document.querySelectorAll('.exam-row');
-            const config = {};
-            rows.forEach(row => {
-                const exam = row.querySelector('input[type="text"]').value;
-                if (exam) {
-                    config[exam] = {
-                        maxTotal: parseInt(row.querySelectorAll('input[type="number"]')[0].value) || 400,
-                        chem: parseInt(row.querySelectorAll('input[type="number"]')[1].value) || 100,
-                        phy: parseInt(row.querySelectorAll('input[type="number"]')[2].value) || 100,
-                        bio: parseInt(row.querySelectorAll('input[type="number"]')[3].value) || 100,
-                        math: parseInt(row.querySelectorAll('input[type="number"]')[4].value) || 100
-                    };
+        // ============================================================
+        // INITIALIZATION
+        // ============================================================
+        window.addEventListener('load', () => {
+            // Try to load from localStorage on page load
+            const saved = localStorage.getItem(DB_KEY);
+            if (saved) {
+                try {
+                    currentData = JSON.parse(saved);
+                    originalData = JSON.parse(JSON.stringify(currentData));
+                    renderTable();
+                    updateStatus();
+                    showAlert('Data loaded from cache', 'info');
+                } catch (err) {
+                    console.error('Error loading cached data:', err);
                 }
-            });
-            try {
-                const response = await fetch('/api/config-max', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ config })
-                });
-                if (response.ok) {
-                    examMaxConfig = config;
-                    alert('Configurations saved! Update student maxTotals via edits if needed.');
-                } else {
-                    alert('Save failed');
-                }
-            } catch (err) {
-                alert('Error: ' + err.message);
             }
-        });
-
-        // Modal Controls
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-        window.onclick = (e) => {
-            if (e.target.classList.contains('modal')) {
-                const modalId = e.target.id;
-                closeModal(modalId);
-            }
-        };
-
-        // Init
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDataTable();
         });
     </script>
 </body>

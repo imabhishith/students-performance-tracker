@@ -1012,6 +1012,514 @@ body {
   gap: var(--space-12);
 }
 
+/* ============================================
+   BOLD & VIBRANT CARD STYLING
+   ============================================ */
+
+.advanced-insights-section {
+  margin-top: 3rem;
+  padding: 2rem 0;
+}
+
+.insights-header {
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.insights-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #2158d4 0%, #c41e3a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.insights-header h2 i {
+  font-size: 1.8rem;
+  background: linear-gradient(135deg, #2158d4 0%, #c41e3a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.insights-header p {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* Insights Grid - 3 columns */
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* ============================================
+   CARD 1: SUBJECT DIFFICULTY RANKING (PURPLE)
+   ============================================ */
+.insight-card {
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+  border: none;
+}
+
+.insight-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.insight-card:hover {
+  transform: translateY(-8px);
+}
+
+.insight-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Difficulty Card - Deep Purple to Violet */
+.difficulty-card {
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  color: white;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.3);
+}
+
+.difficulty-card:hover {
+  box-shadow: 0 16px 48px rgba(124, 58, 237, 0.4);
+}
+
+.difficulty-card .insight-header {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.difficulty-card .insight-icon {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.difficulty-card .insight-icon i {
+  color: white;
+}
+
+.difficulty-card .insight-title h3,
+.difficulty-card .insight-title p {
+  color: white;
+}
+
+.difficulty-card .insight-title p {
+  opacity: 0.9;
+}
+
+/* ============================================
+   CARD 2: PERFORMANCE DISTRIBUTION (TEAL)
+   ============================================ */
+.distribution-card {
+  background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+  color: white;
+  box-shadow: 0 8px 24px rgba(8, 145, 178, 0.3);
+}
+
+.distribution-card:hover {
+  box-shadow: 0 16px 48px rgba(8, 145, 178, 0.4);
+}
+
+.distribution-card .insight-header {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.distribution-card .insight-icon {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.distribution-card .insight-icon i {
+  color: white;
+}
+
+.distribution-card .insight-title h3,
+.distribution-card .insight-title p {
+  color: white;
+}
+
+.distribution-card .insight-title p {
+  opacity: 0.9;
+}
+
+/* ============================================
+   CARD 3: TREND ANALYSIS (ORANGE/RED)
+   ============================================ */
+.trend-card {
+  background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+  color: white;
+  box-shadow: 0 8px 24px rgba(234, 88, 12, 0.3);
+}
+
+.trend-card:hover {
+  box-shadow: 0 16px 48px rgba(234, 88, 12, 0.4);
+}
+
+.trend-card .insight-header {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.trend-card .insight-icon {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.trend-card .insight-icon i {
+  color: white;
+}
+
+.trend-card .insight-title h3,
+.trend-card .insight-title p {
+  color: white;
+}
+
+.trend-card .insight-title p {
+  opacity: 0.9;
+}
+
+.insight-header {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.insight-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.insight-icon i {
+  font-size: 1.8rem;
+}
+
+.insight-title h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.insight-title p {
+  font-size: 0.85rem;
+  margin: 0;
+  opacity: 0.85;
+}
+
+/* ============================================
+   DIFFICULTY CARD CONTENT
+   ============================================ */
+.difficulty-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.difficulty-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.difficulty-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.subject-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: white;
+}
+
+.difficulty-badge {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+}
+
+.difficulty-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.difficulty-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
+  border-radius: var(--radius-full);
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+.difficulty-percent {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  text-align: right;
+}
+
+/* ============================================
+   DISTRIBUTION CARD CONTENT
+   ============================================ */
+.distribution-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.distribution-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  transition: all 0.3s ease;
+  color: white;
+}
+
+.distribution-item:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.distribution-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  margin-bottom: 0.75rem;
+  font-size: 1.4rem;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.distribution-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.distribution-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  opacity: 0.8;
+}
+
+.distribution-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: white;
+}
+
+.distribution-percent {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.distribution-sublabel {
+  font-size: 0.7rem;
+  opacity: 0.75;
+  margin-top: 0.2rem;
+}
+
+/* ============================================
+   TREND ANALYSIS CONTENT
+   ============================================ */
+.trend-display {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.trend-metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  transition: all 0.3s ease;
+}
+
+.trend-metric:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.trend-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  opacity: 0.85;
+}
+
+.trend-value-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.trend-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: white;
+}
+
+.trend-indicator {
+  font-size: 1.2rem;
+  animation: pulse 2s infinite;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.trend-indicator.up {
+  color: #4ade80;
+  animation: slideUp 0.6s ease-out;
+}
+
+.trend-indicator.down {
+  color: #fca5a5;
+  animation: slideDown 0.6s ease-out;
+  transform: rotate(180deg);
+}
+
+.trend-status {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.trend-status.improving {
+  background: rgba(74, 222, 128, 0.3);
+  color: #86efac;
+  border-color: #4ade80;
+}
+
+.trend-status.declining {
+  background: rgba(252, 165, 165, 0.3);
+  color: #fecaca;
+  border-color: #fca5a5;
+}
+
+.trend-status.stable {
+  background: rgba(253, 230, 138, 0.3);
+  color: #fef3c7;
+  border-color: #fcd34d;
+}
+
+.trend-description {
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.trend-description p {
+  margin: 0;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes slideUp {
+  from {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-6px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
 .action-buttons {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -4499,4 +5007,673 @@ body {
         print-color-adjust: exact !important;
         color-scheme: exact !important;
     }
+}
+
+/* ============================================
+   UNIFIED CARDS SECTION WRAPPER
+   ============================================ */
+
+.unified-cards-section {
+  margin-bottom: 3rem;
+}
+
+.unified-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+/* ============================================
+   LEADERBOARD CARDS - BOLD VIBRANT GRADIENTS
+   ============================================ */
+
+.leaderboard-card {
+  border-radius: 12px;
+  overflow: hidden;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  min-height: 400px;
+}
+
+.leaderboard-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+}
+
+/* Card 1 - Last 3 Exams (Pink to Magenta Gradient) */
+.unified-cards-grid .leaderboard-card:nth-child(4) {
+  background: linear-gradient(135deg, #ec4899 0%, #bb1f7a 100%);
+}
+
+/* Card 2 - Top Performers (Cyan to Blue Gradient) */
+.unified-cards-grid .leaderboard-card:nth-child(5) {
+  background: linear-gradient(135deg, #06d40d 0%, #0fc702 100%);
+}
+
+/* Card 3 - Most Improved (Golden Yellow to Orange Gradient) */
+.unified-cards-grid .leaderboard-card:nth-child(6) {
+  background: linear-gradient(135deg, #9e15fa 0%, #6106d9 100%);
+}
+
+/* ============================================
+   LEADERBOARD HEADER
+   ============================================ */
+
+.leaderboard-header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: 1.75rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+}
+
+.leaderboard-header-icon {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  flex-shrink: 0;
+}
+
+.leaderboard-header-icon i {
+  font-size: 1.8rem;
+  color: white;
+}
+
+.leaderboard-header-content {
+  flex: 1;
+}
+
+.leaderboard-header h3 {
+  margin: 0 0 0.3rem 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.leaderboard-header p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* ============================================
+   LEADERBOARD BODY
+   ============================================ */
+
+.leaderboard-body {
+  flex: 1;
+  padding: 1rem 1.75rem 1.75rem 1.75rem;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  justify-content: flex-start;
+}
+
+/* ============================================
+   LEADERBOARD ITEM
+   ============================================ */
+
+.leaderboard-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  color: white;
+  animation: slideIn 0.4s ease-out forwards;
+}
+
+.leaderboard-item:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.leaderboard-item:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.leaderboard-item:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.leaderboard-item:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateX(6px);
+}
+
+/* ============================================
+   RANK BADGE
+   ============================================ */
+
+.rank-badge {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+/* Rank 1 - Gold */
+.leaderboard-item.rank-1 .rank-badge {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #92400e;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.leaderboard-item.rank-1:hover .rank-badge {
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 8px 20px rgba(251, 191, 36, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Rank 2 - Silver */
+.leaderboard-item.rank-2 .rank-badge {
+  background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+  color: #374151;
+  box-shadow: 0 4px 12px rgba(209, 213, 219, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.leaderboard-item.rank-2:hover .rank-badge {
+  transform: scale(1.15) rotate(-5deg);
+  box-shadow: 0 8px 20px rgba(209, 213, 219, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Rank 3 - Bronze */
+.leaderboard-item.rank-3 .rank-badge {
+  background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+  color: #7c2d12;
+  box-shadow: 0 4px 12px rgba(253, 186, 116, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.leaderboard-item.rank-3:hover .rank-badge {
+  transform: scale(1.15) rotate(3deg);
+  box-shadow: 0 8px 20px rgba(253, 186, 116, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================
+   LEADERBOARD INFO
+   ============================================ */
+
+.leaderboard-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.student-name {
+  display: block;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.student-roll {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* ============================================
+   LEADERBOARD SCORE
+   ============================================ */
+
+.leaderboard-score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  text-align: right;
+  min-width: 70px;
+}
+
+.score-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  line-height: 1.2;
+}
+
+.score-percent {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .unified-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .leaderboard-card {
+    min-height: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .unified-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .leaderboard-header {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+
+  .leaderboard-header-icon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+  }
+
+  .leaderboard-header-icon i {
+    font-size: 1.5rem;
+  }
+
+  .leaderboard-header h3 {
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .leaderboard-header p {
+    font-size: 0.8rem;
+  }
+
+  .leaderboard-body {
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+    gap: 0.5rem;
+  }
+
+  .leaderboard-item {
+    padding: 0.85rem;
+    gap: 0.75rem;
+  }
+
+  .leaderboard-item:hover {
+    transform: translateX(4px);
+  }
+
+  .rank-badge {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 1rem;
+  }
+
+  .leaderboard-item.rank-1 .rank-badge,
+  .leaderboard-item.rank-2 .rank-badge,
+  .leaderboard-item.rank-3 .rank-badge {
+    font-size: 1.1rem;
+  }
+
+  .score-value {
+    font-size: 1rem;
+  }
+
+  .score-percent {
+    font-size: 0.75rem;
+  }
+
+  .student-name {
+    font-size: 0.9rem;
+  }
+
+  .student-roll {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .unified-cards-grid {
+    gap: 1rem;
+  }
+
+  .leaderboard-card {
+    min-height: auto;
+  }
+
+  .leaderboard-header {
+    padding: 1.25rem;
+    gap: 0.75rem;
+  }
+
+  .leaderboard-header-icon {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+  }
+
+  .leaderboard-header-icon i {
+    font-size: 1.3rem;
+  }
+
+  .leaderboard-header h3 {
+    font-size: 0.95rem;
+  }
+
+  .leaderboard-header p {
+    font-size: 0.75rem;
+  }
+
+  .leaderboard-body {
+    padding: 0.75rem 1.25rem 1.25rem 1.25rem;
+    gap: 0.5rem;
+  }
+
+  .leaderboard-item {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .rank-badge {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    font-size: 0.9rem;
+  }
+
+  .score-value {
+    font-size: 0.95rem;
+  }
+
+  .student-name {
+    font-size: 0.85rem;
+  }
+
+  .student-roll {
+    font-size: 0.7rem;
+  }
+
+  .leaderboard-score {
+    min-width: 60px;
+  }
+}
+
+/* ============================================
+   ENHANCED BALANCED CONSISTENCY
+   ============================================ */
+
+.performance-consistency-stat-balanced {
+  margin-top: 1.2rem;
+  padding-top: 1.2rem;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.consistency-balanced-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.consistency-balanced-header i {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.85);
+  animation: wave 2s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.consistency-title {
+  flex: 1;
+}
+
+.consistency-balanced-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.consistency-badge {
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  background: rgba(74, 222, 128, 0.2);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  color: #86efac;
+  text-align: center;
+  min-width: 80px;
+  white-space: nowrap;
+}
+
+.consistency-badge.medium {
+  background: rgba(250, 204, 21, 0.2);
+  border-color: rgba(250, 204, 21, 0.3);
+  color: #fef3c7;
+}
+
+.consistency-badge.low {
+  background: rgba(252, 165, 165, 0.2);
+  border-color: rgba(252, 165, 165, 0.3);
+  color: #fecaca;
+}
+
+.consistency-balanced-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+}
+
+.balanced-bar-bg {
+  flex: 1;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.balanced-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.25));
+  border-radius: 3px;
+  transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+}
+
+.balanced-bar-value {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.8);
+  min-width: 35px;
+  text-align: right;
+}
+
+/* ============================================
+   VOLATILITY INDICATOR
+   ============================================ */
+
+.volatility-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+  border-left: 3px solid rgba(255, 255, 255, 0.15);
+}
+
+.volatility-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: rgba(255, 255, 255, 0.75);
+  min-width: 95px;
+}
+
+.volatility-mini-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.4rem;
+  flex: 1;
+  height: 20px;
+}
+
+.volatility-bar-mini {
+  flex: 1;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.2));
+  border-radius: 2px 2px 0 0;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-bottom: none;
+  transition: all 0.3s ease;
+  animation: barPulse 2s ease-in-out infinite;
+}
+
+.volatility-bar-mini:nth-child(1) { animation-delay: 0s; }
+.volatility-bar-mini:nth-child(2) { animation-delay: 0.2s; }
+.volatility-bar-mini:nth-child(3) { animation-delay: 0.4s; }
+.volatility-bar-mini:nth-child(4) { animation-delay: 0.6s; }
+.volatility-bar-mini:nth-child(5) { animation-delay: 0.8s; }
+
+@keyframes barPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.volatility-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+  min-width: 65px;
+  text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .consistency-badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.7rem;
+    min-width: 70px;
+  }
+
+  .balanced-bar-value {
+    font-size: 0.75rem;
+  }
+
+  .volatility-label {
+    min-width: 85px;
+    font-size: 0.7rem;
+  }
+
+  .volatility-mini-bars {
+    height: 18px;
+    gap: 0.3rem;
+  }
+
+  .volatility-text {
+    min-width: 55px;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .consistency-balanced-header {
+    font-size: 0.8rem;
+  }
+
+  .consistency-badge {
+    min-width: 65px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+  }
+
+  .balanced-bar-value {
+    font-size: 0.7rem;
+  }
+
+  .volatility-indicator {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .volatility-label {
+    width: 100%;
+  }
+
+  .volatility-mini-bars {
+    width: 100%;
+    height: 16px;
+  }
+
+  .volatility-text {
+    width: 100%;
+    text-align: right;
+  }
 }

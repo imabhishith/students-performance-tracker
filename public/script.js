@@ -497,7 +497,7 @@ function processJsonData(data) {
     populateLast3();
     ['chem', 'phy', 'bio', 'math'].forEach(sub => populateSubject(`${sub}Table`, sub));
     populateStats();
-
+    calculateAdvancedInsights();
     showTab('overall');
 
   } catch (error) {
@@ -572,6 +572,372 @@ function computeCumulatives(student) {
   } else {
     student.strongSubject = ['N/A'];
     student.weakSubject = ['N/A'];
+  }
+}
+
+// ============================================
+// ADVANCED INSIGHTS FUNCTIONS
+// ============================================
+
+function calculateAdvancedInsights() {
+  if (students.length === 0) return;
+
+  // 1. SUBJECT DIFFICULTY RANKING
+  calculateSubjectDifficultyRanking();
+  
+  // 2. PERFORMANCE DISTRIBUTION
+  calculatePerformanceDistribution();
+  
+  // 3. TREND ANALYSIS
+  calculateTrendAnalysis();
+  
+  // 4. LEADERBOARDS
+  populateLast3Leaderboard();
+  populateOverallLeaderboard();
+  populateImprovedLeaderboard();
+}
+
+function calculateSubjectDifficultyRanking() {
+  const subjects = ['chem', 'phy', 'bio', 'math'];
+  const subjectNames = {chem: 'Chemistry', phy: 'Physics', bio: 'Biology', math: 'Mathematics'};
+  
+  const subjectAverages = {};
+  
+  subjects.forEach(sub => {
+    let total = 0, maxTotal = 0, count = 0;
+    
+    students.forEach(stu => {
+      if (stu.subjectMaxTotals && stu.subjectMaxTotals[sub] > 0) {
+        total += stu.subjectTotals[sub] || 0;
+        maxTotal += stu.subjectMaxTotals[sub];
+        count++;
+      }
+    });
+    
+    subjectAverages[sub] = maxTotal > 0 ? (total / maxTotal * 100) : 0;
+  });
+  
+  // Populate difficulty bars
+  subjects.forEach(sub => {
+    const percent = subjectAverages[sub];
+    const barEl = document.getElementById(sub + 'Bar');
+    const percentEl = document.getElementById(sub + 'Percent');
+    const badgeEl = document.getElementById(sub + 'Difficulty');
+    
+    if (barEl) barEl.style.width = Math.min(percent, 100) + '%';
+    if (percentEl) percentEl.textContent = percent.toFixed(1) + '%';
+    
+    if (badgeEl) {
+      badgeEl.className = 'difficulty-badge';
+      if (percent >= 70) {
+        badgeEl.classList.add('easy');
+        badgeEl.textContent = 'Easy';
+      } else if (percent >= 50) {
+        badgeEl.classList.add('moderate');
+        badgeEl.textContent = 'Moderate';
+      } else {
+        badgeEl.classList.add('difficult');
+        badgeEl.textContent = 'Difficult';
+      }
+    }
+  });
+}
+
+function calculatePerformanceDistribution() {
+  let highPerformers = 0;    // 70%+
+  let averagePerformers = 0; // 35-70%
+  let atRiskStudents = 0;    // <35%
+  
+  students.forEach(stu => {
+    const percent = parseFloat(stu.cumPercent) || 0;
+    
+    if (percent >= 70) highPerformers++;
+    else if (percent >= 35) averagePerformers++;
+    else atRiskStudents++;
+  });
+  
+  const total = students.length;
+  
+  // Update UI
+  document.getElementById('highPerfCount').textContent = highPerformers;
+  document.getElementById('highPerfPercent').textContent = ((highPerformers/total)*100).toFixed(0) + '%';
+  
+  document.getElementById('avgPerfCount').textContent = averagePerformers;
+  document.getElementById('avgPerfPercent').textContent = ((averagePerformers/total)*100).toFixed(0) + '%';
+  
+  document.getElementById('atRiskCount').textContent = atRiskStudents;
+  document.getElementById('atRiskPercent').textContent = ((atRiskStudents/total)*100).toFixed(0) + '%';
+}
+
+function calculateTrendAnalysis() {
+  // Get latest exam vs overall average
+  const validExams = students.flatMap(s => s.exams).filter(e => e.maxTotal > 0);
+  
+  if (validExams.length === 0) {
+    document.getElementById('trendDescription').textContent = 'Insufficient data for trend analysis';
+    return;
+  }
+  
+  // ✅ FIXED: Calculate TRUE overall average
+  // Overall Average = (Sum of all scores obtained) / (Sum of all maximum marks) * 100
+  let totalScoresObtained = 0;
+  let totalMaxMarks = 0;
+  
+  students.forEach(stu => {
+    stu.exams.forEach(exam => {
+      if (exam.maxTotal > 0) {
+        totalScoresObtained += exam.total;
+        totalMaxMarks += exam.maxTotal;
+      }
+    });
+  });
+  
+  const overallAvg = totalMaxMarks > 0 ? (totalScoresObtained / totalMaxMarks * 100) : 0;
+  
+  // Latest exam average
+  const latestExam = last3Exams && last3Exams[last3Exams.length - 1];
+  
+  let latestAvg = 0;
+  if (latestExam) {
+    let latestTotal = 0;
+    let latestMax = 0;
+    
+    students.forEach(stu => {
+      const examData = stu.exams.find(e => e.exam === latestExam);
+      if (examData && examData.maxTotal > 0) {
+        latestTotal += examData.total;
+        latestMax += examData.maxTotal;
+      }
+    });
+    
+    latestAvg = latestMax > 0 ? (latestTotal / latestMax * 100) : 0;
+  }
+  
+  const trend = latestAvg - overallAvg;
+  
+  // Update UI
+  document.getElementById('latestExamAvg').textContent = latestAvg.toFixed(1) + '%';
+  document.getElementById('overallTrendAvg').textContent = overallAvg.toFixed(1) + '%';
+  document.getElementById('trendValue').textContent = (trend >= 0 ? '+' : '') + trend.toFixed(1) + '%';
+  
+  // Set trend indicator and status
+  const indicator = document.getElementById('trendIndicator');
+  const status = document.getElementById('trendStatus');
+  
+  indicator.className = 'trend-indicator';
+  status.className = 'trend-status';
+  
+  if (trend > 2) {
+    indicator.classList.add('up');
+    status.classList.add('improving');
+    status.textContent = 'Improving';
+    document.getElementById('trendDescription').textContent = 'Class showing positive growth momentum. Keep maintaining focus!';
+  } else if (trend < -2) {
+    indicator.classList.add('down');
+    status.classList.add('declining');
+    status.textContent = 'Declining';
+    document.getElementById('trendDescription').textContent = 'Class performance declining. Additional support needed.';
+  } else {
+    status.classList.add('stable');
+    status.textContent = 'Stable';
+    document.getElementById('trendDescription').textContent = 'Class performance stable. Continue current strategies.';
+  }
+
+  // Enhanced Performance Consistency with Score Volatility
+const scoresConsistency = students.map(s => s.cumPercent || 0).filter(s => !isNaN(s));
+
+if (scoresConsistency.length === 0) {
+  // If no valid scores, set defaults
+  document.getElementById('consistencyStatus').textContent = 'N/A';
+  document.getElementById('consistencyBar').style.width = '0%';
+  document.getElementById('consistencyValue').textContent = '0%';
+  for (let i = 1; i <= 5; i++) {
+    document.getElementById('volatilityBar' + i).style.height = '8px';
+  }
+  document.getElementById('volatilityLevel').textContent = 'N/A';
+  return;
+}
+
+const meanConsistency = scoresConsistency.reduce((a, b) => a + b, 0) / scoresConsistency.length;
+const varianceConsistency = scoresConsistency.reduce((a, b) => a + Math.pow(b - meanConsistency, 2), 0) / scoresConsistency.length;
+const stdDevConsistency = Math.sqrt(varianceConsistency);
+const variationConsistency = Math.min(100, isNaN(stdDevConsistency) ? 0 : (stdDevConsistency / 50) * 100);
+const predictabilityConsistency = 100 - variationConsistency;
+
+// Consistency Status
+let consistencyStatus = 'Stable';
+let consistencyStatusClass = '';
+
+if (variationConsistency > 60) {
+  consistencyStatus = 'Variable';
+  consistencyStatusClass = 'low';
+} else if (variationConsistency > 35) {
+  consistencyStatus = 'Moderate';
+  consistencyStatusClass = 'medium';
+}
+
+const statusElConsistency = document.getElementById('consistencyStatus');
+statusElConsistency.textContent = consistencyStatus;
+statusElConsistency.className = 'consistency-badge ' + consistencyStatusClass;
+
+document.getElementById('consistencyBar').style.width = predictabilityConsistency + '%';
+document.getElementById('consistencyValue').textContent = Math.round(predictabilityConsistency) + '%';
+
+// NEW: Score Volatility Visualization
+const sortedScoresVolatility = [...scoresConsistency].sort((a, b) => a - b);
+const quintilesVolatility = [];
+
+for (let i = 0; i < 5; i++) {
+  const start = Math.floor((i * scoresConsistency.length) / 5);
+  const end = Math.floor(((i + 1) * scoresConsistency.length) / 5);
+  
+  if (start >= end) {
+    quintilesVolatility.push(meanConsistency);
+    continue;
+  }
+  
+  const quintileScoresTemp = sortedScoresVolatility.slice(start, end);
+  const quintileAvgTemp = quintileScoresTemp.length > 0 
+    ? quintileScoresTemp.reduce((a, b) => a + b, 0) / quintileScoresTemp.length 
+    : meanConsistency;
+  
+  quintilesVolatility.push(quintileAvgTemp);
+}
+
+// Normalize to 8-16px heights
+const minQVolatility = Math.min(...quintilesVolatility);
+const maxQVolatility = Math.max(...quintilesVolatility);
+const rangeVolatility = maxQVolatility - minQVolatility || 1;
+
+for (let i = 1; i <= 5; i++) {
+  const barHeightVolatility = Math.max(6, 8 + ((quintilesVolatility[i - 1] - minQVolatility) / rangeVolatility) * 12);
+  document.getElementById('volatilityBar' + i).style.height = barHeightVolatility + 'px';
+}
+
+// Volatility Level
+let volatilityLevel = 'High';
+if (variationConsistency < 25) {
+  volatilityLevel = 'Very Low';
+} else if (variationConsistency < 40) {
+  volatilityLevel = 'Low';
+} else if (variationConsistency < 55) {
+  volatilityLevel = 'Moderate';
+} else if (variationConsistency < 75) {
+  volatilityLevel = 'High';
+} else {
+  volatilityLevel = 'Very High';
+}
+
+document.getElementById('volatilityLevel').textContent = volatilityLevel;
+}
+
+// ============================================
+// LEADERBOARD FUNCTIONS
+// ============================================
+
+function populateLast3Leaderboard() {
+  // Top 3 from last 3 exams combined
+  const last3Students = students.map(stu => {
+    let total = 0, maxTotal = 0;
+    
+    if (last3Exams) {
+      last3Exams.forEach(examName => {
+        const examData = stu.exams.find(ex => ex.exam === examName && ex.maxTotal > 0);
+        if (examData) {
+          total += examData.total;
+          maxTotal += examData.maxTotal;
+        }
+      });
+    }
+    
+    const percent = maxTotal > 0 ? (total / maxTotal * 100).toFixed(1) : 0;
+    return { name: stu.name, roll: stu.roll, total, percent };
+  })
+  .sort((a, b) => b.total - a.total)
+  .slice(0, 3);
+  
+  // Populate leaderboard
+  for (let i = 0; i < 3; i++) {
+    const student = last3Students[i] || {};
+    document.getElementById(`last3Rank${i+1}Name`).textContent = student.name || '-';
+    document.getElementById(`last3Rank${i+1}Roll`).textContent = student.roll || '-';
+    document.getElementById(`last3Rank${i+1}Score`).textContent = student.total || '0';
+    document.getElementById(`last3Rank${i+1}Percent`).textContent = (student.percent || '0') + '%';
+  }
+}
+
+function populateOverallLeaderboard() {
+  // Top 3 across all exams (overall cumulative)
+  const topStudents = [...students]
+    .sort((a, b) => parseFloat(b.cumTotal || 0) - parseFloat(a.cumTotal || 0))
+    .slice(0, 3);
+  
+  // Populate leaderboard
+  for (let i = 0; i < 3; i++) {
+    const student = topStudents[i] || {};
+    document.getElementById(`topAllRank${i+1}Name`).textContent = student.name || '-';
+    document.getElementById(`topAllRank${i+1}Roll`).textContent = student.roll || '-';
+    document.getElementById(`topAllRank${i+1}Score`).textContent = student.cumTotal || '0';
+    document.getElementById(`topAllRank${i+1}Percent`).textContent = (student.cumPercent || '0') + '%';
+  }
+}
+
+function populateImprovedLeaderboard() {
+  // Most improved: compare LATEST EXAM to overall average
+  // Latest exam = last exam in examOrder (system's latest, not individual's)
+  
+  const latestExam = examOrder && examOrder[examOrder.length - 1];
+  
+  if (!latestExam) {
+    for (let i = 0; i < 3; i++) {
+      document.getElementById(`improvedRank${i+1}Name`).textContent = '-';
+      document.getElementById(`improvedRank${i+1}Roll`).textContent = '-';
+      document.getElementById(`improvedRank${i+1}Score`).textContent = '+0';
+      document.getElementById(`improvedRank${i+1}Percent`).textContent = '%';
+    }
+    return;
+  }
+  
+  const improvedStudents = students.map(stu => {
+    // Get the LATEST EXAM (system's latest, not individual's)
+    const latestExamData = stu.exams.find(ex => ex.exam === latestExam && ex.maxTotal > 0);
+    
+    if (!latestExamData) {
+      return { name: stu.name, roll: stu.roll, improvement: -Infinity };
+    }
+    
+    // Latest exam percentage
+    const latestPercent = (latestExamData.total / latestExamData.maxTotal) * 100;
+    
+    // Overall average (true class average)
+    let totalScoresObtained = 0;
+    let totalMaxMarks = 0;
+    
+    stu.exams.forEach(exam => {
+      if (exam.maxTotal > 0) {
+        totalScoresObtained += exam.total;
+        totalMaxMarks += exam.maxTotal;
+      }
+    });
+    
+    const overallPercent = totalMaxMarks > 0 ? (totalScoresObtained / totalMaxMarks * 100) : 0;
+    
+    // Improvement = Latest exam % - Overall average %
+    const improvement = latestPercent - overallPercent;
+    
+    return { name: stu.name, roll: stu.roll, improvement };
+  })
+  .filter(s => s.improvement !== -Infinity)  // Exclude students who didn't take latest exam
+  .sort((a, b) => b.improvement - a.improvement)
+  .slice(0, 3);
+  
+  // Populate leaderboard
+  for (let i = 0; i < 3; i++) {
+    const student = improvedStudents[i] || {};
+    document.getElementById(`improvedRank${i+1}Name`).textContent = student.name || '-';
+    document.getElementById(`improvedRank${i+1}Roll`).textContent = student.roll || '-';
+    document.getElementById(`improvedRank${i+1}Score`).textContent = (student.improvement >= 0 ? '+' : '') + (student.improvement || '0').toFixed(1);
+    document.getElementById(`improvedRank${i+1}Percent`).textContent = '%';
   }
 }
 
