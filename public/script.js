@@ -1503,6 +1503,456 @@ function computeProgress(student) {
   return progress;
 }
 
+class ComparativeAnalysis {
+    constructor(students, examOrder) {
+        this.students = students;
+        this.examOrder = examOrder;
+        this.init();
+    }
+    
+    init() {
+        this.setupEventListeners();
+        console.log('✅ Comparative Analysis initialized');
+    }
+    
+    setupEventListeners() {
+        const typeSelect = document.getElementById('comparisonType');
+        const generateBtn = document.getElementById('generateComparison');
+        
+        if (typeSelect) {
+            typeSelect.addEventListener('change', (e) => {
+                this.updateControls(e.target.value);
+            });
+        }
+        
+        if (generateBtn) {
+            generateBtn.addEventListener('click', () => {
+                this.generateComparison();
+            });
+        }
+    }
+    
+    updateControls(type) {
+        const subjectSelectGroup = document.getElementById('subjectSelectGroup');
+        if (!subjectSelectGroup) return;
+        
+        // Show subject selector only for subject and performance comparisons
+        subjectSelectGroup.style.display = 
+            (type === 'subject' || type === 'performance') ? 'flex' : 'none';
+    }
+    
+    generateComparison() {
+        const type = document.getElementById('comparisonType')?.value;
+        
+        if (!type) return;
+        
+        let results;
+        switch(type) {
+            case 'exam':
+                results = this.compareExams();
+                break;
+            case 'subject':
+                results = this.compareSubjectTrends();
+                break;
+            case 'time':
+                results = this.compareTimePeriods();
+                break;
+            case 'performance':
+                results = this.comparePerformanceDistribution();
+                break;
+        }
+        
+        if (results) {
+            this.displayResults(results, type);
+        }
+    }
+    
+    // ─────────────────────────────────────────────────────────
+    // EXAM vs EXAM COMPARISON
+    // ─────────────────────────────────────────────────────────
+    compareExams() {
+        const examData = [];
+        
+        this.examOrder.forEach(exam => {
+            const scores = this.students
+                .filter(s => s.exams?.some(e => e.exam === exam))
+                .map(s => {
+                    const ex = s.exams.find(e => e.exam === exam);
+                    return ex?.total / ex?.maxTotal * 100 || 0;
+                });
+            
+            const avg = scores.length > 0 
+                ? scores.reduce((a, b) => a + b) / scores.length 
+                : 0;
+            
+            examData.push({
+                exam: exam,
+                avgScore: Math.round(avg),
+                highestScore: Math.max(...scores),
+                lowestScore: Math.min(...scores),
+                participationRate: Math.round((scores.length / this.students.length) * 100),
+                difficulty: avg >= 70 ? 'Easy' : avg >= 50 ? 'Moderate' : 'Difficult'
+            });
+        });
+        
+        const trends = [];
+        for (let i = 1; i < examData.length; i++) {
+            const change = examData[i].avgScore - examData[i-1].avgScore;
+            const direction = change > 0 ? '↑' : change < 0 ? '↓' : '→';
+            trends.push({
+                from: examData[i-1].exam,
+                to: examData[i].exam,
+                change: change,
+                direction: direction
+            });
+        }
+        
+        return {
+            type: 'exam',
+            data: examData,
+            trends: trends
+        };
+    }
+    
+    // ─────────────────────────────────────────────────────────
+    // SUBJECT TREND COMPARISON
+    // ─────────────────────────────────────────────────────────
+    compareSubjectTrends() {
+        const subject = document.getElementById('compareSubject')?.value || 'chem';
+        const key = subject.toLowerCase();
+        
+        const subjectTrends = [];
+        
+        this.examOrder.forEach(exam => {
+            const scores = this.students
+                .filter(s => s.exams?.some(e => e.exam === exam && e.scores?.[key]))
+                .map(s => {
+                    const ex = s.exams.find(e => e.exam === exam);
+                    return ex?.scores?.[key] || 0;
+                });
+            
+            const avg = scores.length > 0
+                ? scores.reduce((a, b) => a + b) / scores.length
+                : 0;
+            
+            subjectTrends.push({
+                exam: exam,
+                avgScore: Math.round(avg),
+                highestScore: Math.max(...scores),
+                lowestScore: Math.min(...scores),
+                stdDev: this.calculateStdDev(scores),
+                participationRate: Math.round((scores.length / this.students.length) * 100)
+            });
+        });
+        
+        return {
+            type: 'subject',
+            subject: subject,
+            data: subjectTrends
+        };
+    }
+    
+    // ─────────────────────────────────────────────────────────
+    // TIME PERIOD COMPARISON
+    // ─────────────────────────────────────────────────────────
+    compareTimePeriods() {
+        const third = Math.ceil(this.examOrder.length / 3);
+        
+        const periods = [
+            {name: 'Early Period', exams: this.examOrder.slice(0, third)},
+            {name: 'Mid Period', exams: this.examOrder.slice(third, 2 * third)},
+            {name: 'Recent Period', exams: this.examOrder.slice(2 * third)}
+        ];
+        
+        const periodStats = periods.map(period => {
+            const periodScores = this.students.map(student => {
+                const scores = student.exams
+                    .filter(e => period.exams.includes(e.exam))
+                    .map(e => (e.total / e.maxTotal) * 100);
+                return scores.length > 0 ? scores.reduce((a, b) => a + b) / scores.length : 0;
+            });
+            
+            const avg = periodScores.reduce((a, b) => a + b) / periodScores.length;
+            
+            return {
+                period: period.name,
+                exams: period.exams.join(', '),
+                avgScore: Math.round(avg),
+                highestScore: Math.max(...periodScores),
+                lowestScore: Math.min(...periodScores),
+                improvementRate: null
+            };
+        });
+        
+        for (let i = 1; i < periodStats.length; i++) {
+            periodStats[i].improvementRate = periodStats[i].avgScore - periodStats[i-1].avgScore;
+        }
+        
+        return {
+            type: 'time',
+            data: periodStats
+        };
+    }
+    
+    // ─────────────────────────────────────────────────────────
+    // PERFORMANCE DISTRIBUTION COMPARISON
+    // ─────────────────────────────────────────────────────────
+    comparePerformanceDistribution() {
+        const distributions = [];
+        
+        this.examOrder.forEach(exam => {
+            const scores = this.students
+                .filter(s => s.exams?.some(e => e.exam === exam))
+                .map(s => {
+                    const ex = s.exams.find(e => e.exam === exam);
+                    return ex?.total / ex?.maxTotal * 100 || 0;
+                });
+            
+            const dist = {
+                exam: exam,
+                excellent: scores.filter(s => s >= 80).length,
+                good: scores.filter(s => s >= 60 && s < 80).length,
+                average: scores.filter(s => s >= 40 && s < 60).length,
+                poor: scores.filter(s => s < 40).length,
+                total: scores.length
+            };
+            
+            distributions.push(dist);
+        });
+        
+        return {
+            type: 'performance',
+            data: distributions
+        };
+    }
+    
+    // ─────────────────────────────────────────────────────────
+    // DISPLAY RESULTS
+    // ─────────────────────────────────────────────────────────
+    displayResults(results, type) {
+        const tableDiv = document.getElementById('comparisonTable');
+        const insightsDiv = document.getElementById('comparisonInsights');
+        
+        if (!tableDiv) return;
+        
+        let tableHtml = '';
+        let insightsHtml = '';
+        
+        switch(type) {
+            case 'exam':
+                tableHtml = this.renderExamComparison(results);
+                insightsHtml = this.generateExamInsights(results);
+                break;
+            case 'subject':
+                tableHtml = this.renderSubjectComparison(results);
+                insightsHtml = this.generateSubjectInsights(results);
+                break;
+            case 'time':
+                tableHtml = this.renderTimeComparison(results);
+                insightsHtml = this.generateTimeInsights(results);
+                break;
+            case 'performance':
+                tableHtml = this.renderPerformanceComparison(results);
+                insightsHtml = this.generatePerformanceInsights(results);
+                break;
+        }
+        
+        tableDiv.innerHTML = tableHtml;
+        if (insightsDiv) {
+            insightsDiv.innerHTML = insightsHtml;
+        }
+    }
+    
+    renderExamComparison(results) {
+        const data = results.data;
+        let html = '<table><thead><tr>';
+        html += '<th>📝 Exam</th><th>Avg Score</th><th>Highest</th><th>Lowest</th>';
+        html += '<th>Participation</th><th>Difficulty</th></tr></thead><tbody>';
+        
+        data.forEach(exam => {
+            html += `<tr>
+                <td>${exam.exam}</td>
+                <td><strong>${exam.avgScore}%</strong></td>
+                <td>${Math.round(exam.highestScore)}%</td>
+                <td>${Math.round(exam.lowestScore)}%</td>
+                <td>${exam.participationRate}%</td>
+                <td>${exam.difficulty}</td>
+            </tr>`;
+        });
+        
+        html += '</tbody></table>';
+        return html;
+    }
+    
+    renderSubjectComparison(results) {
+        const data = results.data;
+        let html = '<table><thead><tr>';
+        html += '<th>📝 Exam</th><th>Avg Score</th><th>Highest</th><th>Lowest</th>';
+        html += '<th>Consistency (Std Dev)</th></tr></thead><tbody>';
+        
+        data.forEach(row => {
+            html += `<tr>
+                <td>${row.exam}</td>
+                <td><strong>${row.avgScore}%</strong></td>
+                <td>${Math.round(row.highestScore)}%</td>
+                <td>${Math.round(row.lowestScore)}%</td>
+                <td>${row.stdDev.toFixed(2)}</td>
+            </tr>`;
+        });
+        
+        html += '</tbody></table>';
+        return html;
+    }
+    
+    renderTimeComparison(results) {
+        const data = results.data;
+        let html = '<table><thead><tr>';
+        html += '<th>Period</th><th>Exams Included</th><th>Avg Score</th><th>Change</th>';
+        html += '</tr></thead><tbody>';
+        
+        data.forEach(period => {
+            const trend = period.improvementRate !== null
+                ? `<span class="trend-${period.improvementRate > 0 ? 'up' : 'down'}">
+                    ${period.improvementRate > 0 ? '+' : ''}${period.improvementRate.toFixed(1)}%</span>`
+                : '—';
+            
+            html += `<tr>
+                <td><strong>${period.period}</strong></td>
+                <td>${period.exams}</td>
+                <td><strong>${period.avgScore}%</strong></td>
+                <td>${trend}</td>
+            </tr>`;
+        });
+        
+        html += '</tbody></table>';
+        return html;
+    }
+    
+    renderPerformanceComparison(results) {
+        const data = results.data;
+        let html = '<table><thead><tr>';
+        html += '<th>📝 Exam</th><th>Excellent (80+)</th><th>Good (60-80)</th>';
+        html += '<th>Average (40-60)</th><th>Poor (<40)</th><th>Total</th></tr></thead><tbody>';
+        
+        data.forEach(row => {
+            html += `<tr>
+                <td><strong>${row.exam}</strong></td>
+                <td>${row.excellent}</td>
+                <td>${row.good}</td>
+                <td>${row.average}</td>
+                <td>${row.poor}</td>
+                <td><strong>${row.total}</strong></td>
+            </tr>`;
+        });
+        
+        html += '</tbody></table>';
+        return html;
+    }
+    
+    // ─────────────────────────────────────────────────────────
+    // GENERATE INSIGHTS
+    // ─────────────────────────────────────────────────────────
+    generateExamInsights(results) {
+        const data = results.data;
+        const trend = data[data.length - 1].avgScore - data[0].avgScore;
+        const trendClass = trend > 0 ? 'trend-up' : trend < 0 ? 'trend-down' : 'trend-stable';
+        const trendText = trend > 0 ? 'improving' : trend < 0 ? 'declining' : 'stable';
+        
+        const easiest = data.reduce((a, b) => a.avgScore > b.avgScore ? a : b);
+        const hardest = data.reduce((a, b) => a.avgScore < b.avgScore ? a : b);
+        
+        return `
+            <h3>📊 Key Insights</h3>
+            <div class="insight-item">
+                <span class="insight-label">Overall Trend:</span>
+                <span class="insight-value ${trendClass}">${trendText.toUpperCase()} ${trend > 0 ? '+' : ''}${trend}%</span>
+            </div>
+            <div class="insight-item">
+                <span class="insight-label">Easiest Exam:</span>
+                <span class="insight-value">${easiest.exam} (${easiest.avgScore}%)</span>
+            </div>
+            <div class="insight-item">
+                <span class="insight-label">Hardest Exam:</span>
+                <span class="insight-value">${hardest.exam} (${hardest.avgScore}%)</span>
+            </div>
+        `;
+    }
+    
+    generateSubjectInsights(results) {
+        const data = results.data;
+        const improvement = data[data.length - 1].avgScore - data[0].avgScore;
+        const subject = document.getElementById('compareSubject')?.value || 'chem';
+        const subjectNames = { chem: 'Chemistry', phy: 'Physics', bio: 'Biology', math: 'Mathematics' };
+        
+        return `
+            <h3>📚 ${subjectNames[subject]} Performance Trend</h3>
+            <div class="insight-item">
+                <span class="insight-label">Initial Score:</span>
+                <span class="insight-value">${data[0].avgScore}%</span>
+            </div>
+            <div class="insight-item">
+                <span class="insight-label">Current Score:</span>
+                <span class="insight-value">${data[data.length - 1].avgScore}%</span>
+            </div>
+            <div class="insight-item">
+                <span class="insight-label">Overall Change:</span>
+                <span class="insight-value ${improvement > 0 ? 'trend-up' : 'trend-down'}">${improvement > 0 ? '+' : ''}${improvement}%</span>
+            </div>
+        `;
+    }
+    
+    generateTimeInsights(results) {
+        const data = results.data;
+        const latestTrend = data[data.length - 1].improvementRate;
+        
+        return `
+            <h3>📈 Time Period Analysis</h3>
+            <div class="insight-item">
+                <span class="insight-label">Early Performance:</span>
+                <span class="insight-value">${data[0].avgScore}%</span>
+            </div>
+            <div class="insight-item">
+                <span class="insight-label">Recent Performance:</span>
+                <span class="insight-value">${data[data.length - 1].avgScore}%</span>
+            </div>
+            <div class="insight-item">
+                <span class="insight-label">Latest Trend:</span>
+                <span class="insight-value ${latestTrend > 0 ? 'trend-up' : 'trend-down'}">${latestTrend > 0 ? '+' : ''}${latestTrend.toFixed(1)}%</span>
+            </div>
+        `;
+    }
+    
+    generatePerformanceInsights(results) {
+        const data = results.data;
+        const recentExam = data[data.length - 1];
+        const totalAtRisk = recentExam.poor;
+        const excellentPercentage = Math.round((recentExam.excellent / recentExam.total) * 100);
+        
+        return `
+            <h3>👥 Performance Distribution</h3>
+            <div class="insight-item">
+                <span class="insight-label">Latest Exam:</span>
+                <span class="insight-value">${recentExam.exam}</span>
+            </div>
+            <div class="insight-item">
+                <span class="insight-label">Excellent Students:</span>
+                <span class="insight-value">${recentExam.excellent} (${excellentPercentage}%)</span>
+            </div>
+            <div class="insight-item">
+                <span class="insight-label">Students At Risk:</span>
+                <span class="insight-value trend-down">${totalAtRisk} (<40%)</span>
+            </div>
+        `;
+    }
+    
+    calculateStdDev(values) {
+        if (values.length === 0) return 0;
+        const mean = values.reduce((a, b) => a + b) / values.length;
+        const variance = values.reduce((a, v) => a + Math.pow(v - mean, 2), 0) / values.length;
+        return Math.sqrt(variance);
+    }
+}
+
 function getExamRank(student, examName) {
   const examStudents = students
   .filter(stu => stu.exams.some(ex => ex.exam === examName && ex.maxTotal > 0))
@@ -5800,6 +6250,10 @@ document.addEventListener('DOMContentLoaded', function() {
   setTimeout(() => {
     initializePrintExport();
   }, 1000);
+});
+
+document.getElementById('comparativeAnalysisBtn')?.addEventListener('click', () => {
+    showSection('comparativeAnalysis');
 });
 
 /* -------------------------------------------------
