@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,10 +10,12 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
     <!-- Enhanced Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
@@ -56,11 +59,11 @@
                 <div class="header-stats">
                     <div class="stat-pill">
                         <i class="fas fa-users"></i>
-                        <span>39 Students</span>
+                        <span>0 Students</span>
                     </div>
                     <div class="stat-pill">
                         <i class="fas fa-chart-line"></i>
-                        <span>11 Exams</span>
+                        <span>0 Exams</span>
                     </div>
                 </div>
             </div>
@@ -93,8 +96,8 @@
                 </div>
             </div>
             <a href="data-manage.html" class="btn btn-primary search-btn" style="margin-top:15px;">
-    <i class="fas fa-database"></i> Data Manager
-</a>
+                <i class="fas fa-database"></i> Data Manager
+            </a>
         </div>
 
         <!-- Enhanced Search Results -->
@@ -216,345 +219,352 @@
                         </div>
                     </div>
                 </div>
-<!-- ============================================
+                <!-- ============================================
      UNIFIED PERFORMANCE OVERVIEW
      All 9 Cards in Single Grid
      ============================================ -->
 
-<!-- ROW 1-2: 3 INSIGHT CARDS + 3 LEADERBOARDS (unified grid) -->
-<div class="unified-cards-section">
-  <div class="unified-cards-grid">
-    <!-- CARD 1: Subject Difficulty Ranking -->
-    <div class="insight-card difficulty-card">
-      <div class="insight-header">
-        <div class="insight-icon">
-          <i class="fas fa-book-open"></i>
-        </div>
-        <div class="insight-title">
-          <h3>Subject Difficulty Ranking</h3>
-          <p>Class average performance by subject</p>
-        </div>
-      </div>
-      <div class="insight-content">
-        <div class="difficulty-list">
-          <div class="difficulty-item">
-            <div class="difficulty-label">
-              <span class="subject-name">Chemistry</span>
-              <span class="difficulty-badge easy" id="chemDifficulty">Easy</span>
-            </div>
-            <div class="difficulty-bar">
-              <div class="difficulty-fill" id="chemBar" style="width: 0%"></div>
-            </div>
-            <span class="difficulty-percent" id="chemPercent">0%</span>
-          </div>
+                <!-- ROW 1-2: 3 INSIGHT CARDS + 3 LEADERBOARDS (unified grid) -->
+                <div class="unified-cards-section">
+                    <div class="unified-cards-grid">
+                        <!-- CARD 1: Subject Difficulty Ranking -->
+                        <div class="insight-card difficulty-card">
+                            <div class="insight-header">
+                                <div class="insight-icon">
+                                    <i class="fas fa-book-open"></i>
+                                </div>
+                                <div class="insight-title">
+                                    <h3>Subject Difficulty Ranking</h3>
+                                    <p>Class average performance by subject</p>
+                                </div>
+                            </div>
+                            <div class="insight-content">
+                                <div class="difficulty-list">
+                                    <div class="difficulty-item">
+                                        <div class="difficulty-label">
+                                            <span class="subject-name">Chemistry</span>
+                                            <span class="difficulty-badge easy" id="chemDifficulty">Easy</span>
+                                        </div>
+                                        <div class="difficulty-bar">
+                                            <div class="difficulty-fill" id="chemBar" style="width: 0%"></div>
+                                        </div>
+                                        <span class="difficulty-percent" id="chemPercent">0%</span>
+                                    </div>
 
-          <div class="difficulty-item">
-            <div class="difficulty-label">
-              <span class="subject-name">Physics</span>
-              <span class="difficulty-badge moderate" id="phyDifficulty">Moderate</span>
-            </div>
-            <div class="difficulty-bar">
-              <div class="difficulty-fill" id="phyBar" style="width: 0%"></div>
-            </div>
-            <span class="difficulty-percent" id="phyPercent">0%</span>
-          </div>
+                                    <div class="difficulty-item">
+                                        <div class="difficulty-label">
+                                            <span class="subject-name">Physics</span>
+                                            <span class="difficulty-badge moderate" id="phyDifficulty">Moderate</span>
+                                        </div>
+                                        <div class="difficulty-bar">
+                                            <div class="difficulty-fill" id="phyBar" style="width: 0%"></div>
+                                        </div>
+                                        <span class="difficulty-percent" id="phyPercent">0%</span>
+                                    </div>
 
-          <div class="difficulty-item">
-            <div class="difficulty-label">
-              <span class="subject-name">Biology</span>
-              <span class="difficulty-badge difficult" id="bioDifficulty">Difficult</span>
-            </div>
-            <div class="difficulty-bar">
-              <div class="difficulty-fill" id="bioBar" style="width: 0%"></div>
-            </div>
-            <span class="difficulty-percent" id="bioPercent">0%</span>
-          </div>
+                                    <div class="difficulty-item">
+                                        <div class="difficulty-label">
+                                            <span class="subject-name">Biology</span>
+                                            <span class="difficulty-badge difficult" id="bioDifficulty">Difficult</span>
+                                        </div>
+                                        <div class="difficulty-bar">
+                                            <div class="difficulty-fill" id="bioBar" style="width: 0%"></div>
+                                        </div>
+                                        <span class="difficulty-percent" id="bioPercent">0%</span>
+                                    </div>
 
-          <div class="difficulty-item">
-            <div class="difficulty-label">
-              <span class="subject-name">Mathematics</span>
-              <span class="difficulty-badge moderate" id="mathDifficulty">Moderate</span>
-            </div>
-            <div class="difficulty-bar">
-              <div class="difficulty-fill" id="mathBar" style="width: 0%"></div>
-            </div>
-            <span class="difficulty-percent" id="mathPercent">0%</span>
-          </div>
-        </div>
-      </div>
-    </div>
+                                    <div class="difficulty-item">
+                                        <div class="difficulty-label">
+                                            <span class="subject-name">Mathematics</span>
+                                            <span class="difficulty-badge moderate" id="mathDifficulty">Moderate</span>
+                                        </div>
+                                        <div class="difficulty-bar">
+                                            <div class="difficulty-fill" id="mathBar" style="width: 0%"></div>
+                                        </div>
+                                        <span class="difficulty-percent" id="mathPercent">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-    <!-- CARD 2: Performance Distribution -->
-    <div class="insight-card distribution-card">
-  <div class="insight-header">
-    <div class="insight-icon">
-      <i class="fas fa-chart-pie"></i>
-    </div>
-    <div class="insight-title">
-      <h3>Performance Distribution</h3>
-      <p>Student categorization by performance level</p>
-    </div>
-  </div>
-  <div class="insight-content">
-    <div class="distribution-grid">
-      <div class="distribution-item high-performers">
-        <div class="distribution-icon">
-          <i class="fas fa-star"></i>
-        </div>
-        <div class="distribution-info">
-          <span class="distribution-label">High</span>
-          <span class="distribution-value" id="highPerfCount">0</span>
-          <span class="distribution-percent" id="highPerfPercent">0%</span>
-          <span class="distribution-sublabel">70+</span>
-        </div>
-      </div>
+                        <!-- CARD 2: Performance Distribution -->
+                        <div class="insight-card distribution-card">
+                            <div class="insight-header">
+                                <div class="insight-icon">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <div class="insight-title">
+                                    <h3>Performance Distribution</h3>
+                                    <p>Student categorization by performance level</p>
+                                </div>
+                            </div>
+                            <div class="insight-content">
+                                <div class="distribution-grid">
+                                    <div class="distribution-item high-performers">
+                                        <div class="distribution-icon">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div class="distribution-info">
+                                            <span class="distribution-label">High</span>
+                                            <span class="distribution-value" id="highPerfCount">0</span>
+                                            <span class="distribution-percent" id="highPerfPercent">0%</span>
+                                            <span class="distribution-sublabel">70+</span>
+                                        </div>
+                                    </div>
 
-      <div class="distribution-item average-performers">
-        <div class="distribution-icon">
-          <i class="fas fa-users"></i>
-        </div>
-        <div class="distribution-info">
-          <span class="distribution-label">Average</span>
-          <span class="distribution-value" id="avgPerfCount">0</span>
-          <span class="distribution-percent" id="avgPerfPercent">0%</span>
-          <span class="distribution-sublabel">35-70</span>
-        </div>
-      </div>
+                                    <div class="distribution-item average-performers">
+                                        <div class="distribution-icon">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <div class="distribution-info">
+                                            <span class="distribution-label">Average</span>
+                                            <span class="distribution-value" id="avgPerfCount">0</span>
+                                            <span class="distribution-percent" id="avgPerfPercent">0%</span>
+                                            <span class="distribution-sublabel">35-70</span>
+                                        </div>
+                                    </div>
 
-      <div class="distribution-item at-risk">
-        <div class="distribution-icon">
-          <i class="fas fa-exclamation-triangle"></i>
-        </div>
-        <div class="distribution-info">
-          <span class="distribution-label">At-Risk</span>
-          <span class="distribution-value" id="atRiskCount">0</span>
-          <span class="distribution-percent" id="atRiskPercent">0%</span>
-          <span class="distribution-sublabel">&lt;35</span>
-        </div>
-      </div>
-    </div>
-    
-    <div class="performance-consistency-stat-balanced">
-  <div class="consistency-balanced-header">
-    <i class="fas fa-wave-square"></i>
-    <span class="consistency-title">Performance Consistency</span>
-  </div>
-  <div class="consistency-balanced-content">
-    <div class="consistency-badge" id="consistencyStatus">Stable</div>
-    <div class="consistency-balanced-bar">
-      <div class="balanced-bar-bg">
-        <div class="balanced-bar-fill" id="consistencyBar" style="width: 0%"></div>
-      </div>
-      <span class="balanced-bar-value" id="consistencyValue">0%</span>
-    </div>
-  </div>
-  
-  <!-- NEW: Volatility Indicator Line -->
-  <div class="volatility-indicator">
-    <span class="volatility-label">Score Volatility</span>
-    <div class="volatility-mini-bars">
-      <span class="volatility-bar-mini" id="volatilityBar1" style="height: 8px;"></span>
-      <span class="volatility-bar-mini" id="volatilityBar2" style="height: 12px;"></span>
-      <span class="volatility-bar-mini" id="volatilityBar3" style="height: 6px;"></span>
-      <span class="volatility-bar-mini" id="volatilityBar4" style="height: 10px;"></span>
-      <span class="volatility-bar-mini" id="volatilityBar5" style="height: 9px;"></span>
-    </div>
-    <span class="volatility-text" id="volatilityLevel">Moderate</span>
-  </div>
-</div>
-  </div>
-</div>
+                                    <div class="distribution-item at-risk">
+                                        <div class="distribution-icon">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </div>
+                                        <div class="distribution-info">
+                                            <span class="distribution-label">At-Risk</span>
+                                            <span class="distribution-value" id="atRiskCount">0</span>
+                                            <span class="distribution-percent" id="atRiskPercent">0%</span>
+                                            <span class="distribution-sublabel">&lt;35</span>
+                                        </div>
+                                    </div>
+                                </div>
 
-    <!-- CARD 3: Trend Analysis -->
-    <div class="insight-card trend-card">
-      <div class="insight-header">
-        <div class="insight-icon">
-          <i class="fas fa-chart-line"></i>
-        </div>
-        <div class="insight-title">
-          <h3>Trend Analysis</h3>
-          <p>Class performance momentum</p>
-        </div>
-      </div>
-      <div class="insight-content">
-        <div class="trend-display">
-          <div class="trend-metric">
-            <span class="trend-label">Latest Exam Avg</span>
-            <div class="trend-value-group">
-              <span class="trend-value" id="latestExamAvg">0</span>
-              <span class="trend-indicator" id="trendIndicator"><i class="fas fa-arrow-right"></i></span>
-            </div>
-          </div>
+                                <div class="performance-consistency-stat-balanced">
+                                    <div class="consistency-balanced-header">
+                                        <i class="fas fa-wave-square"></i>
+                                        <span class="consistency-title">Performance Consistency</span>
+                                    </div>
+                                    <div class="consistency-balanced-content">
+                                        <div class="consistency-badge" id="consistencyStatus">Stable</div>
+                                        <div class="consistency-balanced-bar">
+                                            <div class="balanced-bar-bg">
+                                                <div class="balanced-bar-fill" id="consistencyBar" style="width: 0%">
+                                                </div>
+                                            </div>
+                                            <span class="balanced-bar-value" id="consistencyValue">0%</span>
+                                        </div>
+                                    </div>
 
-          <div class="trend-metric">
-            <span class="trend-label">Overall Average</span>
-            <span class="trend-value" id="overallTrendAvg">0</span>
-          </div>
+                                    <!-- NEW: Volatility Indicator Line -->
+                                    <div class="volatility-indicator">
+                                        <span class="volatility-label">Score Volatility</span>
+                                        <div class="volatility-mini-bars">
+                                            <span class="volatility-bar-mini" id="volatilityBar1"
+                                                style="height: 8px;"></span>
+                                            <span class="volatility-bar-mini" id="volatilityBar2"
+                                                style="height: 12px;"></span>
+                                            <span class="volatility-bar-mini" id="volatilityBar3"
+                                                style="height: 6px;"></span>
+                                            <span class="volatility-bar-mini" id="volatilityBar4"
+                                                style="height: 10px;"></span>
+                                            <span class="volatility-bar-mini" id="volatilityBar5"
+                                                style="height: 9px;"></span>
+                                        </div>
+                                        <span class="volatility-text" id="volatilityLevel">Moderate</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-          <div class="trend-metric">
-            <span class="trend-label">Momentum</span>
-            <div class="trend-value-group">
-              <span class="trend-value" id="trendValue">0</span>
-              <span class="trend-status" id="trendStatus">Stable</span>
-            </div>
-          </div>
+                        <!-- CARD 3: Trend Analysis -->
+                        <div class="insight-card trend-card">
+                            <div class="insight-header">
+                                <div class="insight-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="insight-title">
+                                    <h3>Trend Analysis</h3>
+                                    <p>Class performance momentum</p>
+                                </div>
+                            </div>
+                            <div class="insight-content">
+                                <div class="trend-display">
+                                    <div class="trend-metric">
+                                        <span class="trend-label">Latest Exam Avg</span>
+                                        <div class="trend-value-group">
+                                            <span class="trend-value" id="latestExamAvg">0</span>
+                                            <span class="trend-indicator" id="trendIndicator"><i
+                                                    class="fas fa-arrow-right"></i></span>
+                                        </div>
+                                    </div>
 
-          <div class="trend-description">
-            <p id="trendDescription">Class performance analysis in progress...</p>
-          </div>
-        </div>
-      </div>
-    </div>
+                                    <div class="trend-metric">
+                                        <span class="trend-label">Overall Average</span>
+                                        <span class="trend-value" id="overallTrendAvg">0</span>
+                                    </div>
 
-    <!-- CARD 4: Last 3 Exams Leaderboard -->
-    <div class="leaderboard-card">
-      <div class="leaderboard-header">
-        <div class="leaderboard-header-icon">
-          <i class="fas fa-calendar-alt"></i>
-        </div>
-        <div class="leaderboard-header-content">
-          <h3>Last 3 Exams Combined</h3>
-          <p>Recent Performance</p>
-        </div>
-      </div>
-      <div class="leaderboard-body">
-        <div class="leaderboard-item rank-1">
-          <div class="rank-badge">1</div>
-          <div class="leaderboard-info">
-            <span class="student-name" id="last3Rank1Name">-</span>
-            <span class="student-roll" id="last3Rank1Roll">-</span>
-          </div>
-          <div class="leaderboard-score">
-            <span class="score-value" id="last3Rank1Score">0</span>
-            <span class="score-percent" id="last3Rank1Percent">0%</span>
-          </div>
-        </div>
-        <div class="leaderboard-item rank-2">
-          <div class="rank-badge">2</div>
-          <div class="leaderboard-info">
-            <span class="student-name" id="last3Rank2Name">-</span>
-            <span class="student-roll" id="last3Rank2Roll">-</span>
-          </div>
-          <div class="leaderboard-score">
-            <span class="score-value" id="last3Rank2Score">0</span>
-            <span class="score-percent" id="last3Rank2Percent">0%</span>
-          </div>
-        </div>
-        <div class="leaderboard-item rank-3">
-          <div class="rank-badge">3</div>
-          <div class="leaderboard-info">
-            <span class="student-name" id="last3Rank3Name">-</span>
-            <span class="student-roll" id="last3Rank3Roll">-</span>
-          </div>
-          <div class="leaderboard-score">
-            <span class="score-value" id="last3Rank3Score">0</span>
-            <span class="score-percent" id="last3Rank3Percent">0%</span>
-          </div>
-        </div>
-      </div>
-    </div>
+                                    <div class="trend-metric">
+                                        <span class="trend-label">Momentum</span>
+                                        <div class="trend-value-group">
+                                            <span class="trend-value" id="trendValue">0</span>
+                                            <span class="trend-status" id="trendStatus">Stable</span>
+                                        </div>
+                                    </div>
 
-    <!-- CARD 5: Top Across All Exams Leaderboard -->
-    <div class="leaderboard-card">
-      <div class="leaderboard-header">
-        <div class="leaderboard-header-icon">
-          <i class="fas fa-chart-bar"></i>
-        </div>
-        <div class="leaderboard-header-content">
-          <h3>Top Across All Exams</h3>
-          <p>Consistent Excellence</p>
-        </div>
-      </div>
-      <div class="leaderboard-body">
-        <div class="leaderboard-item rank-1">
-          <div class="rank-badge">1</div>
-          <div class="leaderboard-info">
-            <span class="student-name" id="topAllRank1Name">-</span>
-            <span class="student-roll" id="topAllRank1Roll">-</span>
-          </div>
-          <div class="leaderboard-score">
-            <span class="score-value" id="topAllRank1Score">0</span>
-            <span class="score-percent" id="topAllRank1Percent">0%</span>
-          </div>
-        </div>
-        <div class="leaderboard-item rank-2">
-          <div class="rank-badge">2</div>
-          <div class="leaderboard-info">
-            <span class="student-name" id="topAllRank2Name">-</span>
-            <span class="student-roll" id="topAllRank2Roll">-</span>
-          </div>
-          <div class="leaderboard-score">
-            <span class="score-value" id="topAllRank2Score">0</span>
-            <span class="score-percent" id="topAllRank2Percent">0%</span>
-          </div>
-        </div>
-        <div class="leaderboard-item rank-3">
-          <div class="rank-badge">3</div>
-          <div class="leaderboard-info">
-            <span class="student-name" id="topAllRank3Name">-</span>
-            <span class="student-roll" id="topAllRank3Roll">-</span>
-          </div>
-          <div class="leaderboard-score">
-            <span class="score-value" id="topAllRank3Score">0</span>
-            <span class="score-percent" id="topAllRank3Percent">0%</span>
-          </div>
-        </div>
-      </div>
-    </div>
+                                    <div class="trend-description">
+                                        <p id="trendDescription">Class performance analysis in progress...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-    <!-- CARD 6: Most Improved Leaderboard -->
-    <div class="leaderboard-card">
-      <div class="leaderboard-header">
-        <div class="leaderboard-header-icon">
-          <i class="fas fa-arrow-up"></i>
-        </div>
-        <div class="leaderboard-header-content">
-          <h3>Most Improved</h3>
-          <p>Positive Growth</p>
-        </div>
-      </div>
-      <div class="leaderboard-body">
-        <div class="leaderboard-item rank-1">
-          <div class="rank-badge">1</div>
-          <div class="leaderboard-info">
-            <span class="student-name" id="improvedRank1Name">-</span>
-            <span class="student-roll" id="improvedRank1Roll">-</span>
-          </div>
-          <div class="leaderboard-score">
-            <span class="score-value" id="improvedRank1Score">+0</span>
-            <span class="score-percent" id="improvedRank1Percent">%</span>
-          </div>
-        </div>
-        <div class="leaderboard-item rank-2">
-          <div class="rank-badge">2</div>
-          <div class="leaderboard-info">
-            <span class="student-name" id="improvedRank2Name">-</span>
-            <span class="student-roll" id="improvedRank2Roll">-</span>
-          </div>
-          <div class="leaderboard-score">
-            <span class="score-value" id="improvedRank2Score">+0</span>
-            <span class="score-percent" id="improvedRank2Percent">%</span>
-          </div>
-        </div>
-        <div class="leaderboard-item rank-3">
-          <div class="rank-badge">3</div>
-          <div class="leaderboard-info">
-            <span class="student-name" id="improvedRank3Name">-</span>
-            <span class="student-roll" id="improvedRank3Roll">-</span>
-          </div>
-          <div class="leaderboard-score">
-            <span class="score-value" id="improvedRank3Score">+0</span>
-            <span class="score-percent" id="improvedRank3Percent">%</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+                        <!-- CARD 4: Last 3 Exams Leaderboard -->
+                        <div class="leaderboard-card">
+                            <div class="leaderboard-header">
+                                <div class="leaderboard-header-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="leaderboard-header-content">
+                                    <h3>Leaderboard <i class="fas fa-trophy"></i></h3>
+                                    <p>Last 3 Exams Combined</p>
+                                </div>
+                            </div>
+                            <div class="leaderboard-body">
+                                <div class="leaderboard-item rank-1">
+                                    <div class="rank-badge">1</div>
+                                    <div class="leaderboard-info">
+                                        <span class="student-nam" id="last3Rank1Name">-</span>
+                                        <span class="student-rol" id="last3Rank1Roll">-</span>
+                                    </div>
+                                    <div class="leaderboard-score">
+                                        <span class="score-value" id="last3Rank1Score">0</span>
+                                        <span class="score-percent" id="last3Rank1Percent">0%</span>
+                                    </div>
+                                </div>
+                                <div class="leaderboard-item rank-2">
+                                    <div class="rank-badge">2</div>
+                                    <div class="leaderboard-info">
+                                        <span class="student-nam" id="last3Rank2Name">-</span>
+                                        <span class="student-rol" id="last3Rank2Roll">-</span>
+                                    </div>
+                                    <div class="leaderboard-score">
+                                        <span class="score-value" id="last3Rank2Score">0</span>
+                                        <span class="score-percent" id="last3Rank2Percent">0%</span>
+                                    </div>
+                                </div>
+                                <div class="leaderboard-item rank-3">
+                                    <div class="rank-badge">3</div>
+                                    <div class="leaderboard-info">
+                                        <span class="student-nam" id="last3Rank3Name">-</span>
+                                        <span class="student-rol" id="last3Rank3Roll">-</span>
+                                    </div>
+                                    <div class="leaderboard-score">
+                                        <span class="score-value" id="last3Rank3Score">0</span>
+                                        <span class="score-percent" id="last3Rank3Percent">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD 5: Top Across All Exams Leaderboard -->
+                        <div class="leaderboard-card">
+                            <div class="leaderboard-header">
+                                <div class="leaderboard-header-icon">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <div class="leaderboard-header-content">
+                                    <h3>Leaderboard <i class="fas fa-trophy"></i></h3>
+                                    <p>Top Across All Exams</p>
+                                </div>
+                            </div>
+                            <div class="leaderboard-body">
+                                <div class="leaderboard-item rank-1">
+                                    <div class="rank-badge">1</div>
+                                    <div class="leaderboard-info">
+                                        <span class="student-nam" id="topAllRank1Name">-</span>
+                                        <span class="student-rol" id="topAllRank1Roll">-</span>
+                                    </div>
+                                    <div class="leaderboard-score">
+                                        <span class="score-value" id="topAllRank1Score">0</span>
+                                        <span class="score-percent" id="topAllRank1Percent">0%</span>
+                                    </div>
+                                </div>
+                                <div class="leaderboard-item rank-2">
+                                    <div class="rank-badge">2</div>
+                                    <div class="leaderboard-info">
+                                        <span class="student-nam" id="topAllRank2Name">-</span>
+                                        <span class="student-rol" id="topAllRank2Roll">-</span>
+                                    </div>
+                                    <div class="leaderboard-score">
+                                        <span class="score-value" id="topAllRank2Score">0</span>
+                                        <span class="score-percent" id="topAllRank2Percent">0%</span>
+                                    </div>
+                                </div>
+                                <div class="leaderboard-item rank-3">
+                                    <div class="rank-badge">3</div>
+                                    <div class="leaderboard-info">
+                                        <span class="student-nam" id="topAllRank3Name">-</span>
+                                        <span class="student-rol" id="topAllRank3Roll">-</span>
+                                    </div>
+                                    <div class="leaderboard-score">
+                                        <span class="score-value" id="topAllRank3Score">0</span>
+                                        <span class="score-percent" id="topAllRank3Percent">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CARD 6: Most Improved Leaderboard -->
+                        <div class="leaderboard-card">
+                            <div class="leaderboard-header">
+                                <div class="leaderboard-header-icon">
+                                    <i class="fas fa-arrow-up"></i>
+                                </div>
+                                <div class="leaderboard-header-content">
+                                    <h3>Most Improved</h3>
+                                    <p>Positive Growth</p>
+                                </div>
+                            </div>
+                            <div class="leaderboard-body">
+                                <div class="leaderboard-item rank-1">
+                                    <div class="rank-badge">1</div>
+                                    <div class="leaderboard-info">
+                                        <span class="student-nam" id="improvedRank1Name">-</span>
+                                        <span class="student-rol" id="improvedRank1Roll">-</span>
+                                    </div>
+                                    <div class="leaderboard-score">
+                                        <span class="score-value" id="improvedRank1Score">+0</span>
+                                        <span class="score-percent" id="improvedRank1Percent">%</span>
+                                    </div>
+                                </div>
+                                <div class="leaderboard-item rank-2">
+                                    <div class="rank-badge">2</div>
+                                    <div class="leaderboard-info">
+                                        <span class="student-nam" id="improvedRank2Name">-</span>
+                                        <span class="student-rol" id="improvedRank2Roll">-</span>
+                                    </div>
+                                    <div class="leaderboard-score">
+                                        <span class="score-value" id="improvedRank2Score">+0</span>
+                                        <span class="score-percent" id="improvedRank2Percent">%</span>
+                                    </div>
+                                </div>
+                                <div class="leaderboard-item rank-3">
+                                    <div class="rank-badge">3</div>
+                                    <div class="leaderboard-info">
+                                        <span class="student-nam" id="improvedRank3Name">-</span>
+                                        <span class="student-rol" id="improvedRank3Roll">-</span>
+                                    </div>
+                                    <div class="leaderboard-score">
+                                        <span class="score-value" id="improvedRank3Score">+0</span>
+                                        <span class="score-percent" id="improvedRank3Percent">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Enhanced Action Buttons -->
                 <div class="action-buttons-section">
                     <div class="stats-header">
-                    <h2><i class="fas fa-tools"></i> Analytics Tools</h2>
+                        <h2><i class="fas fa-tools"></i> Analytics Tools</h2>
                     </div>
                     <div class="action-buttons">
                         <button id="subjectDifficultyBtn" class="action-btn subject-btn">
@@ -584,7 +594,8 @@
                                 <span class="btn-subtitle">Individual Performance</span>
                             </div>
                         </button>
-                        <button id="examDifficultyBtn" class="action-btn difficulty-btn" onclick="toggleExamDifficultyAnalysis()">
+                        <button id="examDifficultyBtn" class="action-btn difficulty-btn"
+                            onclick="toggleExamDifficultyAnalysis()">
                             <div class="btn-icon">
                                 <i class="fas fa-chart-bar"></i>
                             </div>
@@ -593,7 +604,8 @@
                                 <span class="btn-subtitle">Exam Complexity</span>
                             </div>
                         </button>
-                        <button id="studentCategorizationBtn" class="action-btn category-btn" onclick="toggleStudentCategorization()">
+                        <button id="studentCategorizationBtn" class="action-btn category-btn"
+                            onclick="toggleStudentCategorization()">
                             <div class="btn-icon">
                                 <i class="fas fa-users-cog"></i>
                             </div>
@@ -602,7 +614,8 @@
                                 <span class="btn-subtitle">Performance Groups</span>
                             </div>
                         </button>
-                        <button id="performanceAlertsBtn" class="action-btn alerts-btn" onclick="togglePerformanceAlerts()">
+                        <button id="performanceAlertsBtn" class="action-btn alerts-btn"
+                            onclick="togglePerformanceAlerts()">
                             <div class="btn-icon">
                                 <i class="fas fa-exclamation-triangle"></i>
                             </div>
@@ -1182,114 +1195,414 @@
         </div>
     </div>
 
+    <!-- Question-wise Marks Modal -->
+    <div class="modal" id="questionMarksModal" style="
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+">
+        <!-- Modal Overlay (clicking closes) -->
+        <div class="modal-overlay" onclick="closeQuestionMarksModal()" style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  "></div>
+
+        <!-- Modal Container -->
+        <div class="modal-container" style="
+    position: relative;
+    z-index: 1001;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    max-width: 900px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  ">
+
+            <!-- Modal Header -->
+            <div class="modal-header" style="
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 2px solid #e5e7eb;
+      background: linear-gradient(135deg, #002168 0%,rgb(15, 35, 65) 100%);
+      color: white;
+      border-radius: 12px 12px 0 0;
+    ">
+                <h2 style="
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color:white;
+      ">
+                    <i class="fas fa-th" style="font-size: 22px; color:white"></i>
+                    Question-wise Marks Breakdown
+                </h2>
+                <button class="modal-close" onclick="closeQuestionMarksModal()" style="
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        transition: background 0.2s;
+      " onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='none'">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body" style="
+      padding: 25px;
+      flex: 1;
+      overflow-y: auto;
+    ">
+
+                <!-- Student Info Section -->
+                <div class="question-modal-header" style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+      ">
+                    <!-- Student Name Card -->
+                    <div style="
+          padding: 14px;
+          background: rgba(37, 99, 235, 0.05);
+          border-radius: 8px;
+          border-left: 4px solid #2563eb;
+        ">
+                        <span style="
+            color: #6b7280;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          ">Student Name</span>
+                        <div style="
+            font-weight: 600;
+            font-size: 16px;
+            margin-top: 6px;
+            color: #1f2937;
+          " id="qmStudentName">-</div>
+                    </div>
+
+                    <!-- Roll Number Card -->
+                    <div style="
+          padding: 14px;
+          background: rgba(37, 99, 235, 0.05);
+          border-radius: 8px;
+          border-left: 4px solid #2563eb;
+        ">
+                        <span style="
+            color: #6b7280;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          ">Roll Number</span>
+                        <div style="
+            font-weight: 600;
+            font-size: 16px;
+            margin-top: 6px;
+            color: #1f2937;
+          " id="qmStudentRoll">-</div>
+                    </div>
+
+                    <!-- Exam Name Card -->
+                    <div style="
+          padding: 14px;
+          background: rgba(37, 99, 235, 0.05);
+          border-radius: 8px;
+          border-left: 4px solid #2563eb;
+        ">
+                        <span style="
+            color: #6b7280;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          ">Exam</span>
+                        <div style="
+            font-weight: 600;
+            font-size: 16px;
+            margin-top: 6px;
+            color: #1f2937;
+          " id="qmExam">-</div>
+                    </div>
+
+                    <!-- Total Score Card -->
+                    <div style="
+          padding: 14px;
+          background: rgba(16, 185, 129, 0.05);
+          border-radius: 8px;
+          border-left: 4px solid #10b981;
+        ">
+                        <span style="
+            color: #6b7280;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          ">Total Score</span>
+                        <div style="
+            font-weight: 700;
+            font-size: 18px;
+            margin-top: 6px;
+            color: #10b981;
+          " id="qmTotal">-</div>
+                    </div>
+                </div>
+
+                <!-- Question Grid (8 rows × 5 boxes = 40 questions) -->
+                <div style="margin-bottom: 20px;">
+                    <h3 style="
+          margin: 0 0 15px 0;
+          font-size: 14px;
+          font-weight: 600;
+          color: #6b7280;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        ">Question-wise Performance</h3>
+
+                    <div class="question-grid" id="questionGrid" style="
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 12px;
+          padding: 15px;
+          background: #f9fafb;
+          border-radius: 8px;
+          border: 1px solid #e5e7eb;
+        ">
+                        <!-- Question boxes will be generated here by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Statistics Section -->
+                <div style="
+        margin-top: 25px;
+        padding: 20px;
+        background: rgba(37, 99, 235, 0.05);
+        border-radius: 8px;
+        border-top: 3px solid #2563eb;
+      ">
+                    <h3 style="
+          margin: 0 0 18px 0;
+          font-size: 14px;
+          font-weight: 600;
+          color: #6b7280;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        ">Performance Analysis</h3>
+
+                    <div style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          gap: 16px;
+        ">
+                        <!-- Full Marks Stat -->
+                        <div style="text-align: center;">
+                            <span style="
+              color: #6b7280;
+              font-size: 12px;
+              font-weight: 600;
+              text-transform: uppercase;
+            ">Full Marks (4)</span>
+                            <div style="
+              font-weight: 700;
+              font-size: 28px;
+              color: #10b981;
+              margin-top: 8px;
+            " id="qmFullMarks">0</div>
+                        </div>
+
+                        <!-- Partial Marks Stat -->
+                        <div style="text-align: center;">
+                            <span style="
+              color: #6b7280;
+              font-size: 12px;
+              font-weight: 600;
+              text-transform: uppercase;
+            ">Negative Marks (-1)</span>
+                            <div style="
+              font-weight: 700;
+              font-size: 28px;
+              color: #f59e0b;
+              margin-top: 8px;
+            " id="qmPartialMarks">0</div>
+                        </div>
+
+                        <!-- Zero Marks Stat -->
+                        <div style="text-align: center;">
+                            <span style="
+              color: #6b7280;
+              font-size: 12px;
+              font-weight: 600;
+              text-transform: uppercase;
+            ">Zero Marks (0)</span>
+                            <div style="
+              font-weight: 700;
+              font-size: 28px;
+              color: #ef4444;
+              margin-top: 8px;
+            " id="qmZeroMarks">0</div>
+                        </div>
+
+                        <!-- Accuracy Stat -->
+                        <div style="text-align: center;">
+                            <span style="
+              color: #6b7280;
+              font-size: 12px;
+              font-weight: 600;
+              text-transform: uppercase;
+            ">Overall Accuracy</span>
+                            <div style="
+              font-weight: 700;
+              font-size: 28px;
+              color: #2563eb;
+              margin-top: 8px;
+            " id="qmAccuracy">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <!-- Enhanced Footer -->
-<footer class="main-footer">
-    <div class="footer-content">
-        <div class="footer-section">
-            <div class="footer-logo">
-                <div class="footer-logo-icon">
-                    <i class="fas fa-graduation-cap"></i>
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="footer-logo-text">
+                        <h3>CRISPR YEAR-LONG BATCH</h3>
+                        <span>2025-26</span>
+                    </div>
                 </div>
-                <div class="footer-logo-text">
-                    <h3>CRISPR YEAR-LONG BATCH</h3>
-                    <span>2025-26</span>
+                <p class="footer-description">
+                    Advanced Student Performance Analytics Platform designed to track, analyze, and enhance academic
+                    excellence for the students.
+                </p>
+                <div class="footer-stats">
+                    <div class="footer-stat">
+                        <i class="fas fa-users"></i>
+                        <span id="footerStudentCount">39 Students</span>
+                    </div>
+                    <div class="footer-stat">
+                        <i class="fas fa-chart-line"></i>
+                        <span id="footerExamCount">11 Exams</span>
+                    </div>
+                    <div class="footer-stat">
+                        <i class="fas fa-trophy"></i>
+                        <span>Excellence Focused</span>
+                    </div>
                 </div>
             </div>
-            <p class="footer-description">
-                Advanced Student Performance Analytics Platform designed to track, analyze, and enhance academic excellence for the students.
-            </p>
-            <div class="footer-stats">
-                <div class="footer-stat">
-                    <i class="fas fa-users"></i>
-                    <span id="footerStudentCount">39 Students</span>
+
+            <div class="footer-section">
+                <h4><i class="fas fa-tools"></i> Quick Actions</h4>
+                <ul class="footer-links">
+                    <li><a href="#" onclick="showTab('overallRank')" class="footer-link">
+                            <i class="fas fa-trophy"></i> Student Rankings
+                        </a></li>
+                    <li><a href="#" onclick="showTab('last3Rank')" class="footer-link">
+                            <i class="fas fa-calendar-alt"></i> Recent Exams
+                        </a></li>
+                    <li><a href="#" onclick="showTab('subjects')" class="footer-link">
+                            <i class="fas fa-book"></i> Subject Analysis
+                        </a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4><i class="fas fa-chart-line"></i> Analytics</h4>
+                <ul class="footer-links">
+                    <li><a href="#" onclick="toggleExamDifficultyAnalysis()" class="footer-link">
+                            <i class="fas fa-brain"></i> Exam Difficulty
+                        </a></li>
+                    <li><a href="#" onclick="toggleStudentCategorization()" class="footer-link">
+                            <i class="fas fa-users-cog"></i> Student Categories
+                        </a></li>
+                    <li><a href="#" onclick="togglePerformanceAlerts()" class="footer-link">
+                            <i class="fas fa-exclamation-triangle"></i> Performance Alerts
+                        </a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4><i class="fas fa-info-circle"></i> System Info</h4>
+                <div class="system-info">
+                    <div class="info-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Last Updated: <span class="lastUpdated">25-10-2025 17:10</span></span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-database"></i>
+                        <span>Total Records: <span class="totalRecords">290</span></span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-server"></i>
+                        <span>System Status: <span class="status-online">Online</span></span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Data Security: <span class="status-secure">Secured</span></span>
+                    </div>
                 </div>
-                <div class="footer-stat">
-                    <i class="fas fa-chart-line"></i>
-                    <span id="footerExamCount">11 Exams</span>
-                </div>
-                <div class="footer-stat">
-                    <i class="fas fa-trophy"></i>
-                    <span>Excellence Focused</span>
+                <div class="footer-actions">
+                    <button class="footer-btn" onclick="refreshAllData()">
+                        <i class="fas fa-sync-alt"></i> Refresh Data
+                    </button>
+                    <button class="footer-btn" onclick="exportAllData()">
+                        <i class="fas fa-download"></i> Export All
+                    </button>
                 </div>
             </div>
         </div>
 
-        <div class="footer-section">
-            <h4><i class="fas fa-tools"></i> Quick Actions</h4>
-            <ul class="footer-links">
-                <li><a href="#" onclick="showTab('overallRank')" class="footer-link">
-                    <i class="fas fa-trophy"></i> Student Rankings
-                </a></li>
-                <li><a href="#" onclick="showTab('last3Rank')" class="footer-link">
-                    <i class="fas fa-calendar-alt"></i> Recent Exams
-                </a></li>
-                <li><a href="#" onclick="showTab('subjects')" class="footer-link">
-                    <i class="fas fa-book"></i> Subject Analysis
-                </a></li>
-            </ul>
-        </div>
-
-        <div class="footer-section">
-            <h4><i class="fas fa-chart-line"></i> Analytics</h4>
-            <ul class="footer-links">
-                <li><a href="#" onclick="toggleExamDifficultyAnalysis()" class="footer-link">
-                    <i class="fas fa-brain"></i> Exam Difficulty
-                </a></li>
-                <li><a href="#" onclick="toggleStudentCategorization()" class="footer-link">
-                    <i class="fas fa-users-cog"></i> Student Categories
-                </a></li>
-                <li><a href="#" onclick="togglePerformanceAlerts()" class="footer-link">
-                    <i class="fas fa-exclamation-triangle"></i> Performance Alerts
-                </a></li>
-            </ul>
-        </div>
-
-        <div class="footer-section">
-            <h4><i class="fas fa-info-circle"></i> System Info</h4>
-            <div class="system-info">
-                <div class="info-item">
-                    <i class="fas fa-clock"></i>
-                    <span>Last Updated: <span class="lastUpdated">25-10-2025 17:10</span></span>
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <div class="copyright">
+                    <i class="fas fa-copyright"></i>
+                    <span>2025 CRISPR Analytics Platform. All rights reserved.</span>
                 </div>
-                <div class="info-item">
-                    <i class="fas fa-database"></i>
-                    <span>Total Records: <span class="totalRecords">290</span></span>
-                </div>
-                <div class="info-item">
-                    <i class="fas fa-server"></i>
-                    <span>System Status: <span class="status-online">Online</span></span>
-                </div>
-                <div class="info-item">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>Data Security: <span class="status-secure">Secured</span></span>
+                <div class="footer-meta">
+                    <span class="version">Version 3.0.1</span>
+                    <span class="divider">•</span>
+                    <span>Built with <i class="fas fa-heart text-blue"></i> for Academic Excellence</span>
+                    <span class="divider">•</span>
+                    <span class="update-time">Updated: Oct 2025</span>
                 </div>
             </div>
-            <div class="footer-actions">
-                <button class="footer-btn" onclick="refreshAllData()">
-                    <i class="fas fa-sync-alt"></i> Refresh Data
-                </button>
-                <button class="footer-btn" onclick="exportAllData()">
-                    <i class="fas fa-download"></i> Export All
-                </button>
-            </div>
         </div>
-    </div>
-
-    <div class="footer-bottom">
-        <div class="footer-bottom-content">
-            <div class="copyright">
-                <i class="fas fa-copyright"></i>
-                <span>2025 CRISPR Analytics Platform. All rights reserved.</span>
-            </div>
-            <div class="footer-meta">
-                <span class="version">Version 2.2.1</span>
-                <span class="divider">•</span>
-                <span>Built with <i class="fas fa-heart text-red"></i> for Academic Excellence</span>
-                <span class="divider">•</span>
-                <span class="update-time">Updated: Oct 2025</span>
-            </div>
-        </div>
-    </div>
-</footer>
+    </footer>
 </body>
+
 </html>

@@ -13,16 +13,12 @@ const subjectNames = {
 };
 
 // ============================================
-// DYNAMIC EXAM ORDERING - AUTO-UPDATED FROM BACKEND
-// ============================================
-
-// ============================================
 // SIMPLE EXAM ORDERING - FOLLOWS DATA ORDER
 // ============================================
 function generateExamOrderAdvanced() {
   // Exam order is already set from processJsonData
   // Just validate and update display
-  
+
   if (examOrder.length === 0) {
     // Fallback if not set (shouldn't happen)
     const uniqueExams = [];
@@ -37,15 +33,15 @@ function generateExamOrderAdvanced() {
     });
     examOrder = uniqueExams;
   }
-  
+
   last3Exams = examOrder.slice(-3);
-  
+
   console.log('✅ Exam order (from data):', {
     examOrder: examOrder,
     last3Exams: last3Exams,
     total: examOrder.length
   });
-  
+
   updateLast3ExamsDisplay();
   return { examOrder, last3Exams };
 }
@@ -56,83 +52,83 @@ function generateExamOrderAdvanced() {
 // ============================================
 
 function updateLast3ExamsDisplay() {
-    try {
-        // Ensure last3Exams is up to date
-        if (examOrder.length > 0) {
-            last3Exams = examOrder.slice(-3);
-        }
-        
-        if (last3Exams.length === 0) {
-            console.warn('⚠️ No exams available for last3Exams display');
-            return;
-        }
-        
-        // Update the section header description (text in brackets)
-        const sectionHeader = document.querySelector('#last3Rank .section-header .header-content h2');
-        if (sectionHeader) {
-            sectionHeader.innerHTML = `<i class="fas fa-calendar-alt"></i> Last 3 Exams Ranking`;
-        }
-        
-        const sectionDescription = document.querySelector('#last3Rank .section-header .header-content p');
-        if (sectionDescription) {
-            const examsList = last3Exams.join(', ');
-            sectionDescription.textContent = `Recent performance analysis (${examsList})`;
-        }
-        
-        // Update the exam pills (visual badges)
-        const pillsContainer = document.querySelector('#last3Rank .exam-pills');
-        if (pillsContainer) {
-            // Clear existing pills
-            pillsContainer.innerHTML = '';
-            
-            // Create new pills for each exam
-            last3Exams.forEach(exam => {
-                const pill = document.createElement('span');
-                pill.className = 'exam-pill';
-                pill.textContent = exam;
-                pillsContainer.appendChild(pill);
-            });
-        }
-        
-        console.log('✅ Last 3 Exams display updated:', {
-            last3Exams: last3Exams,
-            pillsUpdated: pillsContainer ? 'Yes' : 'No',
-            textUpdated: sectionDescription ? 'Yes' : 'No'
-        });
-        
-    } catch (error) {
-        console.error('❌ Last 3 Exams display update error:', error);
+  try {
+    // Ensure last3Exams is up to date
+    if (examOrder.length > 0) {
+      last3Exams = examOrder.slice(-3);
     }
+
+    if (last3Exams.length === 0) {
+      console.warn('⚠️ No exams available for last3Exams display');
+      return;
+    }
+
+    // Update the section header description (text in brackets)
+    const sectionHeader = document.querySelector('#last3Rank .section-header .header-content h2');
+    if (sectionHeader) {
+      sectionHeader.innerHTML = `<i class="fas fa-calendar-alt"></i> Last 3 Exams Ranking`;
+    }
+
+    const sectionDescription = document.querySelector('#last3Rank .section-header .header-content p');
+    if (sectionDescription) {
+      const examsList = last3Exams.join(', ');
+      sectionDescription.textContent = `Recent performance analysis (${examsList})`;
+    }
+
+    // Update the exam pills (visual badges)
+    const pillsContainer = document.querySelector('#last3Rank .exam-pills');
+    if (pillsContainer) {
+      // Clear existing pills
+      pillsContainer.innerHTML = '';
+
+      // Create new pills for each exam
+      last3Exams.forEach(exam => {
+        const pill = document.createElement('span');
+        pill.className = 'exam-pill';
+        pill.textContent = exam;
+        pillsContainer.appendChild(pill);
+      });
+    }
+
+    console.log('✅ Last 3 Exams display updated:', {
+      last3Exams: last3Exams,
+      pillsUpdated: pillsContainer ? 'Yes' : 'No',
+      textUpdated: sectionDescription ? 'Yes' : 'No'
+    });
+
+  } catch (error) {
+    console.error('❌ Last 3 Exams display update error:', error);
+  }
 }
 
 // Add this after the existing constants (after line 8)
 async function fetchStudentData() {
-    showLoading();
-    try {
-        console.log('🔄 Fetching data from API...');
-        const response = await fetch('/api/students');
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        console.log('📦 API Response:', result);
-        
-        if (result.success && result.data) {
-            console.log(`✅ Data received: ${result.count} records`);
-            processJsonData(result.data);  // ✅ Pass the data here
-        } else {
-            throw new Error('Invalid data format from API');
-        }
-    } catch (error) {
-        console.error('❌ Fetch Error:', error);
-        showStatus(`Error: ${error.message}`, 'error');
-        
-        // Show error message on page
-        setTimeout(() => {
-            const container = document.querySelector('.container') || document.body;
-            container.innerHTML += `
+  showLoading();
+  try {
+    console.log('🔄 Fetching data from API...');
+    const response = await fetch('/api/students');
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log('📦 API Response:', result);
+
+    if (result.success && result.data) {
+      console.log(`✅ Data received: ${result.count} records`);
+      processJsonData(result.data);  // ✅ Pass the data here
+    } else {
+      throw new Error('Invalid data format from API');
+    }
+  } catch (error) {
+    console.error('❌ Fetch Error:', error);
+    showStatus(`Error: ${error.message}`, 'error');
+
+    // Show error message on page
+    setTimeout(() => {
+      const container = document.querySelector('.container') || document.body;
+      container.innerHTML += `
                 <div style="background: #ffebee; border: 2px solid #f44336; padding: 20px; margin: 20px; border-radius: 8px; text-align: center;">
                     <h3 style="color: #c62828;">⚠️ Data Loading Failed</h3>
                     <p style="color: #d32f2f;">${error.message}</p>
@@ -145,143 +141,144 @@ async function fetchStudentData() {
                     </ul>
                 </div>
             `;
-            
-            // Fallback: Set empty students to unblock UI
-            students = [];
-            processJsonData([]);  // Trigger empty data processing
-        }, 500);
-    } finally {
-        hideLoading();
-    }
+
+      // Fallback: Set empty students to unblock UI
+      students = [];
+      processJsonData([]);  // Trigger empty data processing
+    }, 500);
+  } finally {
+    hideLoading();
+  }
 }
 
 // Main initialization
 window.addEventListener('DOMContentLoaded', () => {
-    console.log('🎯 Page loaded, fetching data...');
-    
-    // Fetch data from backend
-    fetchStudentData();
-    
-    // Initialize theme
-    const themeToggleBtn = document.getElementById('themeToggle');
-    if (themeToggleBtn) {
-        setTimeout(() => themeToggleBtn.click(), 1);
-        setTimeout(() => {
-            const loading = document.getElementById('loadingOverlay');
-            if (loading) loading.style.display = 'none';
-        }, 1);
-    }
+  console.log('🎯 Page loaded, fetching data...');
+
+  // Fetch data from backend
+  fetchStudentData();
+  loadQuestionMarksData();
+
+  // Initialize theme
+  const themeToggleBtn = document.getElementById('themeToggle');
+  if (themeToggleBtn) {
+    setTimeout(() => themeToggleBtn.click(), 1);
+    setTimeout(() => {
+      const loading = document.getElementById('loadingOverlay');
+      if (loading) loading.style.display = 'none';
+    }, 1);
+  }
 });
 
 
 // NEW: Filter functions
 function filterOverallRanklist(filterType) {
-    currentOverallFilter = filterType;
+  currentOverallFilter = filterType;
 
-    // Update button states
-    document.getElementById('overallAllBtn').classList.toggle('active', filterType === 'all');
-    document.getElementById('overallRTBtn').classList.toggle('active', filterType === 'RT');
-    document.getElementById('overallWEBtn').classList.toggle('active', filterType === 'WE');
-    document.getElementById('overallMTBtn').classList.toggle('active', filterType === 'MT');
+  // Update button states
+  document.getElementById('overallAllBtn').classList.toggle('active', filterType === 'all');
+  document.getElementById('overallRTBtn').classList.toggle('active', filterType === 'RT');
+  document.getElementById('overallWEBtn').classList.toggle('active', filterType === 'WE');
+  document.getElementById('overallMTBtn').classList.toggle('active', filterType === 'MT');
 
-    // Repopulate the overall ranklist with filtered data
-    populateOverallFiltered(filterType);
+  // Repopulate the overall ranklist with filtered data
+  populateOverallFiltered(filterType);
 }
 
 function filterLast3Ranklist(filterType) {
-    currentLast3Filter = filterType;
+  currentLast3Filter = filterType;
 
-    // Update button states
-    document.getElementById('last3AllBtn').classList.toggle('active', filterType === 'all');
-    document.getElementById('last3RTBtn').classList.toggle('active', filterType === 'RT');
-    document.getElementById('last3WEBtn').classList.toggle('active', filterType === 'WE');
-    document.getElementById('last3MTBtn').classList.toggle('active', filterType === 'MT');
+  // Update button states
+  document.getElementById('last3AllBtn').classList.toggle('active', filterType === 'all');
+  document.getElementById('last3RTBtn').classList.toggle('active', filterType === 'RT');
+  document.getElementById('last3WEBtn').classList.toggle('active', filterType === 'WE');
+  document.getElementById('last3MTBtn').classList.toggle('active', filterType === 'MT');
 
-    // Repopulate the last 3 ranklist with filtered data
-    populateLast3Filtered(filterType);
+  // Repopulate the last 3 ranklist with filtered data
+  populateLast3Filtered(filterType);
 }
 
 function getFilteredExamsForOverall(filterType) {
-    if (filterType === 'all') {
-        return examOrder; // All exams
-    } else if (filterType === 'RT') {
-        return examOrder.filter(exam => exam.startsWith('RT')); // Only RT exams
-    } else if (filterType === 'WE') {
-        return examOrder.filter(exam => exam.startsWith('WE')); // Only WE exams
-    } else if (filterType === 'MT') {
-        return examOrder.filter(exam => exam.startsWith('MT')); // Only MT exams
-    }
-    return examOrder;
+  if (filterType === 'all') {
+    return examOrder; // All exams
+  } else if (filterType === 'RT') {
+    return examOrder.filter(exam => exam.startsWith('RT')); // Only RT exams
+  } else if (filterType === 'WE') {
+    return examOrder.filter(exam => exam.startsWith('WE')); // Only WE exams
+  } else if (filterType === 'MT') {
+    return examOrder.filter(exam => exam.startsWith('MT')); // Only MT exams
+  }
+  return examOrder;
 }
 
 function getFilteredExamsForLast3(filterType) {
-    if (filterType === 'all') {
-        return last3Exams; // WE 6, RT 2, WE 7
-    } else if (filterType === 'RT') {
-        // Get last 3 RT exams - but only RT 1 and RT 2 exist
-        const rtExams = examOrder.filter(exam => exam.startsWith('RT'));
-        return rtExams; // Will return ['RT 1', 'RT 2'] - all available RTs
-    } else if (filterType === 'WE') {
-        // Get last 3 WE exams - WE 5, WE 6, WE 7
-        const weExams = examOrder.filter(exam => exam.startsWith('WE'));
-        return weExams.slice(-3); // Last 3 WEs: ['WE 5', 'WE 6', 'WE 7']
-    } else if (filterType === 'MT') {
-        // Get last 3 MT exams - MT 5, MT 6, MT 7
-        const mtExams = examOrder.filter(exam => exam.startsWith('MT'));  // ✅ FIXED: Added mtExams
-        return mtExams.slice(-3); // Last 3 MTs: ['MT 5', 'MT 6', 'MT 7']
-    }
-    return last3Exams;
+  if (filterType === 'all') {
+    return last3Exams; // WE 6, RT 2, WE 7
+  } else if (filterType === 'RT') {
+    // Get last 3 RT exams - but only RT 1 and RT 2 exist
+    const rtExams = examOrder.filter(exam => exam.startsWith('RT'));
+    return rtExams; // Will return ['RT 1', 'RT 2'] - all available RTs
+  } else if (filterType === 'WE') {
+    // Get last 3 WE exams - WE 5, WE 6, WE 7
+    const weExams = examOrder.filter(exam => exam.startsWith('WE'));
+    return weExams.slice(-3); // Last 3 WEs: ['WE 5', 'WE 6', 'WE 7']
+  } else if (filterType === 'MT') {
+    // Get last 3 MT exams - MT 5, MT 6, MT 7
+    const mtExams = examOrder.filter(exam => exam.startsWith('MT'));  // ✅ FIXED: Added mtExams
+    return mtExams.slice(-3); // Last 3 MTs: ['MT 5', 'MT 6', 'MT 7']
+  }
+  return last3Exams;
 }
 
 function populateOverallFiltered(filterType) {
-    const tbody = document.querySelector('#rankTable tbody');
-    tbody.innerHTML = '';
+  const tbody = document.querySelector('#rankTable tbody');
+  tbody.innerHTML = '';
 
-    const filteredExams = getFilteredExamsForOverall(filterType);
+  const filteredExams = getFilteredExamsForOverall(filterType);
 
-    // Calculate cumulative totals based on filtered exams
-const filteredStudents = students.map(stu => {
-  let cumTotal = 0;
-  let cumMax = 0;
-  let examsAttempted = 0;
+  // Calculate cumulative totals based on filtered exams
+  const filteredStudents = students.map(stu => {
+    let cumTotal = 0;
+    let cumMax = 0;
+    let examsAttempted = 0;
 
-  stu.exams.forEach(ex => {
-    if (ex.maxTotal > 0 && filteredExams.includes(ex.exam)) {
-      cumTotal += ex.total;
-      cumMax += ex.maxTotal;
-      examsAttempted++;
-    }
-  });
-
-  const cumPercent = cumMax > 0 ? ((cumTotal / cumMax) * 100).toFixed(2) : "0.00";
-
-  return {
-    ...stu,
-    filteredCumTotal: cumTotal,
-    filteredCumMax: cumMax,
-    filteredCumPercent: cumPercent,
-    filteredExamsAttempted: examsAttempted
-  };
-});
-
-
-    // Sort by filtered cumulative total
-    const sorted = [...filteredStudents].sort((a, b) => {
-        if (b.filteredCumTotal !== a.filteredCumTotal) {
-            return b.filteredCumTotal - a.filteredCumTotal;
-        }
-        return a.roll.localeCompare(b.roll);
+    stu.exams.forEach(ex => {
+      if (ex.maxTotal > 0 && filteredExams.includes(ex.exam)) {
+        cumTotal += ex.total;
+        cumMax += ex.maxTotal;
+        examsAttempted++;
+      }
     });
 
-    sorted.forEach((stu, i) => {
-        const rank = stu.filteredCumTotal > 0 ? i + 1 : '-';
-        const tr = document.createElement('tr');
+    const cumPercent = cumMax > 0 ? ((cumTotal / cumMax) * 100).toFixed(2) : "0.00";
 
-        if (rank <= 3 && rank !== '-' && stu.filteredCumTotal > 0) {
-            tr.classList.add('top-performer');
-        }
+    return {
+      ...stu,
+      filteredCumTotal: cumTotal,
+      filteredCumMax: cumMax,
+      filteredCumPercent: cumPercent,
+      filteredExamsAttempted: examsAttempted
+    };
+  });
 
-        tr.innerHTML = `
+
+  // Sort by filtered cumulative total
+  const sorted = [...filteredStudents].sort((a, b) => {
+    if (b.filteredCumTotal !== a.filteredCumTotal) {
+      return b.filteredCumTotal - a.filteredCumTotal;
+    }
+    return a.roll.localeCompare(b.roll);
+  });
+
+  sorted.forEach((stu, i) => {
+    const rank = stu.filteredCumTotal > 0 ? i + 1 : '-';
+    const tr = document.createElement('tr');
+
+    if (rank <= 3 && rank !== '-' && stu.filteredCumTotal > 0) {
+      tr.classList.add('top-performer');
+    }
+
+    tr.innerHTML = `
             <td>${rank}</td>
             <td>${stu.roll}</td>
             <td class="name" data-roll="${stu.roll}">${stu.name}</td>
@@ -290,67 +287,67 @@ const filteredStudents = students.map(stu => {
             <td>${stu.filteredCumPercent}%</td>
         `;
 
-        tbody.appendChild(tr);
-    });
+    tbody.appendChild(tr);
+  });
 
-    if (students.length === 0) {
+  if (students.length === 0) {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No students to display</td></tr>';
     document.getElementById('overallCount').textContent = '0 students';
     return;
-    }
-    document.getElementById('overallCount').textContent = `${students.length} students`;
-    addClickListeners();
+  }
+  document.getElementById('overallCount').textContent = `${students.length} students`;
+  addClickListeners();
 }
 
 function populateLast3Filtered(filterType) {
-    const tbody = document.querySelector('#last3Table tbody');
-    tbody.innerHTML = '';
+  const tbody = document.querySelector('#last3Table tbody');
+  tbody.innerHTML = '';
 
-    const filteredExams = getFilteredExamsForLast3(filterType);
+  const filteredExams = getFilteredExamsForLast3(filterType);
 
-    // Calculate last 3 totals based on filtered exams
-    const last3Students = students.map(stu => {
-        let total = 0;
-        let maxTotal = 0;
-        let examsAttempted = 0;
+  // Calculate last 3 totals based on filtered exams
+  const last3Students = students.map(stu => {
+    let total = 0;
+    let maxTotal = 0;
+    let examsAttempted = 0;
 
-        filteredExams.forEach(examName => {
-            const examData = stu.exams.find(ex => ex.exam === examName && ex.maxTotal > 0);
-            if (examData) {
-                total += examData.total;
-                maxTotal += examData.maxTotal;
-                examsAttempted++;
-            }
-        });
-
-        const last3Percent = maxTotal > 0 ? ((total / maxTotal) * 100).toFixed(2) : '0.00';
-
-        return {
-            ...stu,
-            last3Total: total,
-            last3Percent: last3Percent,
-            last3ExamsAttempted: examsAttempted,
-            last3MaxTotal: maxTotal
-        };
+    filteredExams.forEach(examName => {
+      const examData = stu.exams.find(ex => ex.exam === examName && ex.maxTotal > 0);
+      if (examData) {
+        total += examData.total;
+        maxTotal += examData.maxTotal;
+        examsAttempted++;
+      }
     });
 
-    // Sort by last 3 total
-    const sorted = last3Students.sort((a, b) => {
-        if (b.last3Total !== a.last3Total) {
-            return b.last3Total - a.last3Total;
-        }
-        return a.roll.localeCompare(b.roll);
-    });
+    const last3Percent = maxTotal > 0 ? ((total / maxTotal) * 100).toFixed(2) : '0.00';
 
-    sorted.forEach((stu, i) => {
-        const rank = stu.last3Total > 0 ? i + 1 : '-';
-        const tr = document.createElement('tr');
+    return {
+      ...stu,
+      last3Total: total,
+      last3Percent: last3Percent,
+      last3ExamsAttempted: examsAttempted,
+      last3MaxTotal: maxTotal
+    };
+  });
 
-        if (rank <= 3 && rank !== '-') {
-            tr.classList.add('top-performer');
-        }
+  // Sort by last 3 total
+  const sorted = last3Students.sort((a, b) => {
+    if (b.last3Total !== a.last3Total) {
+      return b.last3Total - a.last3Total;
+    }
+    return a.roll.localeCompare(b.roll);
+  });
 
-        tr.innerHTML = `
+  sorted.forEach((stu, i) => {
+    const rank = stu.last3Total > 0 ? i + 1 : '-';
+    const tr = document.createElement('tr');
+
+    if (rank <= 3 && rank !== '-') {
+      tr.classList.add('top-performer');
+    }
+
+    tr.innerHTML = `
             <td>${rank}</td>
             <td>${stu.roll}</td>
             <td class="name" data-roll="${stu.roll}">${stu.name}</td>
@@ -359,16 +356,16 @@ function populateLast3Filtered(filterType) {
             <td>${stu.last3Percent}%</td>
         `;
 
-        tbody.appendChild(tr);
-    });
+    tbody.appendChild(tr);
+  });
 
-    if (students.length === 0) {
+  if (students.length === 0) {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No students to display</td></tr>';
     document.getElementById('overallCount').textContent = '0 students';
     return;
-    }
-    document.getElementById('last3Count').textContent = `${students.length} students`;
-    addClickListeners();
+  }
+  document.getElementById('last3Count').textContent = `${students.length} students`;
+  addClickListeners();
 }
 
 // Utility functions
@@ -395,26 +392,26 @@ function showStatus(message, type) {
 
 // Main initialization (consolidated - replace all DOMContentLoaded listeners)
 window.addEventListener('DOMContentLoaded', () => {
-    console.log('🎯 Page loaded, fetching data...');
-    
-    // Fetch data from backend
-    fetchStudentData();
-    
-    // Initialize theme
-    const themeToggleBtn = document.getElementById('themeToggle');
-    if (themeToggleBtn) {
-        setTimeout(() => themeToggleBtn.click(), 1);
-        setTimeout(() => {
-            const loading = document.getElementById('loadingOverlay');
-            if (loading) loading.style.display = 'none';
-        }, 1);
-    }
-    
-    // Initialize footer/stats after a delay
+  console.log('🎯 Page loaded, fetching data...');
+
+  // Fetch data from backend
+  fetchStudentData();
+
+  // Initialize theme
+  const themeToggleBtn = document.getElementById('themeToggle');
+  if (themeToggleBtn) {
+    setTimeout(() => themeToggleBtn.click(), 1);
     setTimeout(() => {
-        updateFooterStats();
-        updateHeaderAndFooterStats();
-    }, 500);
+      const loading = document.getElementById('loadingOverlay');
+      if (loading) loading.style.display = 'none';
+    }, 1);
+  }
+
+  // Initialize footer/stats after a delay
+  setTimeout(() => {
+    updateFooterStats();
+    updateHeaderAndFooterStats();
+  }, 500);
 });
 
 // Track exam order from data (first appearance order)
@@ -427,24 +424,24 @@ function processJsonData(data) {
     const studentMap = {};
     examOrderFromData.length = 0;  // Reset
     seenExams.clear();
-    
+
     data.forEach(row => {
       const roll = row.roll.trim();
       const name = row.name.trim();
       const examName = row.exam.trim();
-      
+
       // Track exam order as it appears in data
       if (!seenExams.has(examName) && row.maxTotal > 0) {
         examOrderFromData.push(examName);
         seenExams.add(examName);
       }
-      
+
       if (!studentMap[roll]) {
-        studentMap[roll] = {roll, name, exams: []};
+        studentMap[roll] = { roll, name, exams: [] };
       } else {
         studentMap[roll].name = name;
       }
-      
+
       studentMap[roll].exams.push({
         exam: examName,
         scores: {
@@ -464,14 +461,14 @@ function processJsonData(data) {
         maxTotal: parseFloat(row.maxTotal) || 0
       });
     });
-    
+
     students = Object.values(studentMap);
     students.forEach(computeCumulatives);
-    
+
     // Use the data-based exam order
     examOrder = [...examOrderFromData];
     last3Exams = examOrder.slice(-3);
-    
+
     updateLast3ExamsDisplay();
     console.log(`✅ Processed ${students.length} students`);
 
@@ -482,12 +479,12 @@ function processJsonData(data) {
       const tbody = document.querySelector('#rankTable tbody');
       if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No data available. Check CSV file.</td></tr>';
       document.getElementById('overallCount').textContent = '0 students';
-      
+
       // Similar for other tables (add if needed)
       const last3Tbody = document.querySelector('#last3Table tbody');
       if (last3Tbody) last3Tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No data available.</td></tr>';
       document.getElementById('last3Count').textContent = '0 students';
-      
+
       showStatus('⚠️ No data found - check CSV file', 'error');
       return;  // Early exit
     }
@@ -575,6 +572,188 @@ function computeCumulatives(student) {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 1. GLOBAL VARIABLE FOR STORING QUESTION MARKS DATA
+// ─────────────────────────────────────────────────────────────────────────────
+
+let questionMarksData = {};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 2. LOAD QUESTION-WISE MARKS FROM CSV
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function loadQuestionMarksData() {
+  try {
+    const response = await fetch('marks-data.csv');
+    const csvText = await response.text();
+    const lines = csvText.split('\n');
+
+    const headers = lines[0].split(',').map(h => h.trim().toUpperCase());
+    const questionColumns = headers.filter(h => h.match(/^Q\d+$/));
+
+    console.log('Found question columns:', questionColumns.length);
+
+    for (let i = 1; i < lines.length; i++) {
+      if (!lines[i].trim()) continue;
+
+      const row = lines[i].split(',').map(c => c.trim());
+      const roll = row[0];
+      const name = row[1];
+      const exam = row[2];
+
+      if (!roll || !exam) continue;
+
+      const key = `${roll}_${exam}`;
+
+      const questionMarks = {};
+      questionColumns.forEach((qCol) => {
+        const colIndex = headers.indexOf(qCol);
+        const mark = parseFloat(row[colIndex]) || 0;
+        questionMarks[qCol] = mark;
+      });
+
+      // Calculate total
+      const total = questionColumns.reduce((sum, q) => sum + (questionMarks[q] || 0), 0);
+
+      questionMarksData[key] = {
+        roll: roll,
+        name: name,
+        exam: exam,
+        marks: questionMarks,
+        total: total
+      };
+    }
+
+    console.log('✅ Question marks data loaded:', Object.keys(questionMarksData).length, 'records');
+  } catch (error) {
+    console.warn('⚠️ Could not load question marks data:', error);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 3. OPEN QUESTION MARKS MODAL
+// ─────────────────────────────────────────────────────────────────────────────
+
+function openQuestionMarksModal(studentRoll, examName, studentName) {
+  const key = `${studentRoll}_${examName}`;
+  const qmData = questionMarksData[key];
+
+  if (!qmData) {
+    alert('Question-wise marks not available for this student & exam.');
+    return;
+  }
+
+  // Populate student info
+  document.getElementById('qmStudentName').textContent = studentName || studentRoll;
+  document.getElementById('qmStudentRoll').textContent = studentRoll;
+  document.getElementById('qmExam').textContent = examName;
+  document.getElementById('qmTotal').textContent = qmData.total.toFixed(1);
+
+  // Generate question grid (8 rows × 5 boxes = 40 questions)
+  generateQuestionGrid(qmData.marks);
+
+  // Calculate and display statistics
+  calculateQuestionStatistics(qmData.marks);
+
+  // Show modal
+  document.getElementById('questionMarksModal').style.display = 'flex';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 4. CLOSE MODAL
+// ─────────────────────────────────────────────────────────────────────────────
+
+function closeQuestionMarksModal() {
+  document.getElementById('questionMarksModal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+document.addEventListener('DOMContentLoaded', function () {
+  const modal = document.getElementById('questionMarksModal');
+  if (modal) {
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) {
+        closeQuestionMarksModal();
+      }
+    });
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 5. GENERATE QUESTION GRID (40 boxes in 8 rows × 5 columns)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function generateQuestionGrid(marks) {
+  const grid = document.getElementById('questionGrid');
+  grid.innerHTML = '';
+
+  const questionCount = Object.keys(marks).length;
+
+  for (let i = 1; i <= questionCount; i++) {
+    const qNum = `Q${i}`;
+    const mark = Number(marks[qNum] || 0);
+
+    let statusClass = 'question-box-none';
+    let iconClass = 'fas fa-minus-circle';
+    let label = 'Not Attempted';
+
+    if (mark === 4) {
+      statusClass = 'question-box-correct';
+      iconClass = 'fas fa-check-circle';
+      label = 'Correct Answer';
+    } else if (mark === -1) {
+      statusClass = 'question-box-wrong';
+      iconClass = 'fas fa-times-circle';
+      label = 'Wrong Answer';
+    }
+
+    const box = document.createElement('div');
+    box.className = `question-box ${statusClass}`;
+    box.title = `${qNum} • ${label} (mark = ${mark})`;
+
+    box.innerHTML = `
+      <div class="q-number">${qNum}</div>
+      <div class="q-icon"><i class="${iconClass}"></i></div>
+      <div class="q-label">${label}</div>
+    `;
+
+    grid.appendChild(box);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 6. CALCULATE QUESTION STATISTICS
+// ─────────────────────────────────────────────────────────────────────────────
+
+function calculateQuestionStatistics(marks) {
+  let fullMarks = 0;        // Count of 4 marks
+  let partialMarks = 0;     // Count of -1 marks
+  let zeroMarks = 0;        // Count of 0 marks
+
+  // Count each question's result
+  for (let i = 1; i <= 40; i++) {
+    const mark = marks[`Q${i}`] || 0;
+    if (mark === 4) {
+      fullMarks++;
+    } else if (mark === -1) {
+      partialMarks++;
+    } else {
+      zeroMarks++;
+    }
+  }
+
+  // Calculate total marks and accuracy
+  const total = Object.keys(marks).reduce((sum, q) => sum + (marks[q] || 0), 0);
+  const maxTotal = 40 * 4; // 40 questions × 4 marks each
+  const accuracy = ((total / maxTotal) * 100).toFixed(1);
+
+  // Update statistics display
+  document.getElementById('qmFullMarks').textContent = fullMarks;
+  document.getElementById('qmPartialMarks').textContent = partialMarks;
+  document.getElementById('qmZeroMarks').textContent = zeroMarks;
+  document.getElementById('qmAccuracy').textContent = accuracy + '%';
+}
+
 // ============================================
 // ADVANCED INSIGHTS FUNCTIONS
 // ============================================
@@ -584,13 +763,13 @@ function calculateAdvancedInsights() {
 
   // 1. SUBJECT DIFFICULTY RANKING
   calculateSubjectDifficultyRanking();
-  
+
   // 2. PERFORMANCE DISTRIBUTION
   calculatePerformanceDistribution();
-  
+
   // 3. TREND ANALYSIS
   calculateTrendAnalysis();
-  
+
   // 4. LEADERBOARDS
   populateLast3Leaderboard();
   populateOverallLeaderboard();
@@ -599,13 +778,13 @@ function calculateAdvancedInsights() {
 
 function calculateSubjectDifficultyRanking() {
   const subjects = ['chem', 'phy', 'bio', 'math'];
-  const subjectNames = {chem: 'Chemistry', phy: 'Physics', bio: 'Biology', math: 'Mathematics'};
-  
+  const subjectNames = { chem: 'Chemistry', phy: 'Physics', bio: 'Biology', math: 'Mathematics' };
+
   const subjectAverages = {};
-  
+
   subjects.forEach(sub => {
     let total = 0, maxTotal = 0, count = 0;
-    
+
     students.forEach(stu => {
       if (stu.subjectMaxTotals && stu.subjectMaxTotals[sub] > 0) {
         total += stu.subjectTotals[sub] || 0;
@@ -613,20 +792,20 @@ function calculateSubjectDifficultyRanking() {
         count++;
       }
     });
-    
+
     subjectAverages[sub] = maxTotal > 0 ? (total / maxTotal * 100) : 0;
   });
-  
+
   // Populate difficulty bars
   subjects.forEach(sub => {
     const percent = subjectAverages[sub];
     const barEl = document.getElementById(sub + 'Bar');
     const percentEl = document.getElementById(sub + 'Percent');
     const badgeEl = document.getElementById(sub + 'Difficulty');
-    
+
     if (barEl) barEl.style.width = Math.min(percent, 100) + '%';
     if (percentEl) percentEl.textContent = percent.toFixed(1) + '%';
-    
+
     if (badgeEl) {
       badgeEl.className = 'difficulty-badge';
       if (percent >= 70) {
@@ -647,42 +826,42 @@ function calculatePerformanceDistribution() {
   let highPerformers = 0;    // 70%+
   let averagePerformers = 0; // 35-70%
   let atRiskStudents = 0;    // <35%
-  
+
   students.forEach(stu => {
     const percent = parseFloat(stu.cumPercent) || 0;
-    
+
     if (percent >= 70) highPerformers++;
     else if (percent >= 35) averagePerformers++;
     else atRiskStudents++;
   });
-  
+
   const total = students.length;
-  
+
   // Update UI
   document.getElementById('highPerfCount').textContent = highPerformers;
-  document.getElementById('highPerfPercent').textContent = ((highPerformers/total)*100).toFixed(0) + '%';
-  
+  document.getElementById('highPerfPercent').textContent = ((highPerformers / total) * 100).toFixed(0) + '%';
+
   document.getElementById('avgPerfCount').textContent = averagePerformers;
-  document.getElementById('avgPerfPercent').textContent = ((averagePerformers/total)*100).toFixed(0) + '%';
-  
+  document.getElementById('avgPerfPercent').textContent = ((averagePerformers / total) * 100).toFixed(0) + '%';
+
   document.getElementById('atRiskCount').textContent = atRiskStudents;
-  document.getElementById('atRiskPercent').textContent = ((atRiskStudents/total)*100).toFixed(0) + '%';
+  document.getElementById('atRiskPercent').textContent = ((atRiskStudents / total) * 100).toFixed(0) + '%';
 }
 
 function calculateTrendAnalysis() {
   // Get latest exam vs overall average
   const validExams = students.flatMap(s => s.exams).filter(e => e.maxTotal > 0);
-  
+
   if (validExams.length === 0) {
     document.getElementById('trendDescription').textContent = 'Insufficient data for trend analysis';
     return;
   }
-  
+
   // ✅ FIXED: Calculate TRUE overall average
   // Overall Average = (Sum of all scores obtained) / (Sum of all maximum marks) * 100
   let totalScoresObtained = 0;
   let totalMaxMarks = 0;
-  
+
   students.forEach(stu => {
     stu.exams.forEach(exam => {
       if (exam.maxTotal > 0) {
@@ -691,17 +870,17 @@ function calculateTrendAnalysis() {
       }
     });
   });
-  
+
   const overallAvg = totalMaxMarks > 0 ? (totalScoresObtained / totalMaxMarks * 100) : 0;
-  
+
   // Latest exam average
   const latestExam = last3Exams && last3Exams[last3Exams.length - 1];
-  
+
   let latestAvg = 0;
   if (latestExam) {
     let latestTotal = 0;
     let latestMax = 0;
-    
+
     students.forEach(stu => {
       const examData = stu.exams.find(e => e.exam === latestExam);
       if (examData && examData.maxTotal > 0) {
@@ -709,24 +888,24 @@ function calculateTrendAnalysis() {
         latestMax += examData.maxTotal;
       }
     });
-    
+
     latestAvg = latestMax > 0 ? (latestTotal / latestMax * 100) : 0;
   }
-  
+
   const trend = latestAvg - overallAvg;
-  
+
   // Update UI
   document.getElementById('latestExamAvg').textContent = latestAvg.toFixed(1) + '%';
   document.getElementById('overallTrendAvg').textContent = overallAvg.toFixed(1) + '%';
   document.getElementById('trendValue').textContent = (trend >= 0 ? '+' : '') + trend.toFixed(1) + '%';
-  
+
   // Set trend indicator and status
   const indicator = document.getElementById('trendIndicator');
   const status = document.getElementById('trendStatus');
-  
+
   indicator.className = 'trend-indicator';
   status.className = 'trend-status';
-  
+
   if (trend > 2) {
     indicator.classList.add('up');
     status.classList.add('improving');
@@ -744,91 +923,91 @@ function calculateTrendAnalysis() {
   }
 
   // Enhanced Performance Consistency with Score Volatility
-const scoresConsistency = students.map(s => s.cumPercent || 0).filter(s => !isNaN(s));
+  const scoresConsistency = students.map(s => s.cumPercent || 0).filter(s => !isNaN(s));
 
-if (scoresConsistency.length === 0) {
-  // If no valid scores, set defaults
-  document.getElementById('consistencyStatus').textContent = 'N/A';
-  document.getElementById('consistencyBar').style.width = '0%';
-  document.getElementById('consistencyValue').textContent = '0%';
+  if (scoresConsistency.length === 0) {
+    // If no valid scores, set defaults
+    document.getElementById('consistencyStatus').textContent = 'N/A';
+    document.getElementById('consistencyBar').style.width = '0%';
+    document.getElementById('consistencyValue').textContent = '0%';
+    for (let i = 1; i <= 5; i++) {
+      document.getElementById('volatilityBar' + i).style.height = '8px';
+    }
+    document.getElementById('volatilityLevel').textContent = 'N/A';
+    return;
+  }
+
+  const meanConsistency = scoresConsistency.reduce((a, b) => a + b, 0) / scoresConsistency.length;
+  const varianceConsistency = scoresConsistency.reduce((a, b) => a + Math.pow(b - meanConsistency, 2), 0) / scoresConsistency.length;
+  const stdDevConsistency = Math.sqrt(varianceConsistency);
+  const variationConsistency = Math.min(100, isNaN(stdDevConsistency) ? 0 : (stdDevConsistency / 50) * 100);
+  const predictabilityConsistency = 100 - variationConsistency;
+
+  // Consistency Status
+  let consistencyStatus = 'Stable';
+  let consistencyStatusClass = '';
+
+  if (variationConsistency > 60) {
+    consistencyStatus = 'Variable';
+    consistencyStatusClass = 'low';
+  } else if (variationConsistency > 35) {
+    consistencyStatus = 'Moderate';
+    consistencyStatusClass = 'medium';
+  }
+
+  const statusElConsistency = document.getElementById('consistencyStatus');
+  statusElConsistency.textContent = consistencyStatus;
+  statusElConsistency.className = 'consistency-badge ' + consistencyStatusClass;
+
+  document.getElementById('consistencyBar').style.width = predictabilityConsistency + '%';
+  document.getElementById('consistencyValue').textContent = Math.round(predictabilityConsistency) + '%';
+
+  // NEW: Score Volatility Visualization
+  const sortedScoresVolatility = [...scoresConsistency].sort((a, b) => a - b);
+  const quintilesVolatility = [];
+
+  for (let i = 0; i < 5; i++) {
+    const start = Math.floor((i * scoresConsistency.length) / 5);
+    const end = Math.floor(((i + 1) * scoresConsistency.length) / 5);
+
+    if (start >= end) {
+      quintilesVolatility.push(meanConsistency);
+      continue;
+    }
+
+    const quintileScoresTemp = sortedScoresVolatility.slice(start, end);
+    const quintileAvgTemp = quintileScoresTemp.length > 0
+      ? quintileScoresTemp.reduce((a, b) => a + b, 0) / quintileScoresTemp.length
+      : meanConsistency;
+
+    quintilesVolatility.push(quintileAvgTemp);
+  }
+
+  // Normalize to 8-16px heights
+  const minQVolatility = Math.min(...quintilesVolatility);
+  const maxQVolatility = Math.max(...quintilesVolatility);
+  const rangeVolatility = maxQVolatility - minQVolatility || 1;
+
   for (let i = 1; i <= 5; i++) {
-    document.getElementById('volatilityBar' + i).style.height = '8px';
+    const barHeightVolatility = Math.max(6, 8 + ((quintilesVolatility[i - 1] - minQVolatility) / rangeVolatility) * 12);
+    document.getElementById('volatilityBar' + i).style.height = barHeightVolatility + 'px';
   }
-  document.getElementById('volatilityLevel').textContent = 'N/A';
-  return;
-}
 
-const meanConsistency = scoresConsistency.reduce((a, b) => a + b, 0) / scoresConsistency.length;
-const varianceConsistency = scoresConsistency.reduce((a, b) => a + Math.pow(b - meanConsistency, 2), 0) / scoresConsistency.length;
-const stdDevConsistency = Math.sqrt(varianceConsistency);
-const variationConsistency = Math.min(100, isNaN(stdDevConsistency) ? 0 : (stdDevConsistency / 50) * 100);
-const predictabilityConsistency = 100 - variationConsistency;
-
-// Consistency Status
-let consistencyStatus = 'Stable';
-let consistencyStatusClass = '';
-
-if (variationConsistency > 60) {
-  consistencyStatus = 'Variable';
-  consistencyStatusClass = 'low';
-} else if (variationConsistency > 35) {
-  consistencyStatus = 'Moderate';
-  consistencyStatusClass = 'medium';
-}
-
-const statusElConsistency = document.getElementById('consistencyStatus');
-statusElConsistency.textContent = consistencyStatus;
-statusElConsistency.className = 'consistency-badge ' + consistencyStatusClass;
-
-document.getElementById('consistencyBar').style.width = predictabilityConsistency + '%';
-document.getElementById('consistencyValue').textContent = Math.round(predictabilityConsistency) + '%';
-
-// NEW: Score Volatility Visualization
-const sortedScoresVolatility = [...scoresConsistency].sort((a, b) => a - b);
-const quintilesVolatility = [];
-
-for (let i = 0; i < 5; i++) {
-  const start = Math.floor((i * scoresConsistency.length) / 5);
-  const end = Math.floor(((i + 1) * scoresConsistency.length) / 5);
-  
-  if (start >= end) {
-    quintilesVolatility.push(meanConsistency);
-    continue;
+  // Volatility Level
+  let volatilityLevel = 'High';
+  if (variationConsistency < 25) {
+    volatilityLevel = 'Very Low';
+  } else if (variationConsistency < 40) {
+    volatilityLevel = 'Low';
+  } else if (variationConsistency < 55) {
+    volatilityLevel = 'Moderate';
+  } else if (variationConsistency < 75) {
+    volatilityLevel = 'High';
+  } else {
+    volatilityLevel = 'Very High';
   }
-  
-  const quintileScoresTemp = sortedScoresVolatility.slice(start, end);
-  const quintileAvgTemp = quintileScoresTemp.length > 0 
-    ? quintileScoresTemp.reduce((a, b) => a + b, 0) / quintileScoresTemp.length 
-    : meanConsistency;
-  
-  quintilesVolatility.push(quintileAvgTemp);
-}
 
-// Normalize to 8-16px heights
-const minQVolatility = Math.min(...quintilesVolatility);
-const maxQVolatility = Math.max(...quintilesVolatility);
-const rangeVolatility = maxQVolatility - minQVolatility || 1;
-
-for (let i = 1; i <= 5; i++) {
-  const barHeightVolatility = Math.max(6, 8 + ((quintilesVolatility[i - 1] - minQVolatility) / rangeVolatility) * 12);
-  document.getElementById('volatilityBar' + i).style.height = barHeightVolatility + 'px';
-}
-
-// Volatility Level
-let volatilityLevel = 'High';
-if (variationConsistency < 25) {
-  volatilityLevel = 'Very Low';
-} else if (variationConsistency < 40) {
-  volatilityLevel = 'Low';
-} else if (variationConsistency < 55) {
-  volatilityLevel = 'Moderate';
-} else if (variationConsistency < 75) {
-  volatilityLevel = 'High';
-} else {
-  volatilityLevel = 'Very High';
-}
-
-document.getElementById('volatilityLevel').textContent = volatilityLevel;
+  document.getElementById('volatilityLevel').textContent = volatilityLevel;
 }
 
 // ============================================
@@ -839,7 +1018,7 @@ function populateLast3Leaderboard() {
   // Top 3 from last 3 exams combined
   const last3Students = students.map(stu => {
     let total = 0, maxTotal = 0;
-    
+
     if (last3Exams) {
       last3Exams.forEach(examName => {
         const examData = stu.exams.find(ex => ex.exam === examName && ex.maxTotal > 0);
@@ -849,20 +1028,20 @@ function populateLast3Leaderboard() {
         }
       });
     }
-    
+
     const percent = maxTotal > 0 ? (total / maxTotal * 100).toFixed(1) : 0;
     return { name: stu.name, roll: stu.roll, total, percent };
   })
-  .sort((a, b) => b.total - a.total)
-  .slice(0, 3);
-  
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 3);
+
   // Populate leaderboard
   for (let i = 0; i < 3; i++) {
     const student = last3Students[i] || {};
-    document.getElementById(`last3Rank${i+1}Name`).textContent = student.name || '-';
-    document.getElementById(`last3Rank${i+1}Roll`).textContent = student.roll || '-';
-    document.getElementById(`last3Rank${i+1}Score`).textContent = student.total || '0';
-    document.getElementById(`last3Rank${i+1}Percent`).textContent = (student.percent || '0') + '%';
+    document.getElementById(`last3Rank${i + 1}Name`).textContent = student.name || '-';
+    document.getElementById(`last3Rank${i + 1}Roll`).textContent = student.roll || '-';
+    document.getElementById(`last3Rank${i + 1}Score`).textContent = student.total || '0';
+    document.getElementById(`last3Rank${i + 1}Percent`).textContent = (student.percent || '0') + '%';
   }
 }
 
@@ -871,73 +1050,73 @@ function populateOverallLeaderboard() {
   const topStudents = [...students]
     .sort((a, b) => parseFloat(b.cumTotal || 0) - parseFloat(a.cumTotal || 0))
     .slice(0, 3);
-  
+
   // Populate leaderboard
   for (let i = 0; i < 3; i++) {
     const student = topStudents[i] || {};
-    document.getElementById(`topAllRank${i+1}Name`).textContent = student.name || '-';
-    document.getElementById(`topAllRank${i+1}Roll`).textContent = student.roll || '-';
-    document.getElementById(`topAllRank${i+1}Score`).textContent = student.cumTotal || '0';
-    document.getElementById(`topAllRank${i+1}Percent`).textContent = (student.cumPercent || '0') + '%';
+    document.getElementById(`topAllRank${i + 1}Name`).textContent = student.name || '-';
+    document.getElementById(`topAllRank${i + 1}Roll`).textContent = student.roll || '-';
+    document.getElementById(`topAllRank${i + 1}Score`).textContent = student.cumTotal || '0';
+    document.getElementById(`topAllRank${i + 1}Percent`).textContent = (student.cumPercent || '0') + '%';
   }
 }
 
 function populateImprovedLeaderboard() {
   // Most improved: compare LATEST EXAM to overall average
   // Latest exam = last exam in examOrder (system's latest, not individual's)
-  
+
   const latestExam = examOrder && examOrder[examOrder.length - 1];
-  
+
   if (!latestExam) {
     for (let i = 0; i < 3; i++) {
-      document.getElementById(`improvedRank${i+1}Name`).textContent = '-';
-      document.getElementById(`improvedRank${i+1}Roll`).textContent = '-';
-      document.getElementById(`improvedRank${i+1}Score`).textContent = '+0';
-      document.getElementById(`improvedRank${i+1}Percent`).textContent = '%';
+      document.getElementById(`improvedRank${i + 1}Name`).textContent = '-';
+      document.getElementById(`improvedRank${i + 1}Roll`).textContent = '-';
+      document.getElementById(`improvedRank${i + 1}Score`).textContent = '+0';
+      document.getElementById(`improvedRank${i + 1}Percent`).textContent = '%';
     }
     return;
   }
-  
+
   const improvedStudents = students.map(stu => {
     // Get the LATEST EXAM (system's latest, not individual's)
     const latestExamData = stu.exams.find(ex => ex.exam === latestExam && ex.maxTotal > 0);
-    
+
     if (!latestExamData) {
       return { name: stu.name, roll: stu.roll, improvement: -Infinity };
     }
-    
+
     // Latest exam percentage
     const latestPercent = (latestExamData.total / latestExamData.maxTotal) * 100;
-    
+
     // Overall average (true class average)
     let totalScoresObtained = 0;
     let totalMaxMarks = 0;
-    
+
     stu.exams.forEach(exam => {
       if (exam.maxTotal > 0) {
         totalScoresObtained += exam.total;
         totalMaxMarks += exam.maxTotal;
       }
     });
-    
+
     const overallPercent = totalMaxMarks > 0 ? (totalScoresObtained / totalMaxMarks * 100) : 0;
-    
+
     // Improvement = Latest exam % - Overall average %
     const improvement = latestPercent - overallPercent;
-    
+
     return { name: stu.name, roll: stu.roll, improvement };
   })
-  .filter(s => s.improvement !== -Infinity)  // Exclude students who didn't take latest exam
-  .sort((a, b) => b.improvement - a.improvement)
-  .slice(0, 3);
-  
+    .filter(s => s.improvement !== -Infinity)  // Exclude students who didn't take latest exam
+    .sort((a, b) => b.improvement - a.improvement)
+    .slice(0, 3);
+
   // Populate leaderboard
   for (let i = 0; i < 3; i++) {
     const student = improvedStudents[i] || {};
-    document.getElementById(`improvedRank${i+1}Name`).textContent = student.name || '-';
-    document.getElementById(`improvedRank${i+1}Roll`).textContent = student.roll || '-';
-    document.getElementById(`improvedRank${i+1}Score`).textContent = (student.improvement >= 0 ? '+' : '') + (student.improvement || '0').toFixed(1);
-    document.getElementById(`improvedRank${i+1}Percent`).textContent = '%';
+    document.getElementById(`improvedRank${i + 1}Name`).textContent = student.name || '-';
+    document.getElementById(`improvedRank${i + 1}Roll`).textContent = student.roll || '-';
+    document.getElementById(`improvedRank${i + 1}Score`).textContent = (student.improvement >= 0 ? '+' : '') + (student.improvement || '0').toFixed(1);
+    document.getElementById(`improvedRank${i + 1}Percent`).textContent = '%';
   }
 }
 
@@ -967,7 +1146,7 @@ function populateOverall() {
 
     tbody.appendChild(tr);
   });
-  
+
   if (students.length === 0) {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No students to display</td></tr>';
     document.getElementById('overallCount').textContent = '0 students';
@@ -983,12 +1162,12 @@ function populateSubject(tableId, sub) {
   tbody.innerHTML = '';
 
   const sorted = [...students]
-  .filter(s => s.subjectMaxTotals[sub] > 0)
-  .sort((a, b) => {
-    const totalB = b.subjectTotals[sub] || 0;
-    const totalA = a.subjectTotals[sub] || 0;
-    return totalB - totalA || a.roll.localeCompare(b.roll);
-  });
+    .filter(s => s.subjectMaxTotals[sub] > 0)
+    .sort((a, b) => {
+      const totalB = b.subjectTotals[sub] || 0;
+      const totalA = a.subjectTotals[sub] || 0;
+      return totalB - totalA || a.roll.localeCompare(b.roll);
+    });
 
   sorted.forEach((stu, i) => {
     const rank = i + 1;
@@ -1023,104 +1202,104 @@ function populateStats() {
   document.querySelector('#totalExams').textContent = totalExams;
   document.querySelector('#totalStudents').textContent = totalStudents;
 
-// Overall average — cohort totals over cohort maxima
-let overallObtained = 0;
-let overallMax = 0;
-students.forEach(stu => {
-  overallObtained += (parseFloat(stu.cumTotal) || 0);
-  overallMax += (parseFloat(stu.cumMax) || 0);
-});
-const overallAvg = overallMax > 0 ? ((overallObtained / overallMax) * 100).toFixed(2) : "0.00";
-document.querySelector('#avgScore').textContent = `${overallAvg}%`;
+  // Overall average — cohort totals over cohort maxima
+  let overallObtained = 0;
+  let overallMax = 0;
+  students.forEach(stu => {
+    overallObtained += (parseFloat(stu.cumTotal) || 0);
+    overallMax += (parseFloat(stu.cumMax) || 0);
+  });
+  const overallAvg = overallMax > 0 ? ((overallObtained / overallMax) * 100).toFixed(2) : "0.00";
+  document.querySelector('#avgScore').textContent = `${overallAvg}%`;
 
 
   // Class average % per subject — sum of totals / sum of maxima
-const subjectKeys = ['chem', 'phy', 'bio', 'math'];
-const subjectTotals = { chem: 0, phy: 0, bio: 0, math: 0 };
-const subjectMaxTotals = { chem: 0, phy: 0, bio: 0, math: 0 };
+  const subjectKeys = ['chem', 'phy', 'bio', 'math'];
+  const subjectTotals = { chem: 0, phy: 0, bio: 0, math: 0 };
+  const subjectMaxTotals = { chem: 0, phy: 0, bio: 0, math: 0 };
 
-students.forEach(stu => {
-  subjectKeys.forEach(sub => {
-    subjectTotals[sub] += (parseFloat(stu.subjectTotals?.[sub]) || 0);
-    subjectMaxTotals[sub] += (parseFloat(stu.subjectMaxTotals?.[sub]) || 0);
+  students.forEach(stu => {
+    subjectKeys.forEach(sub => {
+      subjectTotals[sub] += (parseFloat(stu.subjectTotals?.[sub]) || 0);
+      subjectMaxTotals[sub] += (parseFloat(stu.subjectMaxTotals?.[sub]) || 0);
+    });
   });
-});
 
-const subjectAverages = {};
-let mostDifficult = 'N/A';
-let minAvg = Infinity;
+  const subjectAverages = {};
+  let mostDifficult = 'N/A';
+  let minAvg = Infinity;
 
-subjectKeys.forEach(sub => {
-  const pct = subjectMaxTotals[sub] > 0 ? ((subjectTotals[sub] / subjectMaxTotals[sub]) * 100) : 0;
-  subjectAverages[sub] = pct.toFixed(2);
-  if (pct > 0 && pct < minAvg) {
-    minAvg = pct;
-    mostDifficult = subjectNames[sub];
-  }
-});
+  subjectKeys.forEach(sub => {
+    const pct = subjectMaxTotals[sub] > 0 ? ((subjectTotals[sub] / subjectMaxTotals[sub]) * 100) : 0;
+    subjectAverages[sub] = pct.toFixed(2);
+    if (pct > 0 && pct < minAvg) {
+      minAvg = pct;
+      mostDifficult = subjectNames[sub];
+    }
+  });
 
-// Populate subject difficulty table (unchanged rendering logic)
-const subjectTbody = document.querySelector('#subjectDifficultyDetails tbody');
-subjectTbody.innerHTML = '';
+  // Populate subject difficulty table (unchanged rendering logic)
+  const subjectTbody = document.querySelector('#subjectDifficultyDetails tbody');
+  subjectTbody.innerHTML = '';
 
-subjectKeys.forEach(sub => {
-  const tr = document.createElement('tr');
-  const avg = parseFloat(subjectAverages[sub]);
-  let status = '';
-  let statusClass = '';
+  subjectKeys.forEach(sub => {
+    const tr = document.createElement('tr');
+    const avg = parseFloat(subjectAverages[sub]);
+    let status = '';
+    let statusClass = '';
 
-  if (avg >= 70) {
-    status = 'Easy';
-    statusClass = 'improved';
-  } else if (avg >= 50) {
-    status = 'Moderate';
-  } else if (avg > 0) {
-    status = 'Difficult';
-    statusClass = 'declined';
-  } else {
-    status = 'No Data';
-  }
+    if (avg >= 70) {
+      status = 'Easy';
+      statusClass = 'improved';
+    } else if (avg >= 50) {
+      status = 'Moderate';
+    } else if (avg > 0) {
+      status = 'Difficult';
+      statusClass = 'declined';
+    } else {
+      status = 'No Data';
+    }
 
-  tr.innerHTML = `
+    tr.innerHTML = `
     <td>${subjectNames[sub]}</td>
     <td>${subjectAverages[sub]}%</td>
     <td class="${statusClass}">${status}</td>
   `;
-  subjectTbody.appendChild(tr);
-});
+    subjectTbody.appendChild(tr);
+  });
 
-// Add most difficult subject row
-const mostTr = document.createElement('tr');
-mostTr.innerHTML = `
+  // Add most difficult subject row
+  const mostTr = document.createElement('tr');
+  mostTr.innerHTML = `
   <td><strong>MOST DIFFICULT</strong></td>
   <td colspan="2" class="declined"><strong>${mostDifficult}</strong></td>
 `;
-subjectTbody.appendChild(mostTr);
+  subjectTbody.appendChild(mostTr);
 
-// ✅ Populate exam participation table - ONLY enrolled students
-const examTbody = document.querySelector('#examDetails tbody');
-examTbody.innerHTML = '';
+  // ✅ Populate exam participation table - ONLY enrolled students
+  const examTbody = document.querySelector('#examDetails tbody');
+  examTbody.innerHTML = '';
 
-examOrder.forEach(exam => {
-  // Count ONLY enrolled students for this exam
-  const enrolledStudents = students.filter(stu => 
-    stu.exams.some(ex => ex.exam === exam && ex.maxTotal >= 0)
-  );
-  
-  const enrolledCount = enrolledStudents.length;
-  
-  // Count those who actually appeared (took the exam)
-  const attempted = enrolledStudents.filter(stu => 
-    stu.exams.some(ex => ex.exam === exam && ex.total > 0)
-  ).length;
-  
-  // Participation % = appeared / enrolled
-  const participationRate = enrolledCount > 0 ? (attempted / enrolledCount) * 100 : 0;
-  
-  const tr = document.createElement('tr');
-  tr.innerHTML = `<td class="exam-name" data-exam="${exam}">${exam}</td><td>${attempted} / ${enrolledCount}</td><td>${participationRate.toFixed(1)}%</td>`;
-  examTbody.appendChild(tr);
-});
+  examOrder.forEach(exam => {
+    // Count ONLY enrolled students for this exam
+    const enrolledStudents = students.filter(stu =>
+      stu.exams.some(ex => ex.exam === exam && ex.maxTotal >= 0)
+    );
+
+    const enrolledCount = enrolledStudents.length;
+
+    // Count those who actually appeared (took the exam)
+    const attempted = enrolledStudents.filter(stu =>
+      stu.exams.some(ex => ex.exam === exam && ex.total > 0)
+    ).length;
+
+    // Participation % = appeared / enrolled
+    const participationRate = enrolledCount > 0 ? (attempted / enrolledCount) * 100 : 0;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="exam-name" data-exam="${exam}">${exam}</td><td>${attempted} / ${enrolledCount}</td><td>${participationRate.toFixed(1)}%</td>`;
+    examTbody.appendChild(tr);
+  });
 
   // Populate student details table
   const studentTbody = document.querySelector('#studentDetails tbody');
@@ -1130,10 +1309,10 @@ examOrder.forEach(exam => {
 
   sortedStudents.forEach((stu, i) => {
     const strongLabel = stu.strongSubject[0] === 'N/A' ? 'N/A' :
-    stu.strongSubject.map(sub => `${subjectNames[sub]} (${stu.subjectAverages[sub]}%)`).join(', ');
+      stu.strongSubject.map(sub => `${subjectNames[sub]} (${stu.subjectAverages[sub]}%)`).join(', ');
 
     const weakLabel = stu.weakSubject[0] === 'N/A' ? 'N/A' :
-    stu.weakSubject.map(sub => `${subjectNames[sub]} (${stu.subjectAverages[sub]}%)`).join(', ');
+      stu.weakSubject.map(sub => `${subjectNames[sub]} (${stu.subjectAverages[sub]}%)`).join(', ');
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -1216,8 +1395,8 @@ function handleNameClick(event) {
 // Build student details content
 function buildStudentDetailsContent(stu) {
   const overallRank = stu.cumTotal > 0 ?
-  [...students].sort((a, b) => b.cumTotal - a.cumTotal || a.roll.localeCompare(b.roll))
-  .findIndex(s => s.roll === stu.roll) + 1 : 'N/A';
+    [...students].sort((a, b) => b.cumTotal - a.cumTotal || a.roll.localeCompare(b.roll))
+      .findIndex(s => s.roll === stu.roll) + 1 : 'N/A';
 
   let content = `
   <div class="student-details-header">
@@ -1233,10 +1412,10 @@ function buildStudentDetailsContent(stu) {
 
   // Strong/weak subjects
   const strongLabel = stu.strongSubject[0] === 'N/A' ? 'N/A' :
-  stu.strongSubject.map(sub => `${subjectNames[sub]} (${stu.subjectAverages[sub]}%)`).join(', ');
+    stu.strongSubject.map(sub => `${subjectNames[sub]} (${stu.subjectAverages[sub]}%)`).join(', ');
 
   const weakLabel = stu.weakSubject[0] === 'N/A' ? 'N/A' :
-  stu.weakSubject.map(sub => `${subjectNames[sub]} (${stu.subjectAverages[sub]}%)`).join(', ');
+    stu.weakSubject.map(sub => `${subjectNames[sub]} (${stu.subjectAverages[sub]}%)`).join(', ');
 
   content += `
   <div class="subject-strengths">
@@ -1265,7 +1444,7 @@ function buildStudentDetailsContent(stu) {
     ['chem', 'bio', 'math', 'phy'].forEach(sub => {
       const avgPct = stu.subjectAverages[sub];
       const rowClass = stu.strongSubject.includes(sub) ? 'improved' :
-      stu.weakSubject.includes(sub) ? 'declined' : '';
+        stu.weakSubject.includes(sub) ? 'declined' : '';
 
       content += `
       <tr class="${rowClass}">
@@ -1347,9 +1526,9 @@ function buildStudentDetailsContent(stu) {
 
     progress.forEach(p => {
       const rankChangeText = p.rankChange > 0 ? `+${p.rankChange} (Improved)` :
-      p.rankChange < 0 ? `${p.rankChange} (Declined)` : 'No Change';
+        p.rankChange < 0 ? `${p.rankChange} (Declined)` : 'No Change';
       const scoreChangeText = p.scoreChange > 0 ? `+${p.scoreChange} (Improved)` :
-      p.scoreChange < 0 ? `${p.scoreChange} (Declined)` : 'No Change';
+        p.scoreChange < 0 ? `${p.scoreChange} (Declined)` : 'No Change';
 
       const rankClass = p.rankChange > 0 ? 'improved' : p.rankChange < 0 ? 'declined' : '';
       const scoreClass = p.scoreChange > 0 ? 'improved' : p.scoreChange < 0 ? 'declined' : '';
@@ -1408,17 +1587,17 @@ function handleExamClick(event) {
 
   // Build exam ranklist
   const examStudents = students
-  .filter(stu => stu.exams.some(ex => ex.exam === exam && ex.maxTotal > 0))
-  .map(stu => {
-    const examData = stu.exams.find(ex => ex.exam === exam);
-    return {
-      ...stu,
-      examTotal: examData.total,
-      examPercent: (examData.total / examData.maxTotal * 100).toFixed(2),
-      examData
-    };
-  })
-  .sort((a, b) => b.examTotal - a.examTotal || a.roll.localeCompare(b.roll));
+    .filter(stu => stu.exams.some(ex => ex.exam === exam && ex.maxTotal > 0))
+    .map(stu => {
+      const examData = stu.exams.find(ex => ex.exam === exam);
+      return {
+        ...stu,
+        examTotal: examData.total,
+        examPercent: (examData.total / examData.maxTotal * 100).toFixed(2),
+        examData
+      };
+    })
+    .sort((a, b) => b.examTotal - a.examTotal || a.roll.localeCompare(b.roll));
 
   let content = `
   <h3>RANKLIST FOR ${exam}</h3>
@@ -1460,7 +1639,7 @@ function handleExamClick(event) {
     <td>${phyDisplay}</td>
     <td>${bioDisplay}</td>
     <td>${mathDisplay}</td>
-    <td>${stu.examTotal}</td>
+    <td style="cursor: pointer; color: #2563eb; font-weight: 600;" onclick="openQuestionMarksModal('${stu.roll}','${exam}','${stu.name}')">${stu.examTotal}</td>
     <td>${stu.examPercent}%</td>
     </tr>
     `;
@@ -1504,273 +1683,273 @@ function computeProgress(student) {
 }
 
 class ComparativeAnalysis {
-    constructor(students, examOrder) {
-        this.students = students;
-        this.examOrder = examOrder;
-        this.init();
+  constructor(students, examOrder) {
+    this.students = students;
+    this.examOrder = examOrder;
+    this.init();
+  }
+
+  init() {
+    this.setupEventListeners();
+    console.log('✅ Comparative Analysis initialized');
+  }
+
+  setupEventListeners() {
+    const typeSelect = document.getElementById('comparisonType');
+    const generateBtn = document.getElementById('generateComparison');
+
+    if (typeSelect) {
+      typeSelect.addEventListener('change', (e) => {
+        this.updateControls(e.target.value);
+      });
     }
-    
-    init() {
-        this.setupEventListeners();
-        console.log('✅ Comparative Analysis initialized');
+
+    if (generateBtn) {
+      generateBtn.addEventListener('click', () => {
+        this.generateComparison();
+      });
     }
-    
-    setupEventListeners() {
-        const typeSelect = document.getElementById('comparisonType');
-        const generateBtn = document.getElementById('generateComparison');
-        
-        if (typeSelect) {
-            typeSelect.addEventListener('change', (e) => {
-                this.updateControls(e.target.value);
-            });
-        }
-        
-        if (generateBtn) {
-            generateBtn.addEventListener('click', () => {
-                this.generateComparison();
-            });
-        }
+  }
+
+  updateControls(type) {
+    const subjectSelectGroup = document.getElementById('subjectSelectGroup');
+    if (!subjectSelectGroup) return;
+
+    // Show subject selector only for subject and performance comparisons
+    subjectSelectGroup.style.display =
+      (type === 'subject' || type === 'performance') ? 'flex' : 'none';
+  }
+
+  generateComparison() {
+    const type = document.getElementById('comparisonType')?.value;
+
+    if (!type) return;
+
+    let results;
+    switch (type) {
+      case 'exam':
+        results = this.compareExams();
+        break;
+      case 'subject':
+        results = this.compareSubjectTrends();
+        break;
+      case 'time':
+        results = this.compareTimePeriods();
+        break;
+      case 'performance':
+        results = this.comparePerformanceDistribution();
+        break;
     }
-    
-    updateControls(type) {
-        const subjectSelectGroup = document.getElementById('subjectSelectGroup');
-        if (!subjectSelectGroup) return;
-        
-        // Show subject selector only for subject and performance comparisons
-        subjectSelectGroup.style.display = 
-            (type === 'subject' || type === 'performance') ? 'flex' : 'none';
+
+    if (results) {
+      this.displayResults(results, type);
     }
-    
-    generateComparison() {
-        const type = document.getElementById('comparisonType')?.value;
-        
-        if (!type) return;
-        
-        let results;
-        switch(type) {
-            case 'exam':
-                results = this.compareExams();
-                break;
-            case 'subject':
-                results = this.compareSubjectTrends();
-                break;
-            case 'time':
-                results = this.compareTimePeriods();
-                break;
-            case 'performance':
-                results = this.comparePerformanceDistribution();
-                break;
-        }
-        
-        if (results) {
-            this.displayResults(results, type);
-        }
-    }
-    
-    // ─────────────────────────────────────────────────────────
-    // EXAM vs EXAM COMPARISON
-    // ─────────────────────────────────────────────────────────
-    compareExams() {
-        const examData = [];
-        
-        this.examOrder.forEach(exam => {
-            const scores = this.students
-                .filter(s => s.exams?.some(e => e.exam === exam))
-                .map(s => {
-                    const ex = s.exams.find(e => e.exam === exam);
-                    return ex?.total / ex?.maxTotal * 100 || 0;
-                });
-            
-            const avg = scores.length > 0 
-                ? scores.reduce((a, b) => a + b) / scores.length 
-                : 0;
-            
-            examData.push({
-                exam: exam,
-                avgScore: Math.round(avg),
-                highestScore: Math.max(...scores),
-                lowestScore: Math.min(...scores),
-                participationRate: Math.round((scores.length / this.students.length) * 100),
-                difficulty: avg >= 70 ? 'Easy' : avg >= 50 ? 'Moderate' : 'Difficult'
-            });
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // EXAM vs EXAM COMPARISON
+  // ─────────────────────────────────────────────────────────
+  compareExams() {
+    const examData = [];
+
+    this.examOrder.forEach(exam => {
+      const scores = this.students
+        .filter(s => s.exams?.some(e => e.exam === exam))
+        .map(s => {
+          const ex = s.exams.find(e => e.exam === exam);
+          return ex?.total / ex?.maxTotal * 100 || 0;
         });
-        
-        const trends = [];
-        for (let i = 1; i < examData.length; i++) {
-            const change = examData[i].avgScore - examData[i-1].avgScore;
-            const direction = change > 0 ? '↑' : change < 0 ? '↓' : '→';
-            trends.push({
-                from: examData[i-1].exam,
-                to: examData[i].exam,
-                change: change,
-                direction: direction
-            });
-        }
-        
-        return {
-            type: 'exam',
-            data: examData,
-            trends: trends
-        };
+
+      const avg = scores.length > 0
+        ? scores.reduce((a, b) => a + b) / scores.length
+        : 0;
+
+      examData.push({
+        exam: exam,
+        avgScore: Math.round(avg),
+        highestScore: Math.max(...scores),
+        lowestScore: Math.min(...scores),
+        participationRate: Math.round((scores.length / this.students.length) * 100),
+        difficulty: avg >= 70 ? 'Easy' : avg >= 50 ? 'Moderate' : 'Difficult'
+      });
+    });
+
+    const trends = [];
+    for (let i = 1; i < examData.length; i++) {
+      const change = examData[i].avgScore - examData[i - 1].avgScore;
+      const direction = change > 0 ? '↑' : change < 0 ? '↓' : '→';
+      trends.push({
+        from: examData[i - 1].exam,
+        to: examData[i].exam,
+        change: change,
+        direction: direction
+      });
     }
-    
-    // ─────────────────────────────────────────────────────────
-    // SUBJECT TREND COMPARISON
-    // ─────────────────────────────────────────────────────────
-    compareSubjectTrends() {
-        const subject = document.getElementById('compareSubject')?.value || 'chem';
-        const key = subject.toLowerCase();
-        
-        const subjectTrends = [];
-        
-        this.examOrder.forEach(exam => {
-            const scores = this.students
-                .filter(s => s.exams?.some(e => e.exam === exam && e.scores?.[key]))
-                .map(s => {
-                    const ex = s.exams.find(e => e.exam === exam);
-                    return ex?.scores?.[key] || 0;
-                });
-            
-            const avg = scores.length > 0
-                ? scores.reduce((a, b) => a + b) / scores.length
-                : 0;
-            
-            subjectTrends.push({
-                exam: exam,
-                avgScore: Math.round(avg),
-                highestScore: Math.max(...scores),
-                lowestScore: Math.min(...scores),
-                stdDev: this.calculateStdDev(scores),
-                participationRate: Math.round((scores.length / this.students.length) * 100)
-            });
+
+    return {
+      type: 'exam',
+      data: examData,
+      trends: trends
+    };
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // SUBJECT TREND COMPARISON
+  // ─────────────────────────────────────────────────────────
+  compareSubjectTrends() {
+    const subject = document.getElementById('compareSubject')?.value || 'chem';
+    const key = subject.toLowerCase();
+
+    const subjectTrends = [];
+
+    this.examOrder.forEach(exam => {
+      const scores = this.students
+        .filter(s => s.exams?.some(e => e.exam === exam && e.scores?.[key]))
+        .map(s => {
+          const ex = s.exams.find(e => e.exam === exam);
+          return ex?.scores?.[key] || 0;
         });
-        
-        return {
-            type: 'subject',
-            subject: subject,
-            data: subjectTrends
-        };
+
+      const avg = scores.length > 0
+        ? scores.reduce((a, b) => a + b) / scores.length
+        : 0;
+
+      subjectTrends.push({
+        exam: exam,
+        avgScore: Math.round(avg),
+        highestScore: Math.max(...scores),
+        lowestScore: Math.min(...scores),
+        stdDev: this.calculateStdDev(scores),
+        participationRate: Math.round((scores.length / this.students.length) * 100)
+      });
+    });
+
+    return {
+      type: 'subject',
+      subject: subject,
+      data: subjectTrends
+    };
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // TIME PERIOD COMPARISON
+  // ─────────────────────────────────────────────────────────
+  compareTimePeriods() {
+    const third = Math.ceil(this.examOrder.length / 3);
+
+    const periods = [
+      { name: 'Early Period', exams: this.examOrder.slice(0, third) },
+      { name: 'Mid Period', exams: this.examOrder.slice(third, 2 * third) },
+      { name: 'Recent Period', exams: this.examOrder.slice(2 * third) }
+    ];
+
+    const periodStats = periods.map(period => {
+      const periodScores = this.students.map(student => {
+        const scores = student.exams
+          .filter(e => period.exams.includes(e.exam))
+          .map(e => (e.total / e.maxTotal) * 100);
+        return scores.length > 0 ? scores.reduce((a, b) => a + b) / scores.length : 0;
+      });
+
+      const avg = periodScores.reduce((a, b) => a + b) / periodScores.length;
+
+      return {
+        period: period.name,
+        exams: period.exams.join(', '),
+        avgScore: Math.round(avg),
+        highestScore: Math.max(...periodScores),
+        lowestScore: Math.min(...periodScores),
+        improvementRate: null
+      };
+    });
+
+    for (let i = 1; i < periodStats.length; i++) {
+      periodStats[i].improvementRate = periodStats[i].avgScore - periodStats[i - 1].avgScore;
     }
-    
-    // ─────────────────────────────────────────────────────────
-    // TIME PERIOD COMPARISON
-    // ─────────────────────────────────────────────────────────
-    compareTimePeriods() {
-        const third = Math.ceil(this.examOrder.length / 3);
-        
-        const periods = [
-            {name: 'Early Period', exams: this.examOrder.slice(0, third)},
-            {name: 'Mid Period', exams: this.examOrder.slice(third, 2 * third)},
-            {name: 'Recent Period', exams: this.examOrder.slice(2 * third)}
-        ];
-        
-        const periodStats = periods.map(period => {
-            const periodScores = this.students.map(student => {
-                const scores = student.exams
-                    .filter(e => period.exams.includes(e.exam))
-                    .map(e => (e.total / e.maxTotal) * 100);
-                return scores.length > 0 ? scores.reduce((a, b) => a + b) / scores.length : 0;
-            });
-            
-            const avg = periodScores.reduce((a, b) => a + b) / periodScores.length;
-            
-            return {
-                period: period.name,
-                exams: period.exams.join(', '),
-                avgScore: Math.round(avg),
-                highestScore: Math.max(...periodScores),
-                lowestScore: Math.min(...periodScores),
-                improvementRate: null
-            };
+
+    return {
+      type: 'time',
+      data: periodStats
+    };
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // PERFORMANCE DISTRIBUTION COMPARISON
+  // ─────────────────────────────────────────────────────────
+  comparePerformanceDistribution() {
+    const distributions = [];
+
+    this.examOrder.forEach(exam => {
+      const scores = this.students
+        .filter(s => s.exams?.some(e => e.exam === exam))
+        .map(s => {
+          const ex = s.exams.find(e => e.exam === exam);
+          return ex?.total / ex?.maxTotal * 100 || 0;
         });
-        
-        for (let i = 1; i < periodStats.length; i++) {
-            periodStats[i].improvementRate = periodStats[i].avgScore - periodStats[i-1].avgScore;
-        }
-        
-        return {
-            type: 'time',
-            data: periodStats
-        };
+
+      const dist = {
+        exam: exam,
+        excellent: scores.filter(s => s >= 80).length,
+        good: scores.filter(s => s >= 60 && s < 80).length,
+        average: scores.filter(s => s >= 40 && s < 60).length,
+        poor: scores.filter(s => s < 40).length,
+        total: scores.length
+      };
+
+      distributions.push(dist);
+    });
+
+    return {
+      type: 'performance',
+      data: distributions
+    };
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // DISPLAY RESULTS
+  // ─────────────────────────────────────────────────────────
+  displayResults(results, type) {
+    const tableDiv = document.getElementById('comparisonTable');
+    const insightsDiv = document.getElementById('comparisonInsights');
+
+    if (!tableDiv) return;
+
+    let tableHtml = '';
+    let insightsHtml = '';
+
+    switch (type) {
+      case 'exam':
+        tableHtml = this.renderExamComparison(results);
+        insightsHtml = this.generateExamInsights(results);
+        break;
+      case 'subject':
+        tableHtml = this.renderSubjectComparison(results);
+        insightsHtml = this.generateSubjectInsights(results);
+        break;
+      case 'time':
+        tableHtml = this.renderTimeComparison(results);
+        insightsHtml = this.generateTimeInsights(results);
+        break;
+      case 'performance':
+        tableHtml = this.renderPerformanceComparison(results);
+        insightsHtml = this.generatePerformanceInsights(results);
+        break;
     }
-    
-    // ─────────────────────────────────────────────────────────
-    // PERFORMANCE DISTRIBUTION COMPARISON
-    // ─────────────────────────────────────────────────────────
-    comparePerformanceDistribution() {
-        const distributions = [];
-        
-        this.examOrder.forEach(exam => {
-            const scores = this.students
-                .filter(s => s.exams?.some(e => e.exam === exam))
-                .map(s => {
-                    const ex = s.exams.find(e => e.exam === exam);
-                    return ex?.total / ex?.maxTotal * 100 || 0;
-                });
-            
-            const dist = {
-                exam: exam,
-                excellent: scores.filter(s => s >= 80).length,
-                good: scores.filter(s => s >= 60 && s < 80).length,
-                average: scores.filter(s => s >= 40 && s < 60).length,
-                poor: scores.filter(s => s < 40).length,
-                total: scores.length
-            };
-            
-            distributions.push(dist);
-        });
-        
-        return {
-            type: 'performance',
-            data: distributions
-        };
+
+    tableDiv.innerHTML = tableHtml;
+    if (insightsDiv) {
+      insightsDiv.innerHTML = insightsHtml;
     }
-    
-    // ─────────────────────────────────────────────────────────
-    // DISPLAY RESULTS
-    // ─────────────────────────────────────────────────────────
-    displayResults(results, type) {
-        const tableDiv = document.getElementById('comparisonTable');
-        const insightsDiv = document.getElementById('comparisonInsights');
-        
-        if (!tableDiv) return;
-        
-        let tableHtml = '';
-        let insightsHtml = '';
-        
-        switch(type) {
-            case 'exam':
-                tableHtml = this.renderExamComparison(results);
-                insightsHtml = this.generateExamInsights(results);
-                break;
-            case 'subject':
-                tableHtml = this.renderSubjectComparison(results);
-                insightsHtml = this.generateSubjectInsights(results);
-                break;
-            case 'time':
-                tableHtml = this.renderTimeComparison(results);
-                insightsHtml = this.generateTimeInsights(results);
-                break;
-            case 'performance':
-                tableHtml = this.renderPerformanceComparison(results);
-                insightsHtml = this.generatePerformanceInsights(results);
-                break;
-        }
-        
-        tableDiv.innerHTML = tableHtml;
-        if (insightsDiv) {
-            insightsDiv.innerHTML = insightsHtml;
-        }
-    }
-    
-    renderExamComparison(results) {
-        const data = results.data;
-        let html = '<table><thead><tr>';
-        html += '<th>📝 Exam</th><th>Avg Score</th><th>Highest</th><th>Lowest</th>';
-        html += '<th>Participation</th><th>Difficulty</th></tr></thead><tbody>';
-        
-        data.forEach(exam => {
-            html += `<tr>
+  }
+
+  renderExamComparison(results) {
+    const data = results.data;
+    let html = '<table><thead><tr>';
+    html += '<th>📝 Exam</th><th>Avg Score</th><th>Highest</th><th>Lowest</th>';
+    html += '<th>Participation</th><th>Difficulty</th></tr></thead><tbody>';
+
+    data.forEach(exam => {
+      html += `<tr>
                 <td>${exam.exam}</td>
                 <td><strong>${exam.avgScore}%</strong></td>
                 <td>${Math.round(exam.highestScore)}%</td>
@@ -1778,64 +1957,64 @@ class ComparativeAnalysis {
                 <td>${exam.participationRate}%</td>
                 <td>${exam.difficulty}</td>
             </tr>`;
-        });
-        
-        html += '</tbody></table>';
-        return html;
-    }
-    
-    renderSubjectComparison(results) {
-        const data = results.data;
-        let html = '<table><thead><tr>';
-        html += '<th>📝 Exam</th><th>Avg Score</th><th>Highest</th><th>Lowest</th>';
-        html += '<th>Consistency (Std Dev)</th></tr></thead><tbody>';
-        
-        data.forEach(row => {
-            html += `<tr>
+    });
+
+    html += '</tbody></table>';
+    return html;
+  }
+
+  renderSubjectComparison(results) {
+    const data = results.data;
+    let html = '<table><thead><tr>';
+    html += '<th>📝 Exam</th><th>Avg Score</th><th>Highest</th><th>Lowest</th>';
+    html += '<th>Consistency (Std Dev)</th></tr></thead><tbody>';
+
+    data.forEach(row => {
+      html += `<tr>
                 <td>${row.exam}</td>
                 <td><strong>${row.avgScore}%</strong></td>
                 <td>${Math.round(row.highestScore)}%</td>
                 <td>${Math.round(row.lowestScore)}%</td>
                 <td>${row.stdDev.toFixed(2)}</td>
             </tr>`;
-        });
-        
-        html += '</tbody></table>';
-        return html;
-    }
-    
-    renderTimeComparison(results) {
-        const data = results.data;
-        let html = '<table><thead><tr>';
-        html += '<th>Period</th><th>Exams Included</th><th>Avg Score</th><th>Change</th>';
-        html += '</tr></thead><tbody>';
-        
-        data.forEach(period => {
-            const trend = period.improvementRate !== null
-                ? `<span class="trend-${period.improvementRate > 0 ? 'up' : 'down'}">
+    });
+
+    html += '</tbody></table>';
+    return html;
+  }
+
+  renderTimeComparison(results) {
+    const data = results.data;
+    let html = '<table><thead><tr>';
+    html += '<th>Period</th><th>Exams Included</th><th>Avg Score</th><th>Change</th>';
+    html += '</tr></thead><tbody>';
+
+    data.forEach(period => {
+      const trend = period.improvementRate !== null
+        ? `<span class="trend-${period.improvementRate > 0 ? 'up' : 'down'}">
                     ${period.improvementRate > 0 ? '+' : ''}${period.improvementRate.toFixed(1)}%</span>`
-                : '—';
-            
-            html += `<tr>
+        : '—';
+
+      html += `<tr>
                 <td><strong>${period.period}</strong></td>
                 <td>${period.exams}</td>
                 <td><strong>${period.avgScore}%</strong></td>
                 <td>${trend}</td>
             </tr>`;
-        });
-        
-        html += '</tbody></table>';
-        return html;
-    }
-    
-    renderPerformanceComparison(results) {
-        const data = results.data;
-        let html = '<table><thead><tr>';
-        html += '<th>📝 Exam</th><th>Excellent (80+)</th><th>Good (60-80)</th>';
-        html += '<th>Average (40-60)</th><th>Poor (<40)</th><th>Total</th></tr></thead><tbody>';
-        
-        data.forEach(row => {
-            html += `<tr>
+    });
+
+    html += '</tbody></table>';
+    return html;
+  }
+
+  renderPerformanceComparison(results) {
+    const data = results.data;
+    let html = '<table><thead><tr>';
+    html += '<th>📝 Exam</th><th>Excellent (80+)</th><th>Good (60-80)</th>';
+    html += '<th>Average (40-60)</th><th>Poor (<40)</th><th>Total</th></tr></thead><tbody>';
+
+    data.forEach(row => {
+      html += `<tr>
                 <td><strong>${row.exam}</strong></td>
                 <td>${row.excellent}</td>
                 <td>${row.good}</td>
@@ -1843,25 +2022,25 @@ class ComparativeAnalysis {
                 <td>${row.poor}</td>
                 <td><strong>${row.total}</strong></td>
             </tr>`;
-        });
-        
-        html += '</tbody></table>';
-        return html;
-    }
-    
-    // ─────────────────────────────────────────────────────────
-    // GENERATE INSIGHTS
-    // ─────────────────────────────────────────────────────────
-    generateExamInsights(results) {
-        const data = results.data;
-        const trend = data[data.length - 1].avgScore - data[0].avgScore;
-        const trendClass = trend > 0 ? 'trend-up' : trend < 0 ? 'trend-down' : 'trend-stable';
-        const trendText = trend > 0 ? 'improving' : trend < 0 ? 'declining' : 'stable';
-        
-        const easiest = data.reduce((a, b) => a.avgScore > b.avgScore ? a : b);
-        const hardest = data.reduce((a, b) => a.avgScore < b.avgScore ? a : b);
-        
-        return `
+    });
+
+    html += '</tbody></table>';
+    return html;
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // GENERATE INSIGHTS
+  // ─────────────────────────────────────────────────────────
+  generateExamInsights(results) {
+    const data = results.data;
+    const trend = data[data.length - 1].avgScore - data[0].avgScore;
+    const trendClass = trend > 0 ? 'trend-up' : trend < 0 ? 'trend-down' : 'trend-stable';
+    const trendText = trend > 0 ? 'improving' : trend < 0 ? 'declining' : 'stable';
+
+    const easiest = data.reduce((a, b) => a.avgScore > b.avgScore ? a : b);
+    const hardest = data.reduce((a, b) => a.avgScore < b.avgScore ? a : b);
+
+    return `
             <h3>📊 Key Insights</h3>
             <div class="insight-item">
                 <span class="insight-label">Overall Trend:</span>
@@ -1876,15 +2055,15 @@ class ComparativeAnalysis {
                 <span class="insight-value">${hardest.exam} (${hardest.avgScore}%)</span>
             </div>
         `;
-    }
-    
-    generateSubjectInsights(results) {
-        const data = results.data;
-        const improvement = data[data.length - 1].avgScore - data[0].avgScore;
-        const subject = document.getElementById('compareSubject')?.value || 'chem';
-        const subjectNames = { chem: 'Chemistry', phy: 'Physics', bio: 'Biology', math: 'Mathematics' };
-        
-        return `
+  }
+
+  generateSubjectInsights(results) {
+    const data = results.data;
+    const improvement = data[data.length - 1].avgScore - data[0].avgScore;
+    const subject = document.getElementById('compareSubject')?.value || 'chem';
+    const subjectNames = { chem: 'Chemistry', phy: 'Physics', bio: 'Biology', math: 'Mathematics' };
+
+    return `
             <h3>📚 ${subjectNames[subject]} Performance Trend</h3>
             <div class="insight-item">
                 <span class="insight-label">Initial Score:</span>
@@ -1899,13 +2078,13 @@ class ComparativeAnalysis {
                 <span class="insight-value ${improvement > 0 ? 'trend-up' : 'trend-down'}">${improvement > 0 ? '+' : ''}${improvement}%</span>
             </div>
         `;
-    }
-    
-    generateTimeInsights(results) {
-        const data = results.data;
-        const latestTrend = data[data.length - 1].improvementRate;
-        
-        return `
+  }
+
+  generateTimeInsights(results) {
+    const data = results.data;
+    const latestTrend = data[data.length - 1].improvementRate;
+
+    return `
             <h3>📈 Time Period Analysis</h3>
             <div class="insight-item">
                 <span class="insight-label">Early Performance:</span>
@@ -1920,15 +2099,15 @@ class ComparativeAnalysis {
                 <span class="insight-value ${latestTrend > 0 ? 'trend-up' : 'trend-down'}">${latestTrend > 0 ? '+' : ''}${latestTrend.toFixed(1)}%</span>
             </div>
         `;
-    }
-    
-    generatePerformanceInsights(results) {
-        const data = results.data;
-        const recentExam = data[data.length - 1];
-        const totalAtRisk = recentExam.poor;
-        const excellentPercentage = Math.round((recentExam.excellent / recentExam.total) * 100);
-        
-        return `
+  }
+
+  generatePerformanceInsights(results) {
+    const data = results.data;
+    const recentExam = data[data.length - 1];
+    const totalAtRisk = recentExam.poor;
+    const excellentPercentage = Math.round((recentExam.excellent / recentExam.total) * 100);
+
+    return `
             <h3>👥 Performance Distribution</h3>
             <div class="insight-item">
                 <span class="insight-label">Latest Exam:</span>
@@ -1943,21 +2122,21 @@ class ComparativeAnalysis {
                 <span class="insight-value trend-down">${totalAtRisk} (<40%)</span>
             </div>
         `;
-    }
-    
-    calculateStdDev(values) {
-        if (values.length === 0) return 0;
-        const mean = values.reduce((a, b) => a + b) / values.length;
-        const variance = values.reduce((a, v) => a + Math.pow(v - mean, 2), 0) / values.length;
-        return Math.sqrt(variance);
-    }
+  }
+
+  calculateStdDev(values) {
+    if (values.length === 0) return 0;
+    const mean = values.reduce((a, b) => a + b) / values.length;
+    const variance = values.reduce((a, v) => a + Math.pow(v - mean, 2), 0) / values.length;
+    return Math.sqrt(variance);
+  }
 }
 
 function getExamRank(student, examName) {
   const examStudents = students
-  .filter(stu => stu.exams.some(ex => ex.exam === examName && ex.maxTotal > 0))
-  .map(stu => ({ ...stu, examTotal: stu.exams.find(ex => ex.exam === examName).total }))
-  .sort((a, b) => b.examTotal - a.examTotal || a.roll.localeCompare(b.roll));
+    .filter(stu => stu.exams.some(ex => ex.exam === examName && ex.maxTotal > 0))
+    .map(stu => ({ ...stu, examTotal: stu.exams.find(ex => ex.exam === examName).total }))
+    .sort((a, b) => b.examTotal - a.examTotal || a.roll.localeCompare(b.roll));
 
   return examStudents.findIndex(s => s.roll === student.roll) + 1;
 }
@@ -1967,12 +2146,12 @@ function getSubjectRanks(student) {
 
   ['chem', 'phy', 'bio', 'math'].forEach(sub => {
     const sorted = [...students]
-    .filter(s => s.subjectMaxTotals[sub] > 0)
-    .sort((a, b) => {
-      const percB = b.subjectMaxTotals[sub] > 0 ? (b.subjectTotals[sub] / b.subjectMaxTotals[sub]) * 100 : 0;
-      const percA = a.subjectMaxTotals[sub] > 0 ? (a.subjectTotals[sub] / a.subjectMaxTotals[sub]) * 100 : 0;
-      return percB - percA || a.roll.localeCompare(b.roll);
-    });
+      .filter(s => s.subjectMaxTotals[sub] > 0)
+      .sort((a, b) => {
+        const percB = b.subjectMaxTotals[sub] > 0 ? (b.subjectTotals[sub] / b.subjectMaxTotals[sub]) * 100 : 0;
+        const percA = a.subjectMaxTotals[sub] > 0 ? (a.subjectTotals[sub] / a.subjectMaxTotals[sub]) * 100 : 0;
+        return percB - percA || a.roll.localeCompare(b.roll);
+      });
 
     ranks[sub] = {
       rank: student.subjectMaxTotals[sub] > 0 ? sorted.findIndex(s => s.roll === student.roll) + 1 : '-',
@@ -2098,7 +2277,7 @@ function createChart(stu, canvasId, mode) {
             color: textColor,
             font: { size: 11 },
             stepSize: 10,
-            callback: function(value) {
+            callback: function (value) {
               return value + '%';
             }
           },
@@ -2157,24 +2336,24 @@ function performSearch() {
   if (!query) return clearSearch();
 
   const results = students.filter(stu =>
-  stu.name.toLowerCase().includes(query) ||
-  stu.roll.toLowerCase().includes(query)
-);
+    stu.name.toLowerCase().includes(query) ||
+    stu.roll.toLowerCase().includes(query)
+  );
 
-const tbody = document.querySelector('#searchTable tbody');
-tbody.innerHTML = '';
+  const tbody = document.querySelector('#searchTable tbody');
+  tbody.innerHTML = '';
 
-const sorted = [...results].sort((a, b) => b.cumTotal - a.cumTotal || a.roll.localeCompare(b.roll));
+  const sorted = [...results].sort((a, b) => b.cumTotal - a.cumTotal || a.roll.localeCompare(b.roll));
 
-sorted.forEach((stu, i) => {
-  const rank = stu.cumTotal > 0 ? i + 1 : '-';
-  const tr = document.createElement('tr');
+  sorted.forEach((stu, i) => {
+    const rank = stu.cumTotal > 0 ? i + 1 : '-';
+    const tr = document.createElement('tr');
 
-  if (rank >= 1 && rank <= 3 && stu.cumTotal > 0) {
-    tr.classList.add('top-performer');
-  }
+    if (rank >= 1 && rank <= 3 && stu.cumTotal > 0) {
+      tr.classList.add('top-performer');
+    }
 
-  tr.innerHTML = `
+    tr.innerHTML = `
   <td>${rank}</td>
   <td>${stu.roll}</td>
   <td class="name" data-roll="${stu.roll}">${stu.name}</td>
@@ -2183,12 +2362,12 @@ sorted.forEach((stu, i) => {
   <td>${stu.cumPercent}%</td>
   `;
 
-  tbody.appendChild(tr);
-});
+    tbody.appendChild(tr);
+  });
 
-document.getElementById('searchCount').textContent = `${results.length} results`;
-document.getElementById('searchResults').style.display = 'block';
-addClickListeners();
+  document.getElementById('searchCount').textContent = `${results.length} results`;
+  document.getElementById('searchResults').style.display = 'block';
+  addClickListeners();
 }
 
 function clearSearch() {
@@ -2289,10 +2468,10 @@ function updateThemeToggleButton(theme) {
 }
 
 // Event listener for theme toggle
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // Initialize theme
   initializeTheme();
-
+  loadQuestionMarksData();
   // Add event listener to theme toggle button
   const themeToggle = document.getElementById('themeToggle');
   if (themeToggle) {
@@ -2314,7 +2493,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Button event listeners
   document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 
-  document.getElementById('logoutBtn').addEventListener('click', function() {
+  document.getElementById('logoutBtn').addEventListener('click', function () {
     sessionStorage.clear();
     localStorage.removeItem('loggedInUser');
     window.location.href = 'index.html';
@@ -2346,8 +2525,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') performSearch();
   });
 
-  document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("DOMContentLoaded", function () {
     processJsonData(sampleData);
+    loadQuestionMarksData();
   });
 
   window.addEventListener('resize', () => {
@@ -2497,19 +2677,19 @@ function getRemarkColor(remark) {
   // Use existing theme colors for remarks
   switch (remark) {
     case 'Toughest':
-    return '#dc3545'; // Red
+      return '#dc3545'; // Red
     case 'Tough':
-    return '#fd7e14'; // Orange Red
+      return '#fd7e14'; // Orange Red
     case 'Above Average':
-    return '#ffc107'; // Yellow
+      return '#ffc107'; // Yellow
     case 'Moderate':
-    return '#6c757d'; // Gray
+      return '#6c757d'; // Gray
     case 'Easy':
-    return '#20c997'; // Teal
+      return '#20c997'; // Teal
     case 'Very Easy':
-    return '#198754'; // Green
+      return '#198754'; // Green
     default:
-    return 'var(--color-text)';
+      return 'var(--color-text)';
   }
 }
 
@@ -2681,9 +2861,9 @@ function populateStudentCategorization() {
   <h4 class="category-title"><i class="fas fa-trophy"></i> High Performers (${categorization.highPerformers.length})</h4>
   <div class="category-list">
   ${categorization.highPerformers.length === 0 ?
-  '<div class="empty-state">No high performers found. Target: ≥70% overall average</div>' :
-  categorization.highPerformers.map((student, index) =>
-  `<div class="category-item high-performer" style="animation-delay: ${index * 0.1}s;">
+      '<div class="empty-state">No high performers found. Target: ≥70% overall average</div>' :
+      categorization.highPerformers.map((student, index) =>
+        `<div class="category-item high-performer" style="animation-delay: ${index * 0.1}s;">
   <div class="student-info">
   <strong class="student-name">${student.name}</strong>
   <span class="student-roll">(${student.roll})</span>
@@ -2691,7 +2871,7 @@ function populateStudentCategorization() {
   <div class="performance-badge high">${student.score.toFixed(1)}%</div>
   <span class="category-reason">${student.reason}</span>
   </div>`
-).join('')}
+      ).join('')}
 </div>
 </div>
 
@@ -2699,9 +2879,9 @@ function populateStudentCategorization() {
 <h4 class="category-title"><i class="fas fa-exclamation-triangle"></i> Students at Risk (${categorization.atRiskStudents.length})</h4>
 <div class="category-list">
 ${categorization.atRiskStudents.length === 0 ?
-'<div class="empty-state">No students at risk. Keep monitoring!</div>' :
-categorization.atRiskStudents.map((student, index) =>
-`<div class="category-item at-risk" style="animation-delay: ${index * 0.1}s;">
+      '<div class="empty-state">No students at risk. Keep monitoring!</div>' :
+      categorization.atRiskStudents.map((student, index) =>
+        `<div class="category-item at-risk" style="animation-delay: ${index * 0.1}s;">
 <div class="student-info">
 <strong class="student-name">${student.name}</strong>
 <span class="student-roll">(${student.roll})</span>
@@ -2709,7 +2889,7 @@ categorization.atRiskStudents.map((student, index) =>
 <div class="performance-badge risk">${student.score.toFixed(1)}%</div>
 <span class="category-reason">${student.reason}</span>
 </div>`
-).join('')}
+      ).join('')}
 </div>
 </div>
 
@@ -2717,9 +2897,9 @@ categorization.atRiskStudents.map((student, index) =>
 <h4 class="category-title"><i class="fas fa-chart-line"></i> Improving Students (${categorization.improvingStudents.length})</h4>
 <div class="category-list">
 ${categorization.improvingStudents.length === 0 ?
-'<div class="empty-state">No significant improvements detected</div>' :
-categorization.improvingStudents.map((student, index) =>
-`<div class="category-item improving" style="animation-delay: ${index * 0.1}s;">
+      '<div class="empty-state">No significant improvements detected</div>' :
+      categorization.improvingStudents.map((student, index) =>
+        `<div class="category-item improving" style="animation-delay: ${index * 0.1}s;">
 <div class="student-info">
 <strong class="student-name">${student.name}</strong>
 <span class="student-roll">(${student.roll})</span>
@@ -2727,7 +2907,7 @@ categorization.improvingStudents.map((student, index) =>
 <div class="performance-badge improving">↗️ +${student.improvement?.toFixed(1) || 'N/A'}%</div>
 <span class="category-reason">${student.reason}</span>
 </div>`
-).join('')}
+      ).join('')}
 </div>
 </div>
 
@@ -2735,9 +2915,9 @@ categorization.improvingStudents.map((student, index) =>
 <h4 class="category-title"><i class="fas fa-chart-line-down"></i> Declining Students (${categorization.decliningStudents.length})</h4>
 <div class="category-list">
 ${categorization.decliningStudents.length === 0 ?
-'<div class="empty-state">No significant declines detected</div>' :
-categorization.decliningStudents.map((student, index) =>
-`<div class="category-item declining" style="animation-delay: ${index * 0.1}s;">
+      '<div class="empty-state">No significant declines detected</div>' :
+      categorization.decliningStudents.map((student, index) =>
+        `<div class="category-item declining" style="animation-delay: ${index * 0.1}s;">
 <div class="student-info">
 <strong class="student-name">${student.name}</strong>
 <span class="student-roll">(${student.roll})</span>
@@ -2745,7 +2925,7 @@ categorization.decliningStudents.map((student, index) =>
 <div class="performance-badge declining">↘️ -${student.decline?.toFixed(1) || 'N/A'}%</div>
 <span class="category-reason">${student.reason}</span>
 </div>`
-).join('')}
+      ).join('')}
 </div>
 </div>
 `;
@@ -2799,12 +2979,12 @@ function populatePerformanceAlerts() {
   </div>
 
   ${Object.entries(alerts).map(([type, alertList]) =>
-  alertList.length > 0 ? `
+    alertList.length > 0 ? `
   <div class="alert-section">
   <h4 class="alert-type-title">${getAlertTypeTitle(type)} <span class="count-badge">${alertList.length}</span></h4>
   <div class="alert-list">
   ${alertList.map((alert, index) =>
-  `<div class="alert-item ${alert.severity.toLowerCase()}" style="animation-delay: ${index * 0.1}s;">
+      `<div class="alert-item ${alert.severity.toLowerCase()}" style="animation-delay: ${index * 0.1}s;">
   <div class="alert-header">
   <span class="severity-badge ${alert.severity.toLowerCase()}">${alert.severity}</span>
   <div class="alert-priority ${alert.severity.toLowerCase()}">
@@ -2821,13 +3001,13 @@ function populatePerformanceAlerts() {
   Generated: ${new Date().toLocaleString()}
   </div>
   </div>`
-).join('')}
+    ).join('')}
 </div>
 </div>` : ''
-).join('')}
+  ).join('')}
 
 ${totalAlerts === 0 ?
-'<div class="no-alerts"><div class="success-icon"><i class="fas fa-check-circle"></i></div><h3>All Clear!</h3><p>No performance alerts detected. Students are performing well.</p></div>' : ''}
+      '<div class="no-alerts"><div class="success-icon"><i class="fas fa-check-circle"></i></div><h3>All Clear!</h3><p>No performance alerts detected. Students are performing well.</p></div>' : ''}
 `;
 }
 
@@ -2892,8 +3072,8 @@ function performStudentCategorization() {
         ...student,
         score: overallPercentage,
         reason: overallPercentage < 35 ?
-        `Critical performance level: ${overallPercentage.toFixed(2)}%` :
-        `Significant performance decline: ${Math.abs(improvementRate).toFixed(1)}% drop`
+          `Critical performance level: ${overallPercentage.toFixed(2)}%` :
+          `Significant performance decline: ${Math.abs(improvementRate).toFixed(1)}% drop`
       });
     }
 
@@ -2951,8 +3131,8 @@ function generatePerformanceAlerts() {
         severity: overallPercentage < 25 ? 'HIGH' : 'MEDIUM',
         message: `${student.name} (${student.roll}) has critically low performance at ${overallPercentage.toFixed(2)}%`,
         action: overallPercentage < 25 ?
-        'Immediate intervention required - schedule parent meeting and create recovery plan' :
-        'Monitor closely and provide additional support resources'
+          'Immediate intervention required - schedule parent meeting and create recovery plan' :
+          'Monitor closely and provide additional support resources'
       });
     }
 
@@ -2987,11 +3167,11 @@ function generatePerformanceAlerts() {
     }
     // Missing exam alerts
     const enrolledButMissedExams = examOrder.filter(exam => {
-      const hasEnrollmentData = students.some(s => 
-        s.roll === student.roll && 
+      const hasEnrollmentData = students.some(s =>
+        s.roll === student.roll &&
         s.exams.some(ex => ex.exam === exam && ex.maxTotal >= 0)
       );
-      
+
       return hasEnrollmentData && !attemptedExams.includes(exam);
     });
 
@@ -3261,10 +3441,10 @@ let currentPrintType = '';
 
 // Make sure filter variables exist
 if (typeof currentOverallFilter === 'undefined') {
-    var currentOverallFilter = 'all';
+  var currentOverallFilter = 'all';
 }
 if (typeof currentLast3Filter === 'undefined') {
-    var currentLast3Filter = 'all';
+  var currentLast3Filter = 'all';
 }
 
 function openOverallPrintDialog() {
@@ -3331,9 +3511,9 @@ function printOverallRanklistWithFilter(filterType) {
     if (filterType === 'RT') {
       title += " (RT ONLY)";
     } else if (filterType === 'WE') {
-      title += " (WE ONLY)";  
+      title += " (WE ONLY)";
     } else if (filterType === 'MT') {
-      title += " (MT ONLY)";  
+      title += " (MT ONLY)";
     }
 
     console.log('Opening print window with title:', title);
@@ -3394,45 +3574,45 @@ function printLast3RanklistWithFilter(filterType) {
 
 // Enhanced Exam Selection Modal Functions
 function openExamSelectionDialog() {
-    // Get available exams from students data (from backend)
-    const exams = [...new Set(
-        students.flatMap(s => 
-            s.exams
-                .filter(e => e.maxTotal > 0)
-                .map(e => e.exam)
-        )
-    )];
-    
-    // Sort exams by the predefined order
-    const sortedExams = exams.sort((a, b) => {
-        const indexA = examOrder.indexOf(a);
-        const indexB = examOrder.indexOf(b);
-        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-        if (indexA !== -1) return -1;
-        if (indexB !== -1) return 1;
-        return a.localeCompare(b);
-    });
+  // Get available exams from students data (from backend)
+  const exams = [...new Set(
+    students.flatMap(s =>
+      s.exams
+        .filter(e => e.maxTotal > 0)
+        .map(e => e.exam)
+    )
+  )];
 
-    // Populate the exam selection grid
-    const grid = document.getElementById('examSelectionGrid');
-    grid.innerHTML = '';
+  // Sort exams by the predefined order
+  const sortedExams = exams.sort((a, b) => {
+    const indexA = examOrder.indexOf(a);
+    const indexB = examOrder.indexOf(b);
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    return a.localeCompare(b);
+  });
 
-    sortedExams.forEach(exam => {
-        // Get exam data from students instead of sampleData
-        const examData = students
-            .flatMap(s => 
-                s.exams
-                    .filter(e => e.exam === exam && e.maxTotal > 0)
-                    .map(e => ({ ...s, ...e }))
-            );
+  // Populate the exam selection grid
+  const grid = document.getElementById('examSelectionGrid');
+  grid.innerHTML = '';
 
-        const hasData = examData.length > 0;
+  sortedExams.forEach(exam => {
+    // Get exam data from students instead of sampleData
+    const examData = students
+      .flatMap(s =>
+        s.exams
+          .filter(e => e.exam === exam && e.maxTotal > 0)
+          .map(e => ({ ...s, ...e }))
+      );
 
-        const examButton = document.createElement('button');
-        examButton.className = hasData ? 'exam-option' : 'exam-option disabled';
-        examButton.onclick = hasData ? () => selectAndPrintExam(exam) : null;
-        examButton.disabled = !hasData;
-        examButton.innerHTML = `
+    const hasData = examData.length > 0;
+
+    const examButton = document.createElement('button');
+    examButton.className = hasData ? 'exam-option' : 'exam-option disabled';
+    examButton.onclick = hasData ? () => selectAndPrintExam(exam) : null;
+    examButton.disabled = !hasData;
+    examButton.innerHTML = `
             <div class="exam-icon">
                 <i class="fas ${exam.startsWith('RT') ? 'fa-clock' : 'fa-calendar-week'}"></i>
             </div>
@@ -3441,50 +3621,50 @@ function openExamSelectionDialog() {
                 <span class="exam-students">${examData.length} students</span>
             </div>
         `;
-        grid.appendChild(examButton);
-    });
+    grid.appendChild(examButton);
+  });
 
-    document.getElementById('examSelectionDialog').style.display = 'flex';
+  document.getElementById('examSelectionDialog').style.display = 'flex';
 }
 
 function closeExamSelectionDialog() {
-    const dialog = document.getElementById('examSelectionDialog');
-    if (dialog) {
-        dialog.style.display = 'none';
-    }
+  const dialog = document.getElementById('examSelectionDialog');
+  if (dialog) {
+    dialog.style.display = 'none';
+  }
 }
 
 
 function selectAndPrintExam(examName) {
-    console.log('Printing exam:', examName);
-    closeExamSelectionDialog();
+  console.log('Printing exam:', examName);
+  closeExamSelectionDialog();
 
-    // Get exam data from students (transformed structure)
-    const examData = students
-        .map(stu => {
-            const examData = stu.exams.find(e => e.exam === examName && e.maxTotal > 0);
-            if (!examData) return null;
-            return {
-                roll: stu.roll,
-                name: stu.name,
-                chem: examData.scores.chem,
-                phy: examData.scores.phy,
-                bio: examData.scores.bio,
-                math: examData.scores.math,
-                total: examData.total,
-                percent: examData.total / examData.maxTotal * 100
-            };
-        })
-        .filter(d => d !== null)
-        .sort((a, b) => b.total - a.total);
+  // Get exam data from students (transformed structure)
+  const examData = students
+    .map(stu => {
+      const examData = stu.exams.find(e => e.exam === examName && e.maxTotal > 0);
+      if (!examData) return null;
+      return {
+        roll: stu.roll,
+        name: stu.name,
+        chem: examData.scores.chem,
+        phy: examData.scores.phy,
+        bio: examData.scores.bio,
+        math: examData.scores.math,
+        total: examData.total,
+        percent: examData.total / examData.maxTotal * 100
+      };
+    })
+    .filter(d => d !== null)
+    .sort((a, b) => b.total - a.total);
 
-    if (examData.length === 0) {
-        alert('No data available for selected exam');
-        return;
-    }
+  if (examData.length === 0) {
+    alert('No data available for selected exam');
+    return;
+  }
 
-    // Create the ranklist HTML
-    let html = `
+  // Create the ranklist HTML
+  let html = `
         <table class="enhanced-table">
             <thead>
                 <tr>
@@ -3502,8 +3682,8 @@ function selectAndPrintExam(examName) {
             <tbody>
     `;
 
-    examData.forEach((d, i) => {
-        html += `
+  examData.forEach((d, i) => {
+    html += `
             <tr>
                 <td>${i + 1}</td>
                 <td>${d.roll}</td>
@@ -3516,18 +3696,18 @@ function selectAndPrintExam(examName) {
                 <td>${d.percent.toFixed(2)}</td>
             </tr>
         `;
-    });
+  });
 
-    html += `
+  html += `
             </tbody>
         </table>
     `;
 
-    openPrintWindow(examName + ' RANKLIST', html);
+  openPrintWindow(examName + ' RANKLIST', html);
 }
 
 // Initialize after DOM loads
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   setTimeout(() => {
     // Re-populate last3 with corrected logic
     if (typeof populateStats === 'function') {
@@ -3587,7 +3767,7 @@ function initializePrintExport() {
   // Initialize print student profile button specifically
   const printStudentProfileBtn = document.getElementById('printStudentProfileBtn');
   if (printStudentProfileBtn) {
-    printStudentProfileBtn.addEventListener('click', function(e) {
+    printStudentProfileBtn.addEventListener('click', function (e) {
       e.preventDefault();
       const select = document.getElementById('studentProfileSelect');
       if (!select || !select.value) {
@@ -3897,8 +4077,8 @@ function printStudentProfileReport(student) {
           </thead>
           <tbody>
             ${student.exams.map(exam => {
-              if (exam.maxTotal === 0) return '';
-              return `<tr>
+    if (exam.maxTotal === 0) return '';
+    return `<tr>
                 <td>${exam.exam}</td>
                 <td>${getExamRank(student, exam.exam)}</td>
                 <td>${exam.scores.chem}/${exam.maxScores.chem}</td>
@@ -3908,7 +4088,7 @@ function printStudentProfileReport(student) {
                 <td>${exam.total}/${exam.maxTotal}</td>
                 <td>${exam.percent.toFixed(2)}%</td>
               </tr>`;
-            }).join('')}
+  }).join('')}
           </tbody>
         </table>
       </div>
@@ -3945,285 +4125,285 @@ function getPerformanceLevel(percentage) {
 }
 
 function openClassPerformanceModal() {
-    closePrintExportModal();
-    currentPrintType = 'classPerformance';
-    document.getElementById('printDialogTitle').textContent = 'Class Performance Summary';
-    document.getElementById('printFilterDialog').style.display = 'flex';
-    document.querySelector('input[name="printFilter"][value="all"]').checked = true;
+  closePrintExportModal();
+  currentPrintType = 'classPerformance';
+  document.getElementById('printDialogTitle').textContent = 'Class Performance Summary';
+  document.getElementById('printFilterDialog').style.display = 'flex';
+  document.querySelector('input[name="printFilter"][value="all"]').checked = true;
 }
 function executePrint() {
-    const selectedFilter = document.querySelector('input[name="printFilter"]:checked');
-    if (!selectedFilter) {
-        alert('Please select a filter option');
-        return;
-    }
-    
-    const filterValue = selectedFilter.value;
-    
-    if (currentPrintType === 'overall') {
-        printOverallRanklistWithFilter(filterValue);
-    } else if (currentPrintType === 'last3') {
-        printLast3RanklistWithFilter(filterValue);
-    } else if (currentPrintType === 'classPerformance') {
-        printClassPerformanceSummary(filterValue);
-    }
-    
-    closePrintFilterDialog();
+  const selectedFilter = document.querySelector('input[name="printFilter"]:checked');
+  if (!selectedFilter) {
+    alert('Please select a filter option');
+    return;
+  }
+
+  const filterValue = selectedFilter.value;
+
+  if (currentPrintType === 'overall') {
+    printOverallRanklistWithFilter(filterValue);
+  } else if (currentPrintType === 'last3') {
+    printLast3RanklistWithFilter(filterValue);
+  } else if (currentPrintType === 'classPerformance') {
+    printClassPerformanceSummary(filterValue);
+  }
+
+  closePrintFilterDialog();
 }
 
 // ================= CLASS PERFORMANCE SUMMARY - FINAL CORRECTED CODE =================
 // Copy this ENTIRE code block to the END of your script.js file
 
 function printClassPerformanceSummary(filterType) {
-    const filteredExams = getFilteredExamsForReport(filterType);
-    
-    if (filteredExams.length === 0) {
-        alert('No exams available for the selected filter.');
-        return;
-    }
-    
-    const stats = calculateClassStatistics(filteredExams);
-    const topPerformers = getTopPerformers(filteredExams, 5);
-    const atRiskStudents = getAtRiskStudents(filteredExams, 5);
-    const subjectStats = calculateSubjectStatistics(filteredExams);
-    const examStats = calculateExamStatistics(filteredExams);
-    
-    const htmlContent = generateClassPerformanceHTML(
-        filterType,
-        filteredExams,
-        stats,
-        topPerformers,
-        atRiskStudents,
-        subjectStats,
-        examStats
-    );
-    
-    const printWindow = window.open('', '', 'width=900,height=700');
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
-    
-    printWindow.onload = function() {
-        setTimeout(() => {
-            printWindow.print();
-        }, 500);
-    };
+  const filteredExams = getFilteredExamsForReport(filterType);
+
+  if (filteredExams.length === 0) {
+    alert('No exams available for the selected filter.');
+    return;
+  }
+
+  const stats = calculateClassStatistics(filteredExams);
+  const topPerformers = getTopPerformers(filteredExams, 5);
+  const atRiskStudents = getAtRiskStudents(filteredExams, 5);
+  const subjectStats = calculateSubjectStatistics(filteredExams);
+  const examStats = calculateExamStatistics(filteredExams);
+
+  const htmlContent = generateClassPerformanceHTML(
+    filterType,
+    filteredExams,
+    stats,
+    topPerformers,
+    atRiskStudents,
+    subjectStats,
+    examStats
+  );
+
+  const printWindow = window.open('', '', 'width=900,height=700');
+  printWindow.document.write(htmlContent);
+  printWindow.document.close();
+
+  printWindow.onload = function () {
+    setTimeout(() => {
+      printWindow.print();
+    }, 500);
+  };
 }
 
 function getFilteredExamsForReport(filterType) {
-    if (filterType === 'all') {
-        return examOrder;
-    } else if (filterType === 'RT') {
-        return examOrder.filter(exam => exam.startsWith('RT'));
-    } else if (filterType === 'WE') {
-        return examOrder.filter(exam => exam.startsWith('WE'));
-    } else if (filterType === 'MT') {
-        return examOrder.filter(exam => exam.startsWith('MT'));
-    }
+  if (filterType === 'all') {
     return examOrder;
+  } else if (filterType === 'RT') {
+    return examOrder.filter(exam => exam.startsWith('RT'));
+  } else if (filterType === 'WE') {
+    return examOrder.filter(exam => exam.startsWith('WE'));
+  } else if (filterType === 'MT') {
+    return examOrder.filter(exam => exam.startsWith('MT'));
+  }
+  return examOrder;
 }
 
 function calculateClassStatistics(exams) {
-    let totalParticipations = 0;
-    let totalScore = 0;
-    let totalMaxScore = 0;
-    let passCount = 0;
-    let failCount = 0;
-    let studentsWithData = new Set();
-    
-    students.forEach(student => {
-        let studentTotal = 0;
-        let studentMax = 0;
-        
-        student.exams.forEach(ex => {
-            if (exams.includes(ex.exam) && ex.maxTotal > 0) {
-                studentTotal += ex.total;
-                studentMax += ex.maxTotal;
-                totalParticipations++;
-                studentsWithData.add(student.roll);
-            }
-        });
-        
-        if (studentMax > 0) {
-            totalScore += studentTotal;
-            totalMaxScore += studentMax;
-            const percent = (studentTotal / studentMax) * 100;
-            if (percent >= 60) passCount++;
-            if (percent < 35) failCount++;
-        }
+  let totalParticipations = 0;
+  let totalScore = 0;
+  let totalMaxScore = 0;
+  let passCount = 0;
+  let failCount = 0;
+  let studentsWithData = new Set();
+
+  students.forEach(student => {
+    let studentTotal = 0;
+    let studentMax = 0;
+
+    student.exams.forEach(ex => {
+      if (exams.includes(ex.exam) && ex.maxTotal > 0) {
+        studentTotal += ex.total;
+        studentMax += ex.maxTotal;
+        totalParticipations++;
+        studentsWithData.add(student.roll);
+      }
     });
-    
-    const avgPercentage = totalMaxScore > 0 ? (totalScore / totalMaxScore) * 100 : 0;
-    const passRate = studentsWithData.size > 0 ? (passCount / studentsWithData.size) * 100 : 0;
-    const participationRate = students.length > 0 ? (studentsWithData.size / students.length) * 100 : 0;
-    const failRate = studentsWithData.size > 0 ? (failCount / studentsWithData.size) * 100 : 0;
-    
-    return {
-        totalStudents: students.length,
-        activeStudents: studentsWithData.size,
-        avgPercentage: avgPercentage.toFixed(2),
-        passRate: passRate.toFixed(2),
-        failRate: failRate.toFixed(2),
-        participationRate: participationRate.toFixed(2),
-        passCount,
-        failCount,
-        totalScore,
-        totalMaxScore,
-        totalExams: exams.length
-    };
+
+    if (studentMax > 0) {
+      totalScore += studentTotal;
+      totalMaxScore += studentMax;
+      const percent = (studentTotal / studentMax) * 100;
+      if (percent >= 60) passCount++;
+      if (percent < 35) failCount++;
+    }
+  });
+
+  const avgPercentage = totalMaxScore > 0 ? (totalScore / totalMaxScore) * 100 : 0;
+  const passRate = studentsWithData.size > 0 ? (passCount / studentsWithData.size) * 100 : 0;
+  const participationRate = students.length > 0 ? (studentsWithData.size / students.length) * 100 : 0;
+  const failRate = studentsWithData.size > 0 ? (failCount / studentsWithData.size) * 100 : 0;
+
+  return {
+    totalStudents: students.length,
+    activeStudents: studentsWithData.size,
+    avgPercentage: avgPercentage.toFixed(2),
+    passRate: passRate.toFixed(2),
+    failRate: failRate.toFixed(2),
+    participationRate: participationRate.toFixed(2),
+    passCount,
+    failCount,
+    totalScore,
+    totalMaxScore,
+    totalExams: exams.length
+  };
 }
 
 function getTopPerformers(exams, count) {
-    const studentScores = students.map(student => {
-        let total = 0, maxTotal = 0, examsAttempted = 0;
-        student.exams.forEach(ex => {
-            if (exams.includes(ex.exam) && ex.maxTotal > 0) {
-                total += ex.total;
-                maxTotal += ex.maxTotal;
-                examsAttempted++;
-            }
-        });
-        const percent = maxTotal > 0 ? (total / maxTotal) * 100 : 0;
-        return {
-            roll: student.roll,
-            name: student.name,
-            total,
-            maxTotal,
-            percentage: percent.toFixed(2),
-            examsAttempted
-        };
-    }).filter(s => s.maxTotal > 0);
-    return studentScores.sort((a, b) => b.total - a.total).slice(0, count);
+  const studentScores = students.map(student => {
+    let total = 0, maxTotal = 0, examsAttempted = 0;
+    student.exams.forEach(ex => {
+      if (exams.includes(ex.exam) && ex.maxTotal > 0) {
+        total += ex.total;
+        maxTotal += ex.maxTotal;
+        examsAttempted++;
+      }
+    });
+    const percent = maxTotal > 0 ? (total / maxTotal) * 100 : 0;
+    return {
+      roll: student.roll,
+      name: student.name,
+      total,
+      maxTotal,
+      percentage: percent.toFixed(2),
+      examsAttempted
+    };
+  }).filter(s => s.maxTotal > 0);
+  return studentScores.sort((a, b) => b.total - a.total).slice(0, count);
 }
 
 function getAtRiskStudents(exams, count) {
-    const studentScores = students.map(student => {
-        let total = 0, maxTotal = 0, examsAttempted = 0;
-        student.exams.forEach(ex => {
-            if (exams.includes(ex.exam) && ex.maxTotal > 0) {
-                total += ex.total;
-                maxTotal += ex.maxTotal;
-                examsAttempted++;
-            }
-        });
-        const percent = maxTotal > 0 ? (total / maxTotal) * 100 : 0;
-        return {
-            roll: student.roll,
-            name: student.name,
-            total,
-            maxTotal,
-            percentage: percent.toFixed(2),
-            examsAttempted
-        };
-    }).filter(s => s.maxTotal > 0 && parseFloat(s.percentage) < 35);
-    return studentScores.sort((a, b) => a.percentage - b.percentage).slice(0, count);
+  const studentScores = students.map(student => {
+    let total = 0, maxTotal = 0, examsAttempted = 0;
+    student.exams.forEach(ex => {
+      if (exams.includes(ex.exam) && ex.maxTotal > 0) {
+        total += ex.total;
+        maxTotal += ex.maxTotal;
+        examsAttempted++;
+      }
+    });
+    const percent = maxTotal > 0 ? (total / maxTotal) * 100 : 0;
+    return {
+      roll: student.roll,
+      name: student.name,
+      total,
+      maxTotal,
+      percentage: percent.toFixed(2),
+      examsAttempted
+    };
+  }).filter(s => s.maxTotal > 0 && parseFloat(s.percentage) < 35);
+  return studentScores.sort((a, b) => a.percentage - b.percentage).slice(0, count);
 }
 
 function calculateSubjectStatistics(exams) {
-    const subjects = ['chem', 'phy', 'bio', 'math'];
-    const subjectStats = {};
-    
-    subjects.forEach(subject => {
-        let totalScore = 0, maxScore = 0, count = 0, highestScore = -Infinity, lowestScore = Infinity;
-        
-        // Convert students array to flat structure for processing
-        const flatData = students.flatMap(stu => 
-            stu.exams.map(ex => ({
-                exam: ex.exam,
-                chem: ex.scores.chem,
-                phy: ex.scores.phy,
-                bio: ex.scores.bio,
-                math: ex.scores.math,
-                maxChem: ex.maxScores.chem,
-                maxPhy: ex.maxScores.phy,
-                maxBio: ex.maxScores.bio,
-                maxMath: ex.maxScores.math,
-                maxTotal: ex.maxTotal
-            }))
-        );
-        
-        flatData.forEach(data => {
-            if (exams.includes(data.exam) && data.maxTotal > 0) {
-                const maxKey = 'max' + subject.charAt(0).toUpperCase() + subject.slice(1);
-                const subMax = data[maxKey];
-                const subScore = data[subject];
-                
-                if (subMax > 0) {
-                    totalScore += subScore;
-                    maxScore += subMax;
-                    count++;
-                    if (subScore > highestScore) highestScore = subScore;
-                    if (subScore < lowestScore) lowestScore = subScore;
-                }
-            }
-        });
-        
-        const avgPercentage = maxScore > 0 ? (totalScore / maxScore * 100) : 0;
-        subjectStats[subject] = {
-            name: subjectNames[subject],
-            avgPercentage: avgPercentage.toFixed(2),
-            totalScore,
-            maxScore,
-            highestScore: highestScore === -Infinity ? 0 : highestScore,
-            lowestScore: lowestScore === Infinity ? 0 : lowestScore,
-            count
-        };
+  const subjects = ['chem', 'phy', 'bio', 'math'];
+  const subjectStats = {};
+
+  subjects.forEach(subject => {
+    let totalScore = 0, maxScore = 0, count = 0, highestScore = -Infinity, lowestScore = Infinity;
+
+    // Convert students array to flat structure for processing
+    const flatData = students.flatMap(stu =>
+      stu.exams.map(ex => ({
+        exam: ex.exam,
+        chem: ex.scores.chem,
+        phy: ex.scores.phy,
+        bio: ex.scores.bio,
+        math: ex.scores.math,
+        maxChem: ex.maxScores.chem,
+        maxPhy: ex.maxScores.phy,
+        maxBio: ex.maxScores.bio,
+        maxMath: ex.maxScores.math,
+        maxTotal: ex.maxTotal
+      }))
+    );
+
+    flatData.forEach(data => {
+      if (exams.includes(data.exam) && data.maxTotal > 0) {
+        const maxKey = 'max' + subject.charAt(0).toUpperCase() + subject.slice(1);
+        const subMax = data[maxKey];
+        const subScore = data[subject];
+
+        if (subMax > 0) {
+          totalScore += subScore;
+          maxScore += subMax;
+          count++;
+          if (subScore > highestScore) highestScore = subScore;
+          if (subScore < lowestScore) lowestScore = subScore;
+        }
+      }
     });
-    
-    return subjectStats;
+
+    const avgPercentage = maxScore > 0 ? (totalScore / maxScore * 100) : 0;
+    subjectStats[subject] = {
+      name: subjectNames[subject],
+      avgPercentage: avgPercentage.toFixed(2),
+      totalScore,
+      maxScore,
+      highestScore: highestScore === -Infinity ? 0 : highestScore,
+      lowestScore: lowestScore === Infinity ? 0 : lowestScore,
+      count
+    };
+  });
+
+  return subjectStats;
 }
 
 function calculateExamStatistics(exams) {
-    return exams.map(examName => {
-        let totalScore = 0, maxScore = 0, studentCount = 0, highestScore = -Infinity, lowestScore = Infinity;
-        
-        students.forEach(student => {
-            const exam = student.exams.find(ex => ex.exam === examName);
-            if (exam && exam.maxTotal > 0) {
-                totalScore += exam.total;
-                maxScore += exam.maxTotal;
-                studentCount++;
-                if (exam.total > highestScore) highestScore = exam.total;
-                if (exam.total < lowestScore) lowestScore = exam.total;
-            }
-        });
-        const enrolledCount = students.filter(stu => stu.exams.some(ex => ex.exam === examName && ex.maxTotal >= 0)).length;
-        const avgPercentage = maxScore > 0 ? (totalScore / maxScore) * 100 : 0;
-        const avgScore = studentCount > 0 ? (totalScore / studentCount).toFixed(2) : 0;
-        
-        // Use the SAME difficulty calculation everywhere
-        let difficulty;
-        if (avgPercentage >= 60) {
-            difficulty = 'Easy';
-        } else if (avgPercentage >= 40) {
-            difficulty = 'Moderate';
-        } else {
-            difficulty = 'Difficult';
-        }
-        
-        return {
-            name: examName,
-            avgPercentage: avgPercentage.toFixed(2),
-            studentCount,
-            enrolledCount,
-            totalStudents: students.length,
-            participationRate: ((studentCount / students.length) * 100).toFixed(2),
-            highestScore: highestScore === -Infinity ? 0 : highestScore,
-            lowestScore: lowestScore === Infinity ? 0 : lowestScore,
-            avgScore,
-            difficulty
-        };
+  return exams.map(examName => {
+    let totalScore = 0, maxScore = 0, studentCount = 0, highestScore = -Infinity, lowestScore = Infinity;
+
+    students.forEach(student => {
+      const exam = student.exams.find(ex => ex.exam === examName);
+      if (exam && exam.maxTotal > 0) {
+        totalScore += exam.total;
+        maxScore += exam.maxTotal;
+        studentCount++;
+        if (exam.total > highestScore) highestScore = exam.total;
+        if (exam.total < lowestScore) lowestScore = exam.total;
+      }
     });
+    const enrolledCount = students.filter(stu => stu.exams.some(ex => ex.exam === examName && ex.maxTotal >= 0)).length;
+    const avgPercentage = maxScore > 0 ? (totalScore / maxScore) * 100 : 0;
+    const avgScore = studentCount > 0 ? (totalScore / studentCount).toFixed(2) : 0;
+
+    // Use the SAME difficulty calculation everywhere
+    let difficulty;
+    if (avgPercentage >= 60) {
+      difficulty = 'Easy';
+    } else if (avgPercentage >= 40) {
+      difficulty = 'Moderate';
+    } else {
+      difficulty = 'Difficult';
+    }
+
+    return {
+      name: examName,
+      avgPercentage: avgPercentage.toFixed(2),
+      studentCount,
+      enrolledCount,
+      totalStudents: students.length,
+      participationRate: ((studentCount / students.length) * 100).toFixed(2),
+      highestScore: highestScore === -Infinity ? 0 : highestScore,
+      lowestScore: lowestScore === Infinity ? 0 : lowestScore,
+      avgScore,
+      difficulty
+    };
+  });
 }
 
 function generateClassPerformanceHTML(filterType, exams, stats, topPerformers, atRiskStudents, subjectStats, examStats) {
-    const filterLabel = filterType === 'all' ? 'All Exams' : filterType === 'RT' ? 'Revision Tests (RT)' : filterType === 'WE' ? 'Weekly Exams (WE)' : 'Mega Tests (MT)';
-    const currentDate = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
-    
-    const subjectsArray = Object.values(subjectStats);
-    const strongest = subjectsArray.reduce((max, s) => parseFloat(s.avgPercentage) > parseFloat(max.avgPercentage) ? s : max, subjectsArray[0]);
-    const weakest = subjectsArray.reduce((min, s) => parseFloat(s.avgPercentage) < parseFloat(min.avgPercentage) ? s : min, subjectsArray[0]);
-    
-    return `
+  const filterLabel = filterType === 'all' ? 'All Exams' : filterType === 'RT' ? 'Revision Tests (RT)' : filterType === 'WE' ? 'Weekly Exams (WE)' : 'Mega Tests (MT)';
+  const currentDate = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  const subjectsArray = Object.values(subjectStats);
+  const strongest = subjectsArray.reduce((max, s) => parseFloat(s.avgPercentage) > parseFloat(max.avgPercentage) ? s : max, subjectsArray[0]);
+  const weakest = subjectsArray.reduce((min, s) => parseFloat(s.avgPercentage) < parseFloat(min.avgPercentage) ? s : min, subjectsArray[0]);
+
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -4565,11 +4745,11 @@ function generateClassPerformanceHTML(filterType, exams, stats, topPerformers, a
             </thead>
             <tbody>
                 ${Object.keys(subjectStats).map(subKey => {
-                    const subject = subjectStats[subKey];
-                    const pct = parseFloat(subject.avgPercentage);
-                    const badgeClass = pct >= 60 ? 'badge-success' : pct >= 40 ? 'badge-warning' : 'badge-danger';
-                    const status = pct >= 60 ? 'Strong' : pct >= 40 ? 'Moderate' : 'Needs Focus';
-                    return `
+    const subject = subjectStats[subKey];
+    const pct = parseFloat(subject.avgPercentage);
+    const badgeClass = pct >= 60 ? 'badge-success' : pct >= 40 ? 'badge-warning' : 'badge-danger';
+    const status = pct >= 60 ? 'Strong' : pct >= 40 ? 'Moderate' : 'Needs Focus';
+    return `
                         <tr>
                             <td><strong>${subject.name}</strong></td>
                             <td><strong>${subject.avgPercentage}%</strong></td>
@@ -4579,7 +4759,7 @@ function generateClassPerformanceHTML(filterType, exams, stats, topPerformers, a
                             <td><span class="badge ${badgeClass}">${status}</span></td>
                         </tr>
                     `;
-                }).join('')}
+  }).join('')}
             </tbody>
         </table>
         
@@ -4605,10 +4785,10 @@ function generateClassPerformanceHTML(filterType, exams, stats, topPerformers, a
             </thead>
             <tbody>
                 ${examStats.map(exam => {
-                    const pct = parseFloat(exam.avgPercentage);
-                    const badgeClass = exam.difficulty === 'Easy' ? 'badge-success' : 
-                                      exam.difficulty === 'Moderate' ? 'badge-warning' : 'badge-danger';
-                    return `
+    const pct = parseFloat(exam.avgPercentage);
+    const badgeClass = exam.difficulty === 'Easy' ? 'badge-success' :
+      exam.difficulty === 'Moderate' ? 'badge-warning' : 'badge-danger';
+    return `
                         <tr>
                             <td><strong>${exam.name}</strong></td>
                             <td>${exam.studentCount} / ${exam.enrolledCount}</td>
@@ -4619,7 +4799,7 @@ function generateClassPerformanceHTML(filterType, exams, stats, topPerformers, a
                             <td><span class="badge ${badgeClass}">${exam.difficulty}</span></td>
                         </tr>
                     `;
-                }).join('')}
+  }).join('')}
             </tbody>
         </table>
     </div>
@@ -4628,25 +4808,25 @@ function generateClassPerformanceHTML(filterType, exams, stats, topPerformers, a
         <div class="insights-box">
             <h3><i class="fas fa-lightbulb"></i> Key Insights & Recommendations</h3>
             <ul>
-                ${parseFloat(stats.avgPercentage) >= 60 ? 
-                    '<li><strong><i class="fas fa-thumbs-up"></i> Excellent class performance!</strong> Average score of ' + stats.avgPercentage + '% indicates strong understanding.</li>' : 
-                    parseFloat(stats.avgPercentage) >= 40 ?
-                    '<li><strong><i class="fas fa-info-circle"></i> Moderate performance.</strong> Focus on targeted interventions to improve weak areas.</li>' :
-                    '<li><strong><i class="fas fa-exclamation-circle"></i> Performance needs attention.</strong> Consider remedial classes and personalized mentoring.</li>'}
-                ${atRiskStudents.length > 5 ? 
-                    '<li><strong><i class="fas fa-user-friends"></i> High number of struggling students.</strong> ' + atRiskStudents.length + ' students need immediate support and intervention.</li>' : 
-                    atRiskStudents.length > 0 ?
-                    '<li><strong><i class="fas fa-user-check"></i> Some students need support.</strong> ' + atRiskStudents.length + ' student(s) require extra attention and practice.</li>' :
-                    '<li><strong><i class="fas fa-smile"></i> All students performing well!</strong> No students below 35%. Maintain current teaching approach.</li>'}
+                ${parseFloat(stats.avgPercentage) >= 60 ?
+      '<li><strong><i class="fas fa-thumbs-up"></i> Excellent class performance!</strong> Average score of ' + stats.avgPercentage + '% indicates strong understanding.</li>' :
+      parseFloat(stats.avgPercentage) >= 40 ?
+        '<li><strong><i class="fas fa-info-circle"></i> Moderate performance.</strong> Focus on targeted interventions to improve weak areas.</li>' :
+        '<li><strong><i class="fas fa-exclamation-circle"></i> Performance needs attention.</strong> Consider remedial classes and personalized mentoring.</li>'}
+                ${atRiskStudents.length > 5 ?
+      '<li><strong><i class="fas fa-user-friends"></i> High number of struggling students.</strong> ' + atRiskStudents.length + ' students need immediate support and intervention.</li>' :
+      atRiskStudents.length > 0 ?
+        '<li><strong><i class="fas fa-user-check"></i> Some students need support.</strong> ' + atRiskStudents.length + ' student(s) require extra attention and practice.</li>' :
+        '<li><strong><i class="fas fa-smile"></i> All students performing well!</strong> No students below 35%. Maintain current teaching approach.</li>'}
                 ${parseFloat(strongest.avgPercentage) >= 60 ?
-                    '<li><strong><i class="fas fa-medal"></i> Strong subject: ' + strongest.name + '.</strong> Leverage this success to motivate students in weaker areas.</li>' :
-                    '<li><strong><i class="fas fa-chart-bar"></i> No subject has strong performance.</strong> Need comprehensive improvement strategy.</li>'}
+      '<li><strong><i class="fas fa-medal"></i> Strong subject: ' + strongest.name + '.</strong> Leverage this success to motivate students in weaker areas.</li>' :
+      '<li><strong><i class="fas fa-chart-bar"></i> No subject has strong performance.</strong> Need comprehensive improvement strategy.</li>'}
                 ${parseFloat(weakest.avgPercentage) < 40 ?
-                    '<li><strong><i class="fas fa-tools"></i> Focus area: ' + weakest.name + '.</strong> Only ' + weakest.avgPercentage + '% average. Implement extra practice sessions.</li>' :
-                    '<li><strong><i class="fas fa-balance-scale"></i> Balanced subject performance.</strong> Continue current teaching methodology.</li>'}
+      '<li><strong><i class="fas fa-tools"></i> Focus area: ' + weakest.name + '.</strong> Only ' + weakest.avgPercentage + '% average. Implement extra practice sessions.</li>' :
+      '<li><strong><i class="fas fa-balance-scale"></i> Balanced subject performance.</strong> Continue current teaching methodology.</li>'}
                 ${parseFloat(stats.participationRate) < 85 ?
-                    '<li><strong><i class="fas fa-calendar-check"></i> Low participation rate (' + stats.participationRate + '%).</strong> Encourage regular exam attendance.</li>' :
-                    '<li><strong><i class="fas fa-users-cog"></i> Excellent participation (' + stats.participationRate + '%).</strong> Students are engaged and motivated.</li>'}
+      '<li><strong><i class="fas fa-calendar-check"></i> Low participation rate (' + stats.participationRate + '%).</strong> Encourage regular exam attendance.</li>' :
+      '<li><strong><i class="fas fa-users-cog"></i> Excellent participation (' + stats.participationRate + '%).</strong> Students are engaged and motivated.</li>'}
             </ul>
         </div>
     </div>
@@ -4669,8 +4849,8 @@ function generateClassPerformanceHTML(filterType, exams, stats, topPerformers, a
 function computeSubjectCumulatives() {
   const subjects = ['chem', 'phy', 'bio', 'math'];
   students.forEach(s => {
-    s.subjectTotals = { chem:0, phy:0, bio:0, math:0 };
-    s.subjectMaxTotals = { chem:0, phy:0, bio:0, math:0 };
+    s.subjectTotals = { chem: 0, phy: 0, bio: 0, math: 0 };
+    s.subjectMaxTotals = { chem: 0, phy: 0, bio: 0, math: 0 };
     s.exams.forEach(ex => {
       subjects.forEach(sub => {
         s.subjectTotals[sub] += ex[sub] || 0;
@@ -4783,7 +4963,7 @@ function computeSubjectCumulatives() {
       subs.forEach(sub => {
         // primary path uses nested structures built from processJsonData
         const score = _val(ex, `scores.${sub}`, _val(ex, sub, 0));
-        const max   = _val(ex, `maxScores.${sub}`, _val(ex, `max${sub.charAt(0).toUpperCase()}${sub.slice(1)}`, 0));
+        const max = _val(ex, `maxScores.${sub}`, _val(ex, `max${sub.charAt(0).toUpperCase()}${sub.slice(1)}`, 0));
         if (max > 0) {
           s.subjectTotals[sub] += score;
           s.subjectMaxTotals[sub] += max;
@@ -4810,118 +4990,118 @@ function printSubjectSpecificReport(subjectFilter) {
 } // [attached_file:1]
 
 function calculateSubjectSpecificData(subjectFilter) {
-    const subjects = subjectFilter === 'all' ? ['chem', 'phy', 'bio', 'math'] : [subjectFilter];
-    
-    // Class-level subject stats (from students array converted to flat structure)
-    const stats = { totalStudents: students.length, totalExams: examOrder.length, subjects: {} };
+  const subjects = subjectFilter === 'all' ? ['chem', 'phy', 'bio', 'math'] : [subjectFilter];
+
+  // Class-level subject stats (from students array converted to flat structure)
+  const stats = { totalStudents: students.length, totalExams: examOrder.length, subjects: {} };
+  subjects.forEach(sub => {
+    let total = 0, maxTotal = 0;
+    const maxKey = 'max' + sub.charAt(0).toUpperCase() + sub.slice(1);
+
+    // Convert students array to flat structure
+    const flatData = students.flatMap(stu =>
+      stu.exams.map(ex => ({
+        chem: ex.scores.chem,
+        phy: ex.scores.phy,
+        bio: ex.scores.bio,
+        math: ex.scores.math,
+        maxChem: ex.maxScores.chem,
+        maxPhy: ex.maxScores.phy,
+        maxBio: ex.maxScores.bio,
+        maxMath: ex.maxScores.math,
+        maxTotal: ex.maxTotal
+      }))
+    );
+
+    flatData.forEach(d => {
+      if (d.maxTotal > 0 && d[maxKey] > 0) {
+        total += (d[sub] || 0);
+        maxTotal += (d[maxKey] || 0);
+      }
+    });
+
+    stats.subjects[sub] = {
+      name: subjectNames[sub],
+      avgPercentage: maxTotal ? ((total / maxTotal) * 100).toFixed(2) : '0.00',
+      totalScore: total,
+      maxScore: maxTotal
+    };
+  });
+
+  // Student performances
+  const studentPerformances = [];
+  students.forEach(s => {
+    let ok = false, tot = 0, mx = 0;
+    const perf = { roll: s.roll, name: s.name, subjects: {} };
+
     subjects.forEach(sub => {
-        let total = 0, maxTotal = 0;
-        const maxKey = 'max' + sub.charAt(0).toUpperCase() + sub.slice(1);
-        
-        // Convert students array to flat structure
-        const flatData = students.flatMap(stu => 
-            stu.exams.map(ex => ({
-                chem: ex.scores.chem,
-                phy: ex.scores.phy,
-                bio: ex.scores.bio,
-                math: ex.scores.math,
-                maxChem: ex.maxScores.chem,
-                maxPhy: ex.maxScores.phy,
-                maxBio: ex.maxScores.bio,
-                maxMath: ex.maxScores.math,
-                maxTotal: ex.maxTotal
-            }))
-        );
-        
-        flatData.forEach(d => {
-            if (d.maxTotal > 0 && d[maxKey] > 0) {
-                total += (d[sub] || 0);
-                maxTotal += (d[maxKey] || 0);
-            }
-        });
-        
-        stats.subjects[sub] = {
-            name: subjectNames[sub],
-            avgPercentage: maxTotal ? ((total / maxTotal) * 100).toFixed(2) : '0.00',
-            totalScore: total,
-            maxScore: maxTotal
+      const st = s.subjectTotals?.[sub] ?? 0;
+      const sm = s.subjectMaxTotals?.[sub] ?? 0;
+      if (sm > 0) {
+        ok = true;
+        perf.subjects[sub] = {
+          total: st,
+          max: sm,
+          avgPercent: sm ? ((st / sm) * 100).toFixed(2) : '0.00'
         };
+        tot += st;
+        mx += sm;
+      }
     });
-    
-    // Student performances
-    const studentPerformances = [];
-    students.forEach(s => {
-        let ok = false, tot = 0, mx = 0;
-        const perf = { roll: s.roll, name: s.name, subjects: {} };
-        
-        subjects.forEach(sub => {
-            const st = s.subjectTotals?.[sub] ?? 0;
-            const sm = s.subjectMaxTotals?.[sub] ?? 0;
-            if (sm > 0) {
-                ok = true;
-                perf.subjects[sub] = {
-                    total: st,
-                    max: sm,
-                    avgPercent: sm ? ((st / sm) * 100).toFixed(2) : '0.00'
-                };
-                tot += st;
-                mx += sm;
-            }
-        });
-        
-        if (ok && mx > 0) {
-            perf.overallPercent = ((tot / mx) * 100).toFixed(2);
-            perf.overallTotal = tot;
-            perf.overallMax = mx;
-            studentPerformances.push(perf);
+
+    if (ok && mx > 0) {
+      perf.overallPercent = ((tot / mx) * 100).toFixed(2);
+      perf.overallTotal = tot;
+      perf.overallMax = mx;
+      studentPerformances.push(perf);
+    }
+  });
+
+  studentPerformances.sort((a, b) => parseFloat(b.overallPercent) - parseFloat(a.overallPercent));
+
+  const topPerformers = studentPerformances.slice(0, 5);
+  const bottomPerformers = studentPerformances.slice(-5).reverse();
+
+  // Exam-wise averages and highs for selected subjects (from students array)
+  const examStats = examOrder.map(exam => {
+    const row = { name: exam, subjects: {} };
+    subjects.forEach(sub => {
+      const maxKey = 'max' + sub.charAt(0).toUpperCase() + sub.slice(1);
+      let totalSub = 0, maxSub = 0, high = -Infinity;
+
+      // Convert students array to flat structure
+      const flatData = students.flatMap(stu =>
+        stu.exams.map(ex => ({
+          exam: ex.exam,
+          chem: ex.scores.chem,
+          phy: ex.scores.phy,
+          bio: ex.scores.bio,
+          math: ex.scores.math,
+          maxChem: ex.maxScores.chem,
+          maxPhy: ex.maxScores.phy,
+          maxBio: ex.maxScores.bio,
+          maxMath: ex.maxScores.math,
+          maxTotal: ex.maxTotal
+        }))
+      );
+
+      flatData.forEach(d => {
+        if (d.exam === exam && d.maxTotal > 0 && d[maxKey] > 0) {
+          totalSub += (d[sub] || 0);
+          maxSub += (d[maxKey] || 0);
+          if ((d[sub] || 0) > high) high = d[sub];
         }
+      });
+
+      row.subjects[sub] = {
+        avgPercent: maxSub ? ((totalSub / maxSub) * 100).toFixed(2) : '0.00',
+        highestScore: high === -Infinity ? 0 : high
+      };
     });
-    
-    studentPerformances.sort((a, b) => parseFloat(b.overallPercent) - parseFloat(a.overallPercent));
-    
-    const topPerformers = studentPerformances.slice(0, 5);
-    const bottomPerformers = studentPerformances.slice(-5).reverse();
-    
-    // Exam-wise averages and highs for selected subjects (from students array)
-    const examStats = examOrder.map(exam => {
-        const row = { name: exam, subjects: {} };
-        subjects.forEach(sub => {
-            const maxKey = 'max' + sub.charAt(0).toUpperCase() + sub.slice(1);
-            let totalSub = 0, maxSub = 0, high = -Infinity;
-            
-            // Convert students array to flat structure
-            const flatData = students.flatMap(stu => 
-                stu.exams.map(ex => ({
-                    exam: ex.exam,
-                    chem: ex.scores.chem,
-                    phy: ex.scores.phy,
-                    bio: ex.scores.bio,
-                    math: ex.scores.math,
-                    maxChem: ex.maxScores.chem,
-                    maxPhy: ex.maxScores.phy,
-                    maxBio: ex.maxScores.bio,
-                    maxMath: ex.maxScores.math,
-                    maxTotal: ex.maxTotal
-                }))
-            );
-            
-            flatData.forEach(d => {
-                if (d.exam === exam && d.maxTotal > 0 && d[maxKey] > 0) {
-                    totalSub += (d[sub] || 0);
-                    maxSub += (d[maxKey] || 0);
-                    if ((d[sub] || 0) > high) high = d[sub];
-                }
-            });
-            
-            row.subjects[sub] = {
-                avgPercent: maxSub ? ((totalSub / maxSub) * 100).toFixed(2) : '0.00',
-                highestScore: high === -Infinity ? 0 : high
-            };
-        });
-        return row;
-    });
-    
-    return { stats, studentPerformances, topPerformers, bottomPerformers, examStats };
+    return row;
+  });
+
+  return { stats, studentPerformances, topPerformers, bottomPerformers, examStats };
 }
 
 // 5) Generate the subject-specific HTML report for printing (row templates FIXED)
@@ -4959,9 +5139,9 @@ function generateSubjectSpecificHTML(subjectFilter, data) {
 
   const allRows = (data.studentPerformances.length
     ? data.studentPerformances.map((s, i) => {
-        const pct = parseFloat(s.overallPercent);
-        const badge = pct >= 60 ? 'badge-success' : pct >= 40 ? 'badge-warning' : 'badge-danger';
-        return `
+      const pct = parseFloat(s.overallPercent);
+      const badge = pct >= 60 ? 'badge-success' : pct >= 40 ? 'badge-warning' : 'badge-danger';
+      return `
           <tr>
             <td class="text-center"><strong>${i + 1}</strong></td>
             <td>${s.roll}</td>
@@ -4970,7 +5150,7 @@ function generateSubjectSpecificHTML(subjectFilter, data) {
             <td class="num">${s.overallTotal}/${s.overallMax}</td>
             <td class="num"><span class="badge ${badge}">${s.overallPercent}%</span></td>
           </tr>`;
-      }).join('')
+    }).join('')
     : `<tr><td colspan="${subjects.length + 5}" class="empty">No records available for this view.</td></tr>`
   );
 
@@ -5042,7 +5222,7 @@ body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; background
 .info-box p { margin: 2px 0; font-size: 7pt }
 
 /* Stats cards */
-.stats-grid { display: grid; grid-template-columns: repeat(${subjects.length===1?3:4}, 1fr); gap: 10px; margin-bottom: 8px }
+.stats-grid { display: grid; grid-template-columns: repeat(${subjects.length === 1 ? 3 : 4}, 1fr); gap: 10px; margin-bottom: 8px }
 .stat-card { background: linear-gradient(135deg,#f0f4ff,#e0e7ff); padding: 12px; border-radius: 8px; text-align: center; border: 2px solid #cbd5e1 }
 .stat-card h3 { margin: 0 0 6px; font-size: 9pt; color: #475569; text-transform: uppercase; font-weight: 600 }
 .stat-card .value { font-size: 18pt; font-weight: 700; color: #2563eb }
@@ -5098,7 +5278,7 @@ tr:last-child td { border-bottom: none }
 <div class="stats-grid">
   ${subjects.map(sub => {
     const s = data.stats.subjects[sub];
-    const icon = sub==='chem'?'flask':sub==='phy'?'atom':sub==='bio'?'dna':'calculator';
+    const icon = sub === 'chem' ? 'flask' : sub === 'phy' ? 'atom' : sub === 'bio' ? 'dna' : 'calculator';
     return `<div class="stat-card">
       <h3><i class="fas fa-${icon}"></i> ${s.name}</h3>
       <p class="value">${s.avgPercentage}%</p>
@@ -5117,7 +5297,7 @@ tr:last-child td { border-bottom: none }
         <th class="col-rank text-center">Rank</th>
         <th class="col-roll text-center">Roll</th>
         <th class="col-name">Name</th>
-        ${subjects.map(s => `<th class="col-sub text-center" title="${subjectNames[s]}">${({chem:'Chem',phy:'Phys',bio:'Bio',math:'Math'})[s]} %</th>`).join('')}
+        ${subjects.map(s => `<th class="col-sub text-center" title="${subjectNames[s]}">${({ chem: 'Chem', phy: 'Phys', bio: 'Bio', math: 'Math' })[s]} %</th>`).join('')}
         <th class="col-overall text-center">Overall %</th>
       </tr>
     </thead>
@@ -5134,7 +5314,7 @@ tr:last-child td { border-bottom: none }
       <tr>
         <th class="col-roll text-center">Roll</th>
         <th class="col-name">Name</th>
-        ${subjects.map(s => `<th class="col-sub text-center" title="${subjectNames[s]}">${({chem:'Chem',phy:'Phys',bio:'Bio',math:'Math'})[s]} %</th>`).join('')}
+        ${subjects.map(s => `<th class="col-sub text-center" title="${subjectNames[s]}">${({ chem: 'Chem', phy: 'Phys', bio: 'Bio', math: 'Math' })[s]} %</th>`).join('')}
         <th class="col-overall text-center">Overall %</th>
       </tr>
     </thead>
@@ -5152,7 +5332,7 @@ tr:last-child td { border-bottom: none }
         <th class="col-rank text-center">Rank</th>
         <th class="col-roll text-center">Roll</th>
         <th class="col-name">Name</th>
-        ${subjects.map(s => `<th class="col-sub text-center" title="${subjectNames[s]}">${({chem:'Chem',phy:'Phys',bio:'Bio',math:'Math'})[s]} %</th>`).join('')}
+        ${subjects.map(s => `<th class="col-sub text-center" title="${subjectNames[s]}">${({ chem: 'Chem', phy: 'Phys', bio: 'Bio', math: 'Math' })[s]} %</th>`).join('')}
         <th class="col-total text-center">Score/Max</th>
         <th class="col-overall text-center">Overall %</th>
       </tr>
@@ -5169,8 +5349,8 @@ tr:last-child td { border-bottom: none }
     <thead>
       <tr>
         <th class="col-exam">Exam</th>
-        ${subjects.map(s => `<th class="col-sub text-center" title="${subjectNames[s]} Avg">${({chem:'Chem',phy:'Phys',bio:'Bio',math:'Math'})[s]} Avg %</th>`).join('')}
-        ${subjects.map(s => `<th class="col-sub text-center" title="${subjectNames[s]} High">${({chem:'Chem',phy:'Phys',bio:'Bio',math:'Math'})[s]} High</th>`).join('')}
+        ${subjects.map(s => `<th class="col-sub text-center" title="${subjectNames[s]} Avg">${({ chem: 'Chem', phy: 'Phys', bio: 'Bio', math: 'Math' })[s]} Avg %</th>`).join('')}
+        ${subjects.map(s => `<th class="col-sub text-center" title="${subjectNames[s]} High">${({ chem: 'Chem', phy: 'Phys', bio: 'Bio', math: 'Math' })[s]} High</th>`).join('')}
       </tr>
     </thead>
     <tbody>${examRows}</tbody>
@@ -5192,30 +5372,30 @@ tr:last-child td { border-bottom: none }
 
 // 1. Open modal to select student
 function openStudentSelectionModal(mode) {
-    if (mode !== 'progress') return;
-    
-    ensureProgressModal();
-    populateProgressStudentDropdown();
-    
-    const modal = document.getElementById('progressTrackingModal');
-    if (modal) modal.style.display = 'flex';
+  if (mode !== 'progress') return;
+
+  ensureProgressModal();
+  populateProgressStudentDropdown();
+
+  const modal = document.getElementById('progressTrackingModal');
+  if (modal) modal.style.display = 'flex';
 }
 
 // 2. Close modal
 function closeStudentSelectionModal() {
-    const modal = document.getElementById('progressTrackingModal');
-    if (modal) modal.style.display = 'none';
+  const modal = document.getElementById('progressTrackingModal');
+  if (modal) modal.style.display = 'none';
 }
 
 // 3. Build modal (only once)
 function ensureProgressModal() {
-    if (document.getElementById('progressTrackingModal')) return;
-    
-    const modal = document.createElement('div');
-    modal.id = 'progressTrackingModal';
-    modal.className = 'modal-overlay';
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:9999';
-    modal.innerHTML = `
+  if (document.getElementById('progressTrackingModal')) return;
+
+  const modal = document.createElement('div');
+  modal.id = 'progressTrackingModal';
+  modal.className = 'modal-overlay';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:9999';
+  modal.innerHTML = `
         <div class="modal-content" style="background:#fff;border-radius:10px;min-width:420px;max-width:560px;box-shadow:0 10px 30px rgba(0,0,0,.2);overflow:hidden">
             <div class="modal-header" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff">
                 <h3 style="margin:0;font-size:16px;font-weight:700"><i class="fas fa-user-clock"></i> Progress Tracking Report</h3>
@@ -5233,146 +5413,148 @@ function ensureProgressModal() {
             </div>
         </div>
     `;
-    
-    document.body.appendChild(modal);
-    
-    // Event listeners
-    document.getElementById('progressCloseBtn').addEventListener('click', closeStudentSelectionModal);
-    document.getElementById('progressCancelBtn').addEventListener('click', closeStudentSelectionModal);
-    document.getElementById('progressPrintBtn').addEventListener('click', () => {
-        const sel = document.getElementById('progressStudentSelect');
-        const roll = sel?.value;
-        if (!roll) {
-            alert('Please select a student.');
-            return;
-        }
-        const student = students.find(s => s.roll === roll);
-        if (!student) {
-            alert('Student not found.');
-            return;
-        }
-        printProgressTrackingReport(student);
-        closeStudentSelectionModal();
-    });
+
+  document.body.appendChild(modal);
+
+  // Event listeners
+  document.getElementById('progressCloseBtn').addEventListener('click', closeStudentSelectionModal);
+  document.getElementById('progressCancelBtn').addEventListener('click', closeStudentSelectionModal);
+  document.getElementById('progressPrintBtn').addEventListener('click', () => {
+    const sel = document.getElementById('progressStudentSelect');
+    const roll = sel?.value;
+    if (!roll) {
+      alert('Please select a student.');
+      return;
+    }
+    const student = students.find(s => s.roll === roll);
+    if (!student) {
+      alert('Student not found.');
+      return;
+    }
+    printProgressTrackingReport(student);
+    closeStudentSelectionModal();
+  });
 }
 
 // 4. Populate dropdown with students
 function populateProgressStudentDropdown() {
-    const select = document.getElementById('progressStudentSelect');
-    if (!select) return;
-    
-    const sorted = [...students].sort((a, b) => 
-        a.roll.localeCompare(b.roll, undefined, { numeric: true, sensitivity: 'base' })
-    );
-    
-    select.innerHTML = '<option value="">Select a student</option>';
-    for (const s of sorted) {
-        const opt = document.createElement('option');
-        opt.value = s.roll;
-        opt.textContent = `${s.name} (${s.roll})`;
-        select.appendChild(opt);
-    }
+  const select = document.getElementById('progressStudentSelect');
+  if (!select) return;
+
+  const sorted = [...students].sort((a, b) =>
+    a.roll.localeCompare(b.roll, undefined, { numeric: true, sensitivity: 'base' })
+  );
+
+  select.innerHTML = '<option value="">Select a student</option>';
+  for (const s of sorted) {
+    const opt = document.createElement('option');
+    opt.value = s.roll;
+    opt.textContent = `${s.name} (${s.roll})`;
+    select.appendChild(opt);
+  }
 }
 
 // 5. Print progress report
 function printProgressTrackingReport(student) {
-    if (typeof computeSubjectCumulatives === 'function') computeSubjectCumulatives();
-    
-    const html = generateProgressTrackingHTML(student);
-    const w = window.open('', '', 'width=1200,height=800');
-    if (!w) {
-        alert('Allow popups for printing.');
-        return;
-    }
-    w.document.write(html);
-    w.document.close();
-    w.onload = () => setTimeout(() => w.print(), 500);
+  if (typeof computeSubjectCumulatives === 'function') computeSubjectCumulatives();
+
+  const html = generateProgressTrackingHTML(student);
+  const w = window.open('', '', 'width=1200,height=800');
+  if (!w) {
+    alert('Allow popups for printing.');
+    return;
+  }
+  w.document.write(html);
+  w.document.close();
+  w.onload = () => setTimeout(() => w.print(), 500);
 }
 
 /* Helpers for metrics */
-const _safe = (o, p, d=0) => {
-  try { return p.split('.').reduce((x,k)=> (x && x[k]!=null? x[k]:undefined), o) ?? d; } catch { return d; }
+const _safe = (o, p, d = 0) => {
+  try { return p.split('.').reduce((x, k) => (x && x[k] != null ? x[k] : undefined), o) ?? d; } catch { return d; }
 };
-const SUBJECTS = ['chem','phy','bio','math'];
-const SHORT = { chem:'Chem', phy:'Phy', bio:'Bio', math:'Math' };
-const FULL  = { chem:'CHEMISTRY', phy:'PHYSICS', bio:'BIOLOGY', math:'MATHEMATICS' };
+const SUBJECTS = ['chem', 'phy', 'bio', 'math'];
+const SHORT = { chem: 'Chem', phy: 'Phy', bio: 'Bio', math: 'Math' };
+const FULL = { chem: 'CHEMISTRY', phy: 'PHYSICS', bio: 'BIOLOGY', math: 'MATHEMATICS' };
 
 /* Build the printable HTML */
 // Replace your current generateProgressTrackingHTML with this version
 function generateProgressTrackingHTML(stu) {
-  const SUBJECTS = ['chem','phy','bio','math'];
-  const SHORT = { chem:'Chem', phy:'Phy', bio:'Bio', math:'Math' };
-  const FULL  = { chem:'CHEMISTRY', phy:'PHYSICS', bio:'BIOLOGY', math:'MATHEMATICS' };
-  const _safe = (o, p, d=0) => { try { return p.split('.').reduce((x,k)=> (x && x[k]!=null? x[k]:undefined), o) ?? d; } catch { return d; } };
+  const SUBJECTS = ['chem', 'phy', 'bio', 'math'];
+  const SHORT = { chem: 'Chem', phy: 'Phy', bio: 'Bio', math: 'Math' };
+  const FULL = { chem: 'CHEMISTRY', phy: 'PHYSICS', bio: 'BIOLOGY', math: 'MATHEMATICS' };
+  const _safe = (o, p, d = 0) => { try { return p.split('.').reduce((x, k) => (x && x[k] != null ? x[k] : undefined), o) ?? d; } catch { return d; } };
 
   // Valid exams in configured order
-  const valid = (stu.exams || []).filter(ex => (_safe(ex,'maxTotal',0) > 0));
-  const byOrder = [...valid].sort((a,b) => examOrder.indexOf(a.exam) - examOrder.indexOf(b.exam));
+  const valid = (stu.exams || []).filter(ex => (_safe(ex, 'maxTotal', 0) > 0));
+  const byOrder = [...valid].sort((a, b) => examOrder.indexOf(a.exam) - examOrder.indexOf(b.exam));
 
   // Exam-wise score + % + rank
   const examRowsData = byOrder.map(ex => {
     const subPct = {}, subScore = {}, subMax = {};
-    let tScore=0, tMax=0;
+    let tScore = 0, tMax = 0;
     SUBJECTS.forEach(s => {
       const sc = _safe(ex, `scores.${s}`, _safe(ex, s, 0));
       const mx = _safe(ex, `maxScores.${s}`, _safe(ex, `max${s.charAt(0).toUpperCase()}${s.slice(1)}`, 0));
-      subScore[s] = sc; subMax[s] = mx; subPct[s] = mx>0 ? (sc/mx*100) : 0;
+      subScore[s] = sc; subMax[s] = mx; subPct[s] = mx > 0 ? (sc / mx * 100) : 0;
       tScore += sc; tMax += mx;
     });
-    const overallPct = tMax>0 ? +(tScore/tMax*100).toFixed(2) : 0;
+    const overallPct = tMax > 0 ? +(tScore / tMax * 100).toFixed(2) : 0;
 
     // FIXED: Get cohort data from students array, not sampleData
-    const cohort = students.flatMap(s => 
-        s.exams
-            .filter(e => e.exam === ex.exam && e.maxTotal > 0)
-            .map(e => ({
-                roll: s.roll,
-                percent: e.percent != null ? e.percent : (e.maxTotal > 0 ? (e.total / e.maxTotal * 100) : 0)
-            }))
+    const cohort = students.flatMap(s =>
+      s.exams
+        .filter(e => e.exam === ex.exam && e.maxTotal > 0)
+        .map(e => ({
+          roll: s.roll,
+          percent: e.percent != null ? e.percent : (e.maxTotal > 0 ? (e.total / e.maxTotal * 100) : 0)
+        }))
     );
-    const sorted = cohort.map(d => ({ roll:d.roll, percent:(d.percent!=null? d.percent : (d.maxTotal>0? (d.total/d.maxTotal*100):0)) }))
-                         .sort((a,b)=> b.percent - a.percent);
+    const sorted = cohort.map(d => ({ roll: d.roll, percent: (d.percent != null ? d.percent : (d.maxTotal > 0 ? (d.total / d.maxTotal * 100) : 0)) }))
+      .sort((a, b) => b.percent - a.percent);
     const idx = sorted.findIndex(e => e.roll === stu.roll);
-    const rank = idx >= 0 ? (idx+1) : '-';
+    const rank = idx >= 0 ? (idx + 1) : '-';
 
-    return { exam: ex.exam, subPct, subScore, subMax, overallPct, totalScore:tScore, totalMax:tMax, rank };
+    return { exam: ex.exam, subPct, subScore, subMax, overallPct, totalScore: tScore, totalMax: tMax, rank };
   });
 
   // Subject cumulatives
-  const subjAgg = SUBJECTS.reduce((acc,s)=>{
-    let sc=0,mx=0,best={exam:'-',pct:-Infinity},worst={exam:'-',pct:Infinity};
-    byOrder.forEach(ex=>{
-      const c=_safe(ex,`scores.${s}`,_safe(ex,s,0)); const M=_safe(ex,`maxScores.${s}`,_safe(ex,`max${s.charAt(0).toUpperCase()}${s.slice(1)}`,0));
-      if(M>0){ sc+=c; mx+=M; const p=(c/M*100); if(p>best.pct) best={exam:ex.exam,pct:p}; if(p<worst.pct) worst={exam:ex.exam,pct:p}; }
+  const subjAgg = SUBJECTS.reduce((acc, s) => {
+    let sc = 0, mx = 0, best = { exam: '-', pct: -Infinity }, worst = { exam: '-', pct: Infinity };
+    byOrder.forEach(ex => {
+      const c = _safe(ex, `scores.${s}`, _safe(ex, s, 0)); const M = _safe(ex, `maxScores.${s}`, _safe(ex, `max${s.charAt(0).toUpperCase()}${s.slice(1)}`, 0));
+      if (M > 0) { sc += c; mx += M; const p = (c / M * 100); if (p > best.pct) best = { exam: ex.exam, pct: p }; if (p < worst.pct) worst = { exam: ex.exam, pct: p }; }
     });
-    acc[s]={ total:sc, max:mx, avgPct: mx>0? +(sc/mx*100).toFixed(2):0,
-             best:{exam:best.exam,pct:isFinite(best.pct)? +best.pct.toFixed(2):0},
-             worst:{exam:worst.exam,pct:isFinite(worst.pct)? +worst.pct.toFixed(2):0} };
+    acc[s] = {
+      total: sc, max: mx, avgPct: mx > 0 ? +(sc / mx * 100).toFixed(2) : 0,
+      best: { exam: best.exam, pct: isFinite(best.pct) ? +best.pct.toFixed(2) : 0 },
+      worst: { exam: worst.exam, pct: isFinite(worst.pct) ? +worst.pct.toFixed(2) : 0 }
+    };
     return acc;
-  },{});
+  }, {});
 
   // Overall + trend/consistency
-  const overall = Object.values(subjAgg).reduce((o,v)=>({score:o.score+v.total,max:o.max+v.max}),{score:0,max:0});
-  const overallPct = overall.max>0? +(overall.score/overall.max*100).toFixed(2):0;
+  const overall = Object.values(subjAgg).reduce((o, v) => ({ score: o.score + v.total, max: o.max + v.max }), { score: 0, max: 0 });
+  const overallPct = overall.max > 0 ? +(overall.score / overall.max * 100).toFixed(2) : 0;
   const last3 = examRowsData.slice(-3);
-  const trend = last3.length>=2 ? +(last3[last3.length-1].overallPct - last3[0].overallPct).toFixed(2) : 0;
-  const trendWord = trend>0 ? 'Upward' : trend<0 ? 'Downward' : 'Stable';
-  const trendArrow = trend>0 ? '▲' : trend<0 ? '▼' : '■';
-  const mean = examRowsData.length? examRowsData.reduce((a,x)=>a+x.overallPct,0)/examRowsData.length : 0;
-  const variance = examRowsData.length? examRowsData.reduce((a,x)=>a+Math.pow(x.overallPct-mean,2),0)/examRowsData.length : 0;
+  const trend = last3.length >= 2 ? +(last3[last3.length - 1].overallPct - last3[0].overallPct).toFixed(2) : 0;
+  const trendWord = trend > 0 ? 'Upward' : trend < 0 ? 'Downward' : 'Stable';
+  const trendArrow = trend > 0 ? '▲' : trend < 0 ? '▼' : '■';
+  const mean = examRowsData.length ? examRowsData.reduce((a, x) => a + x.overallPct, 0) / examRowsData.length : 0;
+  const variance = examRowsData.length ? examRowsData.reduce((a, x) => a + Math.pow(x.overallPct - mean, 2), 0) / examRowsData.length : 0;
   const stdOverall = +Math.sqrt(variance).toFixed(2);
-  const subjectAvgs = SUBJECTS.map(s=>subjAgg[s].avgPct);
-  const meanS = subjectAvgs.length? subjectAvgs.reduce((a,x)=>a+x,0)/subjectAvgs.length:0;
-  const varS = subjectAvgs.length? subjectAvgs.reduce((a,x)=>a+Math.pow(x-meanS,2),0)/subjectAvgs.length:0;
+  const subjectAvgs = SUBJECTS.map(s => subjAgg[s].avgPct);
+  const meanS = subjectAvgs.length ? subjectAvgs.reduce((a, x) => a + x, 0) / subjectAvgs.length : 0;
+  const varS = subjectAvgs.length ? subjectAvgs.reduce((a, x) => a + Math.pow(x - meanS, 2), 0) / subjectAvgs.length : 0;
   const stdSubjects = +Math.sqrt(varS).toFixed(2);
-  const latest = examRowsData[examRowsData.length-1] || { exam:'-', overallPct:0 };
+  const latest = examRowsData[examRowsData.length - 1] || { exam: '-', overallPct: 0 };
 
   // Subject cards
-  const subjectsGrid = SUBJECTS.map(s=>{
+  const subjectsGrid = SUBJECTS.map(s => {
     const a = subjAgg[s];
     return `
       <div class="stat-card">
-        <h3><i class="fas fa-${s==='chem'?'flask':s==='phy'?'atom':s==='bio'?'dna':'calculator'}"></i> ${FULL[s]}</h3>
+        <h3><i class="fas fa-${s === 'chem' ? 'flask' : s === 'phy' ? 'atom' : s === 'bio' ? 'dna' : 'calculator'}"></i> ${FULL[s]}</h3>
         <p class="value">${a.avgPct}%</p>
         <p class="sub-value">Score/Max: ${a.total}/${a.max}</p>
         <p class="mini">Best: ${a.best.exam} • ${a.best.pct}%</p>
@@ -5383,15 +5565,15 @@ function generateProgressTrackingHTML(stu) {
 
   // Exam rows: score|% pills
   const examRowsHTML = examRowsData.map(r => {
-    const overallCls = r.overallPct>=60?'pill-green': r.overallPct>=40?'pill-amber':'pill-red';
+    const overallCls = r.overallPct >= 60 ? 'pill-green' : r.overallPct >= 40 ? 'pill-amber' : 'pill-red';
     return `
       <tr>
         <td><strong>${r.exam}</strong></td>
-        ${SUBJECTS.map(s=> {
-          const pct = r.subPct[s], score = r.subScore[s];
-          const cls = pct>=60?'pill-green': pct>=40?'pill-amber':'pill-red';
-          return `<td class="num"><span class="score-strong">${score}</span> | <span class="pill ${cls}">${pct.toFixed(2)}%</span></td>`;
-        }).join('')}
+        ${SUBJECTS.map(s => {
+      const pct = r.subPct[s], score = r.subScore[s];
+      const cls = pct >= 60 ? 'pill-green' : pct >= 40 ? 'pill-amber' : 'pill-red';
+      return `<td class="num"><span class="score-strong">${score}</span> | <span class="pill ${cls}">${pct.toFixed(2)}%</span></td>`;
+    }).join('')}
         <td class="num"><span class="score-strong">${r.totalScore}</span> | <span class="pill ${overallCls}">${r.overallPct}%</span></td>
         <td class="num"><span class="rank-pill">#${r.rank}</span></td>
       </tr>
@@ -5399,12 +5581,12 @@ function generateProgressTrackingHTML(stu) {
   }).join('') || `<tr><td colspan="7" class="empty">No qualified assessments.</td></tr>`;
 
   // Metric pill classes for Consistency & Trend
-  const sigmaClass   = stdOverall  <= 7 ? 'metric-green' : stdOverall  <= 12 ? 'metric-amber' : 'metric-red';
-  const spreadClass  = stdSubjects <= 8 ? 'metric-green' : stdSubjects <= 12 ? 'metric-amber' : 'metric-red';
-  const trendClass   = trend > 0 ? 'metric-green' : trend < 0 ? 'metric-red' : 'metric-blue';
-  const last3HTML    = last3.length ? last3.map(x=>`<span class="metric-chip">${x.overallPct.toFixed(2)}%</span>`).join('<span class="sp">•</span>') : '-';
+  const sigmaClass = stdOverall <= 7 ? 'metric-green' : stdOverall <= 12 ? 'metric-amber' : 'metric-red';
+  const spreadClass = stdSubjects <= 8 ? 'metric-green' : stdSubjects <= 12 ? 'metric-amber' : 'metric-red';
+  const trendClass = trend > 0 ? 'metric-green' : trend < 0 ? 'metric-red' : 'metric-blue';
+  const last3HTML = last3.length ? last3.map(x => `<span class="metric-chip">${x.overallPct.toFixed(2)}%</span>`).join('<span class="sp">•</span>') : '-';
 
-  const currentDate = new Date().toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' });
+  const currentDate = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
 
   return `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><title>Progress Report — ${stu.name} (${stu.roll})</title>
@@ -5580,11 +5762,11 @@ tr:last-child td{border-bottom:none}
     </div>
     <div class="kpi">
       <div class="kpi-label">Latest</div>
-      <div class="kpi-value" title="${(examRowsData[examRowsData.length-1]||{}).exam || '-'}">${(examRowsData[examRowsData.length-1]||{overallPct:0}).overallPct}%</div>
+      <div class="kpi-value" title="${(examRowsData[examRowsData.length - 1] || {}).exam || '-'}">${(examRowsData[examRowsData.length - 1] || { overallPct: 0 }).overallPct}%</div>
     </div>
     <div class="kpi trend">
       <div class="kpi-label">Trend (L3)</div>
-      <div class="kpi-value ${trend>0?'positive':trend<0?'negative':''}">${trendArrow} ${trend>=0?'+':''}${trend}%</div>
+      <div class="kpi-value ${trend > 0 ? 'positive' : trend < 0 ? 'negative' : ''}">${trendArrow} ${trend >= 0 ? '+' : ''}${trend}%</div>
     </div>
     <div class="kpi">
       <div class="kpi-label">Consistency</div>
@@ -5605,14 +5787,14 @@ tr:last-child td{border-bottom:none}
   <table>
     <colgroup>
       <col class="col-exam">
-      ${SUBJECTS.map(()=>'<col class="col-sub">').join('')}
+      ${SUBJECTS.map(() => '<col class="col-sub">').join('')}
       <col class="col-overall">
       <col class="col-rank">
     </colgroup>
     <thead>
       <tr>
         <th>Exam</th>
-        ${SUBJECTS.map(s=>`<th title="${FULL[s]}">${SHORT[s]} score|%</th>`).join('')}
+        ${SUBJECTS.map(s => `<th title="${FULL[s]}">${SHORT[s]} score|%</th>`).join('')}
         <th>Overall score|%</th>
         <th>Rank</th>
       </tr>
@@ -5641,7 +5823,7 @@ tr:last-child td{border-bottom:none}
       </tr>
       <tr>
         <td>Direction</td>
-        <td class="num"><span class="metric-pill ${trendClass}">${trendArrow} ${trend>=0?'+':''}${trend}% (${trendWord})</span></td>
+        <td class="num"><span class="metric-pill ${trendClass}">${trendArrow} ${trend >= 0 ? '+' : ''}${trend}% (${trendWord})</span></td>
       </tr>
     </tbody>
   </table>
@@ -5660,64 +5842,64 @@ tr:last-child td{border-bottom:none}
 
 // Footer functionality
 function updateFooterStats() {
-    try {
-        // Update student count
-        const studentCount = students.length;
-        const footerStudentElement = document.getElementById('footerStudentCount');
-        if (footerStudentElement) {
-            footerStudentElement.textContent = studentCount + ' Students';
-        }
-        
-        // Update exam count
-        const uniqueExams = [...new Set(students.flatMap(s => s.exams.map(e => e.exam)))];
-        const examCount = uniqueExams.filter(e => 
-            students.some(s => s.exams.some(ex => ex.exam === e && ex.maxTotal > 0))
-        ).length;
-        const footerExamElement = document.getElementById('footerExamCount');
-        if (footerExamElement) {
-            footerExamElement.textContent = examCount + ' Exams';
-        }
-        
-        // Update last updated time
-        const lastUpdatedElement = document.querySelector('.lastUpdated');
-        if (lastUpdatedElement) {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('en-IN', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-            const timeStr = now.toLocaleTimeString('en-IN', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            });
-            lastUpdatedElement.textContent = `${dateStr} ${timeStr}`;
-        }
-        
-        // Update total records
-        const totalRecordsElement = document.querySelector('.totalRecords');
-        if (totalRecordsElement) {
-            const totalRecords = students.reduce((sum, s) => sum + s.exams.length, 0);
-            totalRecordsElement.textContent = totalRecords;
-        }
-        
-        // Update system status (always online if we got here)
-        const statusOnline = document.querySelector('.status-online');
-        if (statusOnline) {
-            statusOnline.textContent = 'Online';
-            statusOnline.style.color = '#10b981';
-        }
-        
-        console.log('✅ Footer stats updated:', {
-            students: studentCount,
-            exams: examCount,
-            records: students.reduce((sum, s) => sum + s.exams.length, 0)
-        });
-        
-    } catch (error) {
-        console.error('❌ Footer update error:', error);
+  try {
+    // Update student count
+    const studentCount = students.length;
+    const footerStudentElement = document.getElementById('footerStudentCount');
+    if (footerStudentElement) {
+      footerStudentElement.textContent = studentCount + ' Students';
     }
+
+    // Update exam count
+    const uniqueExams = [...new Set(students.flatMap(s => s.exams.map(e => e.exam)))];
+    const examCount = uniqueExams.filter(e =>
+      students.some(s => s.exams.some(ex => ex.exam === e && ex.maxTotal > 0))
+    ).length;
+    const footerExamElement = document.getElementById('footerExamCount');
+    if (footerExamElement) {
+      footerExamElement.textContent = examCount + ' Exams';
+    }
+
+    // Update last updated time
+    const lastUpdatedElement = document.querySelector('.lastUpdated');
+    if (lastUpdatedElement) {
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      const timeStr = now.toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+      lastUpdatedElement.textContent = `${dateStr} ${timeStr}`;
+    }
+
+    // Update total records
+    const totalRecordsElement = document.querySelector('.totalRecords');
+    if (totalRecordsElement) {
+      const totalRecords = students.reduce((sum, s) => sum + s.exams.length, 0);
+      totalRecordsElement.textContent = totalRecords;
+    }
+
+    // Update system status (always online if we got here)
+    const statusOnline = document.querySelector('.status-online');
+    if (statusOnline) {
+      statusOnline.textContent = 'Online';
+      statusOnline.style.color = '#10b981';
+    }
+
+    console.log('✅ Footer stats updated:', {
+      students: studentCount,
+      exams: examCount,
+      records: students.reduce((sum, s) => sum + s.exams.length, 0)
+    });
+
+  } catch (error) {
+    console.error('❌ Footer update error:', error);
+  }
 }
 
 // Auto-refresh footer every 30 seconds
@@ -5725,17 +5907,17 @@ setInterval(updateFooterStats, 30000);
 
 // Refresh all data function
 function refreshAllData() {
-    showLoading();
-    
-    // Re-fetch data from backend
-    fetchStudentData().then(() => {
-        updateFooterStats();
-        showStatus('Data refreshed successfully!', 'success');
-    }).catch(error => {
-        showStatus('Failed to refresh: ' + error.message, 'error');
-    }).finally(() => {
-        hideLoading();
-    });
+  showLoading();
+
+  // Re-fetch data from backend
+  fetchStudentData().then(() => {
+    updateFooterStats();
+    showStatus('Data refreshed successfully!', 'success');
+  }).catch(error => {
+    showStatus('Failed to refresh: ' + error.message, 'error');
+  }).finally(() => {
+    hideLoading();
+  });
 }
 
 // ============================================
@@ -5743,78 +5925,78 @@ function refreshAllData() {
 // ============================================
 
 function updateHeaderAndFooterStats() {
-    try {
-        // Calculate student count
-        const studentCount = students.length;
-        
-        // Calculate exam count (only exams with data)
-        const uniqueExams = [...new Set(students.flatMap(s => s.exams.map(e => e.exam)))];
-        const examCount = uniqueExams.filter(e => 
-            students.some(s => s.exams.some(ex => ex.exam === e && ex.maxTotal > 0))
-        ).length;
-        
-        // Update HEADER stats
-        const headerStudentStat = document.querySelector('.header-stats .stat-pill:nth-child(1) span');
-        if (headerStudentStat) {
-            headerStudentStat.textContent = `${studentCount} Students`;
-        }
-        
-        const headerExamStat = document.querySelector('.header-stats .stat-pill:nth-child(2) span');
-        if (headerExamStat) {
-            headerExamStat.textContent = `${examCount} Exams`;
-        }
-        
-        // Update FOOTER stats
-        const footerStudentCount = document.getElementById('footerStudentCount');
-        if (footerStudentCount) {
-            footerStudentCount.textContent = `${studentCount} Students`;
-        }
-        
-        const footerExamCount = document.getElementById('footerExamCount');
-        if (footerExamCount) {
-            footerExamCount.textContent = `${examCount} Exams`;
-        }
-        
-        // Update last updated time
-        const lastUpdatedElements = document.querySelectorAll('.lastUpdated');
-        lastUpdatedElements.forEach(el => {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('en-IN', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-            const timeStr = now.toLocaleTimeString('en-IN', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            });
-            el.textContent = `${dateStr} ${timeStr}`;
-        });
-        
-        // Update total records
-        const totalRecordsElements = document.querySelectorAll('.totalRecords');
-        const totalRecords = students.reduce((sum, s) => sum + s.exams.length, 0);
-        totalRecordsElements.forEach(el => {
-            el.textContent = totalRecords;
-        });
-        
-        // Update system status
-        const statusElements = document.querySelectorAll('.status-online');
-        statusElements.forEach(el => {
-            el.textContent = 'Online';
-            el.style.color = '#10b981';
-        });
-        
-        console.log('✅ Header & Footer updated:', {
-            students: studentCount,
-            exams: examCount,
-            totalRecords: totalRecords
-        });
-        
-    } catch (error) {
-        console.error('❌ Header/Footer update error:', error);
+  try {
+    // Calculate student count
+    const studentCount = students.length;
+
+    // Calculate exam count (only exams with data)
+    const uniqueExams = [...new Set(students.flatMap(s => s.exams.map(e => e.exam)))];
+    const examCount = uniqueExams.filter(e =>
+      students.some(s => s.exams.some(ex => ex.exam === e && ex.maxTotal > 0))
+    ).length;
+
+    // Update HEADER stats
+    const headerStudentStat = document.querySelector('.header-stats .stat-pill:nth-child(1) span');
+    if (headerStudentStat) {
+      headerStudentStat.textContent = `${studentCount} Students`;
     }
+
+    const headerExamStat = document.querySelector('.header-stats .stat-pill:nth-child(2) span');
+    if (headerExamStat) {
+      headerExamStat.textContent = `${examCount} Exams`;
+    }
+
+    // Update FOOTER stats
+    const footerStudentCount = document.getElementById('footerStudentCount');
+    if (footerStudentCount) {
+      footerStudentCount.textContent = `${studentCount} Students`;
+    }
+
+    const footerExamCount = document.getElementById('footerExamCount');
+    if (footerExamCount) {
+      footerExamCount.textContent = `${examCount} Exams`;
+    }
+
+    // Update last updated time
+    const lastUpdatedElements = document.querySelectorAll('.lastUpdated');
+    lastUpdatedElements.forEach(el => {
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      const timeStr = now.toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+      el.textContent = `${dateStr} ${timeStr}`;
+    });
+
+    // Update total records
+    const totalRecordsElements = document.querySelectorAll('.totalRecords');
+    const totalRecords = students.reduce((sum, s) => sum + s.exams.length, 0);
+    totalRecordsElements.forEach(el => {
+      el.textContent = totalRecords;
+    });
+
+    // Update system status
+    const statusElements = document.querySelectorAll('.status-online');
+    statusElements.forEach(el => {
+      el.textContent = 'Online';
+      el.style.color = '#10b981';
+    });
+
+    console.log('✅ Header & Footer updated:', {
+      students: studentCount,
+      exams: examCount,
+      totalRecords: totalRecords
+    });
+
+  } catch (error) {
+    console.error('❌ Header/Footer update error:', error);
+  }
 }
 
 // Auto-refresh every 30 seconds
@@ -5827,12 +6009,12 @@ setInterval(updateHeaderAndFooterStats, 30000);
    FIXED: Colors now print correctly (not white)
    ======================================== */
 
-(function() {
+(function () {
   // Store original openPrintWindow
   const originalOpenPrintWindow = window.openPrintWindow;
-  
+
   // Override to inject theme picker
-  window.openPrintWindow = function(title, content) {
+  window.openPrintWindow = function (title, content) {
     // Show theme modal instead of printing directly
     showThemePickerModal(title, content);
   };
@@ -6218,61 +6400,61 @@ setInterval(updateHeaderAndFooterStats, 30000);
     printWindow.document.write(printDoc);
     printWindow.document.close();
     printWindow.focus();
-    setTimeout(() => { 
-      try { 
-        printWindow.print(); 
-      } catch(e) { 
-        console.log('Auto-print failed:', e); 
+    setTimeout(() => {
+      try {
+        printWindow.print();
+      } catch (e) {
+        console.log('Auto-print failed:', e);
         alert('Please use the print button (Ctrl+P / Cmd+P) in the opened window.');
-      } 
+      }
     }, 1000);
   }
 })();
 
 // Export all data function
 function exportAllData() {
-    alert('Exporting all data... This feature will be implemented soon!');
+  alert('Exporting all data... This feature will be implemented soon!');
 }
 
 // Initialize footer when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    // Small delay to ensure other scripts have loaded
-    setTimeout(() => {
-        updateFooterStats();
-    }, 500);
-    
-    // Update footer stats every 30 seconds
-    setInterval(updateFooterStats, 30000);
+document.addEventListener('DOMContentLoaded', function () {
+  // Small delay to ensure other scripts have loaded
+  setTimeout(() => {
+    updateFooterStats();
+  }, 500);
+
+  // Update footer stats every 30 seconds
+  setInterval(updateFooterStats, 30000);
 });
 
 // Initialize on DOM ready
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   setTimeout(() => {
     initializePrintExport();
   }, 1000);
 });
 
 document.getElementById('comparativeAnalysisBtn')?.addEventListener('click', () => {
-    showSection('comparativeAnalysis');
+  showSection('comparativeAnalysis');
 });
 
 /* -------------------------------------------------
    AUTO-START IN LIGHT THEME (WHITE)
    ------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Force light theme classes on <body>
-    document.body.classList.remove('dark-theme');
-    document.body.classList.add('light-theme');
+  // 1. Force light theme classes on <body>
+  document.body.classList.remove('dark-theme');
+  document.body.classList.add('light-theme');
 
-    // 2. Update the toggle button icon/text to show "dark" (because we are in light)
-    const themeBtn = document.getElementById('themeToggle');
-    if (themeBtn) {
-        // If your button uses Font-Awesome icons:
-        themeBtn.innerHTML = '<i class="fas fa-moon"></i>';   // moon = switch to dark
-        // OR if you use plain text:
-        // themeBtn.textContent = 'Dark Mode';
-    }
+  // 2. Update the toggle button icon/text to show "dark" (because we are in light)
+  const themeBtn = document.getElementById('themeToggle');
+  if (themeBtn) {
+    // If your button uses Font-Awesome icons:
+    themeBtn.innerHTML = '<i class="fas fa-moon"></i>';   // moon = switch to dark
+    // OR if you use plain text:
+    // themeBtn.textContent = 'Dark Mode';
+  }
 
-    // 3. Store the preference (optional but recommended)
-    localStorage.setItem('theme', 'light');
+  // 3. Store the preference (optional but recommended)
+  localStorage.setItem('theme', 'light');
 });
