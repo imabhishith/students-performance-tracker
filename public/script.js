@@ -576,105 +576,83 @@ function computeCumulatives(student) {
 // QUESTION-WISE MARKS MODULE
 // ═══════════════════════════════════════════════════════════════
 
+// 1. FIXED - Question Data Loading
 let questionMarksData = {};
-
-// Load question marks from CSV
 async function loadQuestionMarksData() {
   try {
-    console.log('🔄 Loading marks-data.csv...');
-    
+    console.log('📥 Loading marks-data.csv...');
     const response = await fetch('marks-data.csv');
-    
     if (!response.ok) {
       console.error('❌ CSV file not found (404)');
       return;
     }
     
-    // CRITICAL FIX: Ensure csvText is a STRING before splitting
-    let csvText = await response.text();
-    
-    // Verify it's actually text
-    if (typeof csvText !== 'string') {
-      console.error('❌ CSV is not text, type is:', typeof csvText);
-      return;
-    }
-    
-    // Remove any BOM (Byte Order Mark) if present
-    csvText = csvText.replace(/^\ufeff/, '');
-    
-    // Now split into lines
+    const csvText = await response.text();
     const lines = csvText.trim().split('\n');
     
-    console.log(`📝 CSV lines: ${lines.length}`);
-    
     if (lines.length < 2) {
-      console.warn('⚠️ CSV file is empty or only has header');
+      console.warn('❌ CSV file is empty or only has header');
       return;
     }
     
-    // Parse headers
     const headers = lines[0].split(',').map(h => h.trim().toUpperCase());
     const questionColumns = headers.filter(h => h.match(/^Q\d+$/));
     
-    console.log(`📝 Headers: ${headers.join(', ')}`);
-    console.log(`❓ Questions found: ${questionColumns.length}`);
+    console.log('📊 Headers:', headers.length, 'Questions:', questionColumns.length);
     
-    let recordCount = 0;
-    
-    // Parse data rows
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) continue;
       
       const row = line.split(',').map(c => c.trim());
-      const roll = row[0];
-      const name = row[1];
-      const exam = row[2];
+      const roll = row[0]?.trim();
+      const name = row[1]?.trim();
+      const exam = row[2]?.trim();
       
       if (!roll || !exam) continue;
       
-      const key = `${roll}_${exam}`;
+      // ✅ EXACT KEY FORMAT - NO SPACES, NO EXTRA CHARACTERS
+      const key = roll + exam;
       const marks = {};
       
-      // Extract question marks
       questionColumns.forEach(qCol => {
         const idx = headers.indexOf(qCol);
         if (idx >= 0 && idx < row.length) {
-          const val = row[idx] || '0';
+          const val = row[idx];
           marks[qCol] = isNaN(val) ? val.toUpperCase() : parseFloat(val);
         }
       });
       
       questionMarksData[key] = { roll, name, exam, marks };
-      recordCount++;
     }
     
-    console.log(`✅ LOADED: ${recordCount} records`);
-    console.log(`   Sample keys: ${Object.keys(questionMarksData).slice(0, 3).join(', ')}`);
+    console.log(`✅ LOADED ${Object.keys(questionMarksData).length} records`);
+    console.log('🔑 Sample keys:', Object.keys(questionMarksData).slice(0, 3));
     
   } catch (error) {
     console.error('❌ Error loading marks:', error);
-    console.error('   Stack:', error.stack);
   }
 }
 
-
-// Open modal when score is clicked
+// 2. FIXED - Open Modal
 function openQuestionMarksModal(studentRoll, examName, studentName) {
-  const key = `${studentRoll}_${examName}`;
+  // ✅ EXACT SAME KEY FORMAT
+  const key = studentRoll.trim() + examName.trim();
+  
+  console.log(`🔍 Lookup: "${key}"`);
   const data = questionMarksData[key];
   
   if (!data) {
-    console.error(`❌ Key not found: ${key}`);
-    alert(`Data not found for ${studentRoll} - ${examName}`);
+    alert(`❌ No data for ${studentRoll} - ${examName}\n\nKey checked: "${key}"`);
+    console.error('❌ Keys available:', Object.keys(questionMarksData).slice(0, 5));
     return;
   }
   
-  console.log(`📊 Opening modal for: ${studentRoll} - ${examName}`);
+  console.log('✅ Found data:', data.roll, data.exam);
   
   document.getElementById('qmStudentName').textContent = studentName;
-  document.getElementById('qmStudentRoll').textContent = studentRoll;
-  document.getElementById('qmExam').textContent = examName;
+  document.getElementById('qmStudentRoll').textContent = studentRoll.trim();
+  document.getElementById('qmExam').textContent = examName.trim();
   
   generateQuestionGrid(data.marks);
   calculateQuestionStatistics(data.marks);
@@ -682,9 +660,111 @@ function openQuestionMarksModal(studentRoll, examName, studentName) {
   document.getElementById('questionMarksModal').style.display = 'flex';
 }
 
-// Close modal
+// 3. FIXED - Close Modal
 function closeQuestionMarksModal() {
   document.getElementById('questionMarksModal').style.display = 'none';
+}
+
+// 4. FIXED - Generate Grid
+function generateQuestionGrid(marks) {
+  const grid = document.getElementById('questionGrid');
+  grid.innerHTML = '';
+  
+  let boxCount = 0;
+  for (let i = 1; i <= 60; i++) {
+    const qKey = `Q${i}`;
+    const mark = marks[qKey];
+    
+    if (mark === 'N' || mark === undefined) continue;
+    
+    const numMark = isNaN(mark) ? null : Number(mark);
+    
+    let bgColor = '#f3f4f6', textColor = '#6b7280', iconClass = 'fas fa-circle', title = '○ Unattempted';
+    
+    if (mark === 'C') {
+      bgColor = '#e0e7ff'; textColor = '#3730a3'; iconClass = 'fas fa-ban'; title = '⊘ Cancelled';
+    } else if (mark === 4) {
+      bgColor = '#dcfce7'; textColor = '#166534'; iconClass = 'fas fa-check'; title = '✓ Correct (+4)';
+    } else if (mark === -1) {
+      bgColor = '#fee2e2'; textColor = '#991b1b'; iconClass = 'fas fa-xmark'; title = '✕ Wrong (-1)';
+    } else if (numMark !== null && numMark > 0 && numMark < 4) {
+      bgColor = '#fef3c7'; textColor = '#92400e'; iconClass = 'fas fa-star'; title = `⭐ Partial (${mark})`;
+    }
+    
+    const box = document.createElement('div');
+    box.title = title;
+    box.style.cssText = `
+      background:${bgColor};color:${textColor};
+      padding:12px;border-radius:10px;text-align:center;
+      border:2px solid ${textColor};
+      cursor:pointer;transition:all 0.3s ease;
+      font-weight:700;display:flex;flex-direction:column;
+      justify-content:center;align-items:center;
+      min-height:70px;width:100%;box-sizing:border-box;
+      ${mark === 'C' ? 'opacity:0.7;' : ''}
+      box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    `;
+    
+    box.innerHTML = `
+      <div style="font-size:11px;opacity:0.85;margin-bottom:6px;font-weight:600;">Q${i}</div>
+      <i class="${iconClass}" style="font-size:28px;margin-bottom:4px;opacity:0.9;"></i>
+    `;
+    
+    box.onmouseover = () => {
+      box.style.transform = 'translateY(-6px) scale(1.05)';
+      box.style.boxShadow = '0 12px 25px rgba(0,0,0,0.25)';
+    };
+    box.onmouseout = () => {
+      box.style.transform = '';
+      box.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+    };
+    
+    grid.appendChild(box);
+    boxCount++;
+  }
+  
+  console.log(`✅ Rendered ${boxCount} question boxes`);
+}
+
+// 5. FIXED - Calculate Stats
+function calculateQuestionStatistics(marks) {
+  let fullMarks = 0, wrongMarks = 0, zeroMarks = 0, cancelledMarks = 0;
+  let totalScore = 0, validQuestions = 0;
+  
+  for (let i = 1; i <= 60; i++) {
+    const qKey = `Q${i}`;
+    const mark = marks[qKey];
+    
+    if (mark === 'C') {
+      cancelledMarks++;
+      continue;
+    }
+    if (mark === 'N' || mark === undefined) continue;
+    
+    validQuestions++;
+    const numMark = isNaN(mark) ? null : Number(mark);
+    
+    if (numMark === 4) {
+      fullMarks++;
+      totalScore += 4;
+    } else if (numMark === -1) {
+      wrongMarks++;
+      totalScore -= 1;
+    } else if (numMark === 0) {
+      zeroMarks++;
+    }
+  }
+  
+  const maxPossible = validQuestions * 4;
+  const accuracy = maxPossible > 0 ? (totalScore / maxPossible * 100).toFixed(1) : '0.0';
+  
+  document.getElementById('qmFullMarks').textContent = fullMarks;
+  document.getElementById('qmWrongMarks').textContent = wrongMarks;
+  document.getElementById('qmZeroMarks').textContent = zeroMarks;
+  document.getElementById('qmCancelledMarks').textContent = cancelledMarks;
+  document.getElementById('qmAccuracy').textContent = accuracy + '%';
+  document.getElementById('qmTotalScore').textContent = totalScore;
+  document.getElementById('qmMaxMarks').textContent = `/ ${maxPossible}`;
 }
 
 function debugQuestionData(marks) {
@@ -702,90 +782,6 @@ function debugQuestionData(marks) {
   }
   console.log(`Total questions: ${count}`);
 }
-
-// Generate colored question boxes
-function generateQuestionGrid(marks) {
-  const grid = document.getElementById('questionGrid');
-  grid.innerHTML = '';
-  
-  let boxCount = 0;
-  for (let i = 1; i <= 60; i++) {
-    const qKey = `Q${i}`;
-    const mark = marks[qKey];
-    
-    if (mark === 'N' || mark === undefined) continue;
-    
-    const numMark = isNaN(mark) ? null : Number(mark);
-    
-    let bgColor = '#d1fae5';
-    let textColor = '#10b981';
-    let iconClass = 'fas fa-check';
-    let title = 'Unattempted (0)';
-    let displayText = '';
-    
-    if (mark === 'C') {
-      bgColor = '#e0e7ff';
-      textColor = '#3730a3';
-      iconClass = 'fas fa-ban';
-      title = 'Cancelled (C)';
-      displayText = 'C';
-    } else if (mark === 4) {
-      bgColor = '#dcfce7';
-      textColor = '#166534';
-      iconClass = 'fas fa-check';
-      title = 'Correct (+4)';
-    } else if (mark === -1) {
-      bgColor = '#fee2e2';
-      textColor = '#991b1b';
-      iconClass = 'fas fa-xmark';
-      title = 'Wrong (-1)';
-    } else if (numMark !== null && numMark > 0 && numMark < 4) {
-      bgColor = '#fef3c7';
-      textColor = '#92400e';
-      iconClass = 'fas fa-star';
-      title = `Partial (${mark})`;
-      displayText = mark;
-    } else if (mark === 0) {
-      bgColor = '#f3f4f6';
-      textColor = '#6b7280';
-      iconClass = 'fas fa-circle';
-      title = 'Unattempted (0)';
-    }
-    
-    const box = document.createElement('div');
-    box.className = 'question-box';
-    box.title = title;
-    box.style.cssText = `background:${bgColor};color:${textColor};padding:12px;border-radius:8px;text-align:center;border:2px solid ${textColor};cursor:pointer;transition:all 0.3s ease;font-weight:600;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:80px;width:100%;box-sizing:border-box;${(mark === 'C') ? 'opacity:0.7;' : ''}`;
-    
-    let innerHTML = `<div style="font-size:11px;opacity:0.8;margin-bottom:6px;font-weight:600;text-transform:uppercase;">Q${i}</div>`;
-    
-    if (displayText) {
-      innerHTML += `<div style="font-size:24px;font-weight:700;margin-bottom:4px;">${displayText}</div>`;
-    } else {
-      innerHTML += `<i class="${iconClass}" style="font-size:28px;margin-bottom:4px;opacity:0.8;"></i>`;
-    }
-    
-    box.innerHTML = innerHTML;
-    
-    box.addEventListener('mouseover', function() {
-      this.style.transform = 'translateY(-4px) scale(1.05)';
-      this.style.boxShadow = '0 8px 16px rgba(0,0,0,0.2)';
-    });
-    
-    box.addEventListener('mouseout', function() {
-      this.style.transform = 'translateY(0) scale(1)';
-      this.style.boxShadow = 'none';
-    });
-    
-    grid.appendChild(box);
-    boxCount++;
-  }
-  
-  console.log(`✨ Grid rendered: ${boxCount} questions`);
-}
-
-
-
 
 // Calculate statistics (exclude C and N from count)
 function calculateQuestionStatistics(marks) {
