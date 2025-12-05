@@ -572,187 +572,366 @@ function computeCumulatives(student) {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 1. GLOBAL VARIABLE FOR STORING QUESTION MARKS DATA
-// ─────────────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// QUESTION-WISE MARKS MODULE
+// ═══════════════════════════════════════════════════════════════
 
 let questionMarksData = {};
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 2. LOAD QUESTION-WISE MARKS FROM CSV
-// ─────────────────────────────────────────────────────────────────────────────
-
+// Load question marks from CSV
 async function loadQuestionMarksData() {
   try {
+    console.log('🔄 Loading marks-data.csv...');
+    
     const response = await fetch('marks-data.csv');
-    const csvText = await response.text();
-    const lines = csvText.split('\n');
-
+    
+    if (!response.ok) {
+      console.error('❌ CSV file not found (404)');
+      return;
+    }
+    
+    // CRITICAL FIX: Ensure csvText is a STRING before splitting
+    let csvText = await response.text();
+    
+    // Verify it's actually text
+    if (typeof csvText !== 'string') {
+      console.error('❌ CSV is not text, type is:', typeof csvText);
+      return;
+    }
+    
+    // Remove any BOM (Byte Order Mark) if present
+    csvText = csvText.replace(/^\ufeff/, '');
+    
+    // Now split into lines
+    const lines = csvText.trim().split('\n');
+    
+    console.log(`📝 CSV lines: ${lines.length}`);
+    
+    if (lines.length < 2) {
+      console.warn('⚠️ CSV file is empty or only has header');
+      return;
+    }
+    
+    // Parse headers
     const headers = lines[0].split(',').map(h => h.trim().toUpperCase());
     const questionColumns = headers.filter(h => h.match(/^Q\d+$/));
-
-    console.log('Found question columns:', questionColumns.length);
-
+    
+    console.log(`📝 Headers: ${headers.join(', ')}`);
+    console.log(`❓ Questions found: ${questionColumns.length}`);
+    
+    let recordCount = 0;
+    
+    // Parse data rows
     for (let i = 1; i < lines.length; i++) {
-      if (!lines[i].trim()) continue;
-
-      const row = lines[i].split(',').map(c => c.trim());
+      const line = lines[i].trim();
+      if (!line) continue;
+      
+      const row = line.split(',').map(c => c.trim());
       const roll = row[0];
       const name = row[1];
       const exam = row[2];
-
+      
       if (!roll || !exam) continue;
-
+      
       const key = `${roll}_${exam}`;
-
-      const questionMarks = {};
-      questionColumns.forEach((qCol) => {
-        const colIndex = headers.indexOf(qCol);
-        const mark = parseFloat(row[colIndex]) || 0;
-        questionMarks[qCol] = mark;
+      const marks = {};
+      
+      // Extract question marks
+      questionColumns.forEach(qCol => {
+        const idx = headers.indexOf(qCol);
+        if (idx >= 0 && idx < row.length) {
+          const val = row[idx] || '0';
+          marks[qCol] = isNaN(val) ? val.toUpperCase() : parseFloat(val);
+        }
       });
-
-      // Calculate total
-      const total = questionColumns.reduce((sum, q) => sum + (questionMarks[q] || 0), 0);
-
-      questionMarksData[key] = {
-        roll: roll,
-        name: name,
-        exam: exam,
-        marks: questionMarks,
-        total: total
-      };
+      
+      questionMarksData[key] = { roll, name, exam, marks };
+      recordCount++;
     }
-
-    console.log('✅ Question marks data loaded:', Object.keys(questionMarksData).length, 'records');
+    
+    console.log(`✅ LOADED: ${recordCount} records`);
+    console.log(`   Sample keys: ${Object.keys(questionMarksData).slice(0, 3).join(', ')}`);
+    
   } catch (error) {
-    console.warn('⚠️ Could not load question marks data:', error);
+    console.error('❌ Error loading marks:', error);
+    console.error('   Stack:', error.stack);
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 3. OPEN QUESTION MARKS MODAL
-// ─────────────────────────────────────────────────────────────────────────────
 
+// Open modal when score is clicked
 function openQuestionMarksModal(studentRoll, examName, studentName) {
   const key = `${studentRoll}_${examName}`;
-  const qmData = questionMarksData[key];
-
-  if (!qmData) {
-    alert('Question-wise marks not available for this student & exam.');
+  const data = questionMarksData[key];
+  
+  if (!data) {
+    console.error(`❌ Key not found: ${key}`);
+    alert(`Data not found for ${studentRoll} - ${examName}`);
     return;
   }
-
-  // Populate student info
-  document.getElementById('qmStudentName').textContent = studentName || studentRoll;
+  
+  console.log(`📊 Opening modal for: ${studentRoll} - ${examName}`);
+  
+  document.getElementById('qmStudentName').textContent = studentName;
   document.getElementById('qmStudentRoll').textContent = studentRoll;
   document.getElementById('qmExam').textContent = examName;
-  document.getElementById('qmTotal').textContent = qmData.total.toFixed(1);
-
-  // Generate question grid (8 rows × 5 boxes = 40 questions)
-  generateQuestionGrid(qmData.marks);
-
-  // Calculate and display statistics
-  calculateQuestionStatistics(qmData.marks);
-
-  // Show modal
+  
+  generateQuestionGrid(data.marks);
+  calculateQuestionStatistics(data.marks);
+  
   document.getElementById('questionMarksModal').style.display = 'flex';
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 4. CLOSE MODAL
-// ─────────────────────────────────────────────────────────────────────────────
-
+// Close modal
 function closeQuestionMarksModal() {
   document.getElementById('questionMarksModal').style.display = 'none';
 }
 
-// Close modal when clicking outside
-document.addEventListener('DOMContentLoaded', function () {
-  const modal = document.getElementById('questionMarksModal');
-  if (modal) {
-    modal.addEventListener('click', function (e) {
-      if (e.target === modal) {
-        closeQuestionMarksModal();
-      }
-    });
+function debugQuestionData(marks) {
+  console.log('🔍 DEBUG: Checking marks data...');
+  console.log('Total marks keys:', Object.keys(marks).length);
+  console.log('Sample marks:', marks);
+  
+  let count = 0;
+  for (let i = 1; i <= 60; i++) {
+    const qKey = `Q${i}`;
+    if (marks[qKey] !== undefined) {
+      console.log(`  Q${i}: ${marks[qKey]}`);
+      count++;
+    }
   }
-});
+  console.log(`Total questions: ${count}`);
+}
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 5. GENERATE QUESTION GRID (40 boxes in 8 rows × 5 columns)
-// ─────────────────────────────────────────────────────────────────────────────
-
+// Generate colored question boxes
 function generateQuestionGrid(marks) {
   const grid = document.getElementById('questionGrid');
   grid.innerHTML = '';
-
-  const questionCount = Object.keys(marks).length;
-
-  for (let i = 1; i <= questionCount; i++) {
-    const qNum = `Q${i}`;
-    const mark = Number(marks[qNum] || 0);
-
-    let statusClass = 'question-box-none';
-    let iconClass = 'fas fa-minus-circle';
-    let label = 'Not Attempted';
-
-    if (mark === 4) {
-      statusClass = 'question-box-correct';
-      iconClass = 'fas fa-check-circle';
-      label = 'Correct Answer';
+  
+  let boxCount = 0;
+  for (let i = 1; i <= 60; i++) {
+    const qKey = `Q${i}`;
+    const mark = marks[qKey];
+    
+    if (mark === 'N' || mark === undefined) continue;
+    
+    const numMark = isNaN(mark) ? null : Number(mark);
+    
+    let bgColor = '#d1fae5';
+    let textColor = '#10b981';
+    let iconClass = 'fas fa-check';
+    let title = 'Unattempted (0)';
+    let displayText = '';
+    
+    if (mark === 'C') {
+      bgColor = '#e0e7ff';
+      textColor = '#3730a3';
+      iconClass = 'fas fa-ban';
+      title = 'Cancelled (C)';
+      displayText = 'C';
+    } else if (mark === 4) {
+      bgColor = '#dcfce7';
+      textColor = '#166534';
+      iconClass = 'fas fa-check';
+      title = 'Correct (+4)';
     } else if (mark === -1) {
-      statusClass = 'question-box-wrong';
-      iconClass = 'fas fa-times-circle';
-      label = 'Wrong Answer';
+      bgColor = '#fee2e2';
+      textColor = '#991b1b';
+      iconClass = 'fas fa-xmark';
+      title = 'Wrong (-1)';
+    } else if (numMark !== null && numMark > 0 && numMark < 4) {
+      bgColor = '#fef3c7';
+      textColor = '#92400e';
+      iconClass = 'fas fa-star';
+      title = `Partial (${mark})`;
+      displayText = mark;
+    } else if (mark === 0) {
+      bgColor = '#f3f4f6';
+      textColor = '#6b7280';
+      iconClass = 'fas fa-circle';
+      title = 'Unattempted (0)';
     }
-
+    
     const box = document.createElement('div');
-    box.className = `question-box ${statusClass}`;
-    box.title = `${qNum} • ${label} (mark = ${mark})`;
-
-    box.innerHTML = `
-      <div class="q-number">${qNum}</div>
-      <div class="q-icon"><i class="${iconClass}"></i></div>
-      <div class="q-label">${label}</div>
-    `;
-
+    box.className = 'question-box';
+    box.title = title;
+    box.style.cssText = `background:${bgColor};color:${textColor};padding:12px;border-radius:8px;text-align:center;border:2px solid ${textColor};cursor:pointer;transition:all 0.3s ease;font-weight:600;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:80px;width:100%;box-sizing:border-box;${(mark === 'C') ? 'opacity:0.7;' : ''}`;
+    
+    let innerHTML = `<div style="font-size:11px;opacity:0.8;margin-bottom:6px;font-weight:600;text-transform:uppercase;">Q${i}</div>`;
+    
+    if (displayText) {
+      innerHTML += `<div style="font-size:24px;font-weight:700;margin-bottom:4px;">${displayText}</div>`;
+    } else {
+      innerHTML += `<i class="${iconClass}" style="font-size:28px;margin-bottom:4px;opacity:0.8;"></i>`;
+    }
+    
+    box.innerHTML = innerHTML;
+    
+    box.addEventListener('mouseover', function() {
+      this.style.transform = 'translateY(-4px) scale(1.05)';
+      this.style.boxShadow = '0 8px 16px rgba(0,0,0,0.2)';
+    });
+    
+    box.addEventListener('mouseout', function() {
+      this.style.transform = 'translateY(0) scale(1)';
+      this.style.boxShadow = 'none';
+    });
+    
     grid.appendChild(box);
+    boxCount++;
   }
+  
+  console.log(`✨ Grid rendered: ${boxCount} questions`);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 6. CALCULATE QUESTION STATISTICS
-// ─────────────────────────────────────────────────────────────────────────────
 
+
+
+// Calculate statistics (exclude C and N from count)
 function calculateQuestionStatistics(marks) {
-  let fullMarks = 0;        // Count of 4 marks
-  let partialMarks = 0;     // Count of -1 marks
-  let zeroMarks = 0;        // Count of 0 marks
-
-  // Count each question's result
-  for (let i = 1; i <= 40; i++) {
-    const mark = marks[`Q${i}`] || 0;
-    if (mark === 4) {
+  let fullMarks = 0;      // 4
+  let partialMarks = 0;   // 1-3
+  let wrongMarks = 0;     // -1
+  let zeroMarks = 0;      // 0
+  let cancelledMarks = 0; // C (NEW)
+  let totalScore = 0;
+  let validQuestions = 0; // Questions (exclude C and N)
+  
+  for (let i = 1; i <= 60; i++) {
+    const qKey = `Q${i}`;
+    const mark = marks[qKey];
+    
+    // Count cancelled separately (NEW)
+    if (mark === 'C') {
+      cancelledMarks++;
+      continue;
+    }
+    
+    // Skip N (No Question)
+    if (mark === 'N') {
+      continue;
+    }
+    
+    // Skip undefined marks
+    if (mark === undefined) {
+      continue;
+    }
+    
+    validQuestions++;
+    const numMark = isNaN(mark) ? null : Number(mark);
+    
+    if (numMark === 4) {
       fullMarks++;
-    } else if (mark === -1) {
+      totalScore += 4;
+    } else if (numMark === -1) {
+      wrongMarks++;
+      totalScore -= 1;
+    } else if (numMark > 0 && numMark < 4) {
       partialMarks++;
-    } else {
+      totalScore += numMark;
+    } else if (numMark === 0) {
       zeroMarks++;
+      // 0 doesn't add to score
     }
   }
-
-  // Calculate total marks and accuracy
-  const total = Object.keys(marks).reduce((sum, q) => sum + (marks[q] || 0), 0);
-  const maxTotal = 40 * 4; // 40 questions × 4 marks each
-  const accuracy = ((total / maxTotal) * 100).toFixed(1);
-
-  // Update statistics display
+  
+  // Calculate max possible marks (only valid questions, not C or N)
+  const maxPossible = validQuestions * 4;
+  const accuracy = maxPossible > 0 ? ((totalScore / maxPossible) * 100).toFixed(1) : 0;
+  
   document.getElementById('qmFullMarks').textContent = fullMarks;
-  document.getElementById('qmPartialMarks').textContent = partialMarks;
+  document.getElementById('qmWrongMarks').textContent = wrongMarks;
   document.getElementById('qmZeroMarks').textContent = zeroMarks;
+  document.getElementById('qmCancelledMarks').textContent = cancelledMarks;
   document.getElementById('qmAccuracy').textContent = accuracy + '%';
+  document.getElementById('qmTotalScore').textContent = totalScore;
+  document.getElementById('qmMaxMarks').textContent = maxPossible;
+
 }
+
+
+// Attach click handlers to ALL score cells in tables
+function attachScoreClickHandlers() {
+  console.log('🔗 Attaching click handlers to score cells...');
+  
+  // Get ALL table rows from ALL ranking tables
+  const allRows = document.querySelectorAll('table tbody tr');
+  
+  allRows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    
+    // Typical structure: [Rank, Roll, Name, Exam1_Score, Exam2_Score, ...]
+    if (cells.length < 4) return;
+    
+    const rollCell = cells?.textContent.trim();
+    const nameCell = cells?.textContent.trim();
+    
+    if (!rollCell || !nameCell) return;
+    
+    // Starting from column 3, these are scores
+    for (let idx = 3; idx < cells.length; idx++) {
+      const cell = cells[idx];
+      const scoreText = cell.textContent.trim();
+      
+      // Skip cells that don't look like scores (e.g., "0 students")
+      if (!scoreText || scoreText.includes('student') || scoreText.includes('Exam')) {
+        continue;
+      }
+      
+      // Make cell clickable
+      if (!cell.style.cursor || cell.style.cursor !== 'pointer') {
+        cell.style.cursor = 'pointer';
+        cell.style.color = 'rgb(59, 130, 246)';
+        cell.style.textDecoration = 'underline';
+        cell.style.fontWeight = '600';
+        cell.style.transition = 'all 0.2s';
+        
+        cell.addEventListener('mouseover', function() {
+          this.style.opacity = '0.8';
+          this.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+        });
+        
+        cell.addEventListener('mouseout', function() {
+          this.style.opacity = '1';
+          this.style.backgroundColor = 'transparent';
+        });
+        
+        // Add click event
+        cell.addEventListener('click', function(e) {
+          e.stopPropagation();
+          
+          // Find exam name from table header
+          const table = row.closest('table');
+          const thead = table?.querySelector('thead');
+          const headerCells = thead?.querySelectorAll('th');
+          const examName = headerCells?.[idx]?.textContent.trim() || 'Unknown';
+          
+          console.log('📊 Score clicked:', { rollCell, nameCell, examName, scoreText });
+          
+          // Open modal
+          openQuestionMarksModal(rollCell, examName, nameCell);
+        });
+      }
+    }
+  });
+  setTimeout(() => {
+    attachScoreClickHandlers();
+  }, 500);
+  
+}
+
+console.log('═══ DIAGNOSTIC ═══');
+console.log('Records loaded:', Object.keys(questionMarksData).length);
+console.log('Available keys:', Object.keys(questionMarksData).slice(0, 5));
+
+// Get all exam names in your CSV
+const exams = [...new Set(Object.keys(questionMarksData).map(k => k.split('_')[1]))];
+console.log('Exam names in CSV:', exams);
+
+// Get all exam names in table headers
+const headerExams = [...document.querySelectorAll('table thead th')].map(h => h.textContent.trim()).filter(h => h);
+console.log('Exam names in table:', headerExams);
+
 
 // ============================================
 // ADVANCED INSIGHTS FUNCTIONS

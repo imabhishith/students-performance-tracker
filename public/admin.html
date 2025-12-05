@@ -1195,303 +1195,238 @@
         </div>
     </div>
 
-    <!-- Question-wise Marks Modal -->
-    <div class="modal" id="questionMarksModal" style="
+   <!-- Question Marks Modal -->
+<div id="questionMarksModal" style="
   display: none;
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  justify-content: center;
+  z-index: 9999;
   align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  overflow: hidden;
 ">
-        <!-- Modal Overlay (clicking closes) -->
-        <div class="modal-overlay" onclick="closeQuestionMarksModal()" style="
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  "></div>
-
-        <!-- Modal Container -->
-        <div class="modal-container" style="
-    position: relative;
-    z-index: 1001;
+  <div style="
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    max-width: 900px;
-    width: 90%;
-    max-height: 90vh;
+    border-radius: 16px;
+    padding: 0;
+    max-width: 98vw;
+    max-height: 92vh;
     overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
     display: flex;
     flex-direction: column;
   ">
-
-            <!-- Modal Header -->
-            <div class="modal-header" style="
+    <!-- Header - Purple Gradient -->
+    <div style="
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px;
-      border-bottom: 2px solid #e5e7eb;
-      background: linear-gradient(135deg, #002168 0%,rgb(15, 35, 65) 100%);
-      color: white;
-      border-radius: 12px 12px 0 0;
+      padding: 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px 16px 0 0;
+      flex-shrink: 0;
     ">
-                <h2 style="
-        margin: 0;
-        font-size: 20px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color:white;
-      ">
-                    <i class="fas fa-th" style="font-size: 22px; color:white"></i>
-                    Question-wise Marks Breakdown
-                </h2>
-                <button class="modal-close" onclick="closeQuestionMarksModal()" style="
-        background: none;
+      <h2 style="margin: 0; color: white; font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 12px;">
+        <i class="fas fa-chart-bar"></i> Question-wise Marks
+      </h2>
+      <button onclick="closeQuestionMarksModal()" style="
+        background: rgba(255,255,255,0.2);
         border: none;
-        color: white;
-        font-size: 24px;
+        font-size: 28px;
         cursor: pointer;
-        padding: 0;
-        width: 32px;
-        height: 32px;
+        color: white;
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 4px;
-        transition: background 0.2s;
-      " onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='none'">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <!-- Modal Body -->
-            <div class="modal-body" style="
-      padding: 25px;
-      flex: 1;
-      overflow-y: auto;
-    ">
-
-                <!-- Student Info Section -->
-                <div class="question-modal-header" style="
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 15px;
-        margin-bottom: 25px;
-      ">
-                    <!-- Student Name Card -->
-                    <div style="
-          padding: 14px;
-          background: rgba(37, 99, 235, 0.05);
-          border-radius: 8px;
-          border-left: 4px solid #2563eb;
-        ">
-                        <span style="
-            color: #6b7280;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-          ">Student Name</span>
-                        <div style="
-            font-weight: 600;
-            font-size: 16px;
-            margin-top: 6px;
-            color: #1f2937;
-          " id="qmStudentName">-</div>
-                    </div>
-
-                    <!-- Roll Number Card -->
-                    <div style="
-          padding: 14px;
-          background: rgba(37, 99, 235, 0.05);
-          border-radius: 8px;
-          border-left: 4px solid #2563eb;
-        ">
-                        <span style="
-            color: #6b7280;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-          ">Roll Number</span>
-                        <div style="
-            font-weight: 600;
-            font-size: 16px;
-            margin-top: 6px;
-            color: #1f2937;
-          " id="qmStudentRoll">-</div>
-                    </div>
-
-                    <!-- Exam Name Card -->
-                    <div style="
-          padding: 14px;
-          background: rgba(37, 99, 235, 0.05);
-          border-radius: 8px;
-          border-left: 4px solid #2563eb;
-        ">
-                        <span style="
-            color: #6b7280;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-          ">Exam</span>
-                        <div style="
-            font-weight: 600;
-            font-size: 16px;
-            margin-top: 6px;
-            color: #1f2937;
-          " id="qmExam">-</div>
-                    </div>
-
-                    <!-- Total Score Card -->
-                    <div style="
-          padding: 14px;
-          background: rgba(16, 185, 129, 0.05);
-          border-radius: 8px;
-          border-left: 4px solid #10b981;
-        ">
-                        <span style="
-            color: #6b7280;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-          ">Total Score</span>
-                        <div style="
-            font-weight: 700;
-            font-size: 18px;
-            margin-top: 6px;
-            color: #10b981;
-          " id="qmTotal">-</div>
-                    </div>
-                </div>
-
-                <!-- Question Grid (8 rows × 5 boxes = 40 questions) -->
-                <div style="margin-bottom: 20px;">
-                    <h3 style="
-          margin: 0 0 15px 0;
-          font-size: 14px;
-          font-weight: 600;
-          color: #6b7280;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        ">Question-wise Performance</h3>
-
-                    <div class="question-grid" id="questionGrid" style="
-          display: grid;
-          grid-template-columns: repeat(5, 1fr);
-          gap: 12px;
-          padding: 15px;
-          background: #f9fafb;
-          border-radius: 8px;
-          border: 1px solid #e5e7eb;
-        ">
-                        <!-- Question boxes will be generated here by JavaScript -->
-                    </div>
-                </div>
-
-                <!-- Statistics Section -->
-                <div style="
-        margin-top: 25px;
-        padding: 20px;
-        background: rgba(37, 99, 235, 0.05);
-        border-radius: 8px;
-        border-top: 3px solid #2563eb;
-      ">
-                    <h3 style="
-          margin: 0 0 18px 0;
-          font-size: 14px;
-          font-weight: 600;
-          color: #6b7280;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        ">Performance Analysis</h3>
-
-                    <div style="
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-          gap: 16px;
-        ">
-                        <!-- Full Marks Stat -->
-                        <div style="text-align: center;">
-                            <span style="
-              color: #6b7280;
-              font-size: 12px;
-              font-weight: 600;
-              text-transform: uppercase;
-            ">Full Marks (4)</span>
-                            <div style="
-              font-weight: 700;
-              font-size: 28px;
-              color: #10b981;
-              margin-top: 8px;
-            " id="qmFullMarks">0</div>
-                        </div>
-
-                        <!-- Partial Marks Stat -->
-                        <div style="text-align: center;">
-                            <span style="
-              color: #6b7280;
-              font-size: 12px;
-              font-weight: 600;
-              text-transform: uppercase;
-            ">Negative Marks (-1)</span>
-                            <div style="
-              font-weight: 700;
-              font-size: 28px;
-              color: #f59e0b;
-              margin-top: 8px;
-            " id="qmPartialMarks">0</div>
-                        </div>
-
-                        <!-- Zero Marks Stat -->
-                        <div style="text-align: center;">
-                            <span style="
-              color: #6b7280;
-              font-size: 12px;
-              font-weight: 600;
-              text-transform: uppercase;
-            ">Zero Marks (0)</span>
-                            <div style="
-              font-weight: 700;
-              font-size: 28px;
-              color: #ef4444;
-              margin-top: 8px;
-            " id="qmZeroMarks">0</div>
-                        </div>
-
-                        <!-- Accuracy Stat -->
-                        <div style="text-align: center;">
-                            <span style="
-              color: #6b7280;
-              font-size: 12px;
-              font-weight: 600;
-              text-transform: uppercase;
-            ">Overall Accuracy</span>
-                            <div style="
-              font-weight: 700;
-              font-size: 28px;
-              color: #2563eb;
-              margin-top: 8px;
-            " id="qmAccuracy">0%</div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+        transition: all 0.2s ease;
+      " onmouseover="this.style.backgroundColor='rgba(255,255,255,0.3)'" onmouseout="this.style.backgroundColor='rgba(255,255,255,0.2)'">✕</button>
     </div>
+
+    <!-- Scrollable Content -->
+    <div style="
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+      width: 100%;
+    ">
+      <!-- Student Info Box -->
+      <div style="
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 18px 24px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        color: white;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 24px;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+      ">
+        <div>
+          <div style="font-size: 11px; opacity: 0.85; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Student Name</div>
+          <div style="font-size: 16px; font-weight: 700;" id="qmStudentName">-</div>
+        </div>
+        <div>
+          <div style="font-size: 11px; opacity: 0.85; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Roll No.</div>
+          <div style="font-size: 16px; font-weight: 700;" id="qmStudentRoll">-</div>
+        </div>
+        <div>
+          <div style="font-size: 11px; opacity: 0.85; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Exam</div>
+          <div style="font-size: 16px; font-weight: 700;" id="qmExam">-</div>
+        </div>
+      </div>
+
+      <!-- Question Grid Section -->
+      <div style="margin-bottom: 24px;">
+        <h3 style="margin: 0 0 14px 0; color: #1f2937; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-circle-question" style="color: #667eea;"></i> Question Analysis
+        </h3>
+      </div>
+
+      <!-- Question Grid - 4 BOXES PER ROW FIXED -->
+      <div id="questionGrid" style="
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 28px;
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #f8f9fc 100%);
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+      "></div>
+
+      <!-- Statistics Section -->
+      <div style="margin-bottom: 24px;">
+        <h3 style="margin: 0 0 14px 0; color: #1f2937; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-chart-line" style="color: #667eea;"></i> Performance Summary
+        </h3>
+      </div>
+
+      <!-- Statistics Grid -->
+      <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 14px;
+        padding: 16px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #f8f9fc 100%);
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+      ">
+        <!-- Correct -->
+        <div style="
+          background: white;
+          padding: 18px;
+          border-radius: 10px;
+          text-align: center;
+          border-left: 4px solid #10b981;
+          box-shadow: 0 2px 8px rgba(16,185,129,0.08);
+          transition: all 0.3s ease;
+          cursor: default;
+        " onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 16px rgba(16,185,129,0.15)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 8px rgba(16,185,129,0.08)'">
+          <div style="font-size: 32px; font-weight: 800; color: #10b981; line-height: 1;">
+            <span id="qmFullMarks">0</span>
+          </div>
+          <div style="font-size: 12px; color: #6b7280; margin-top: 8px; font-weight: 600;"><i class="fas fa-check-circle" style="margin-right: 6px; color: #10b981;"></i>Correct</div>
+        </div>
+
+        <!-- Wrong -->
+        <div style="
+          background: white;
+          padding: 18px;
+          border-radius: 10px;
+          text-align: center;
+          border-left: 4px solid #ef4444;
+          box-shadow: 0 2px 8px rgba(239,68,68,0.08);
+          transition: all 0.3s ease;
+          cursor: default;
+        " onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 16px rgba(239,68,68,0.15)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 8px rgba(239,68,68,0.08)'">
+          <div style="font-size: 32px; font-weight: 800; color: #ef4444; line-height: 1;">
+            <span id="qmWrongMarks">0</span>
+          </div>
+          <div style="font-size: 12px; color: #6b7280; margin-top: 8px; font-weight: 600;"><i class="fas fa-times-circle" style="margin-right: 6px; color: #ef4444;"></i>Wrong</div>
+        </div>
+
+        <!-- Unattempted -->
+        <div style="
+          background: white;
+          padding: 18px;
+          border-radius: 10px;
+          text-align: center;
+          border-left: 4px solid #9ca3af;
+          box-shadow: 0 2px 8px rgba(156,163,175,0.08);
+          transition: all 0.3s ease;
+          cursor: default;
+        " onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 16px rgba(156,163,175,0.15)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 8px rgba(156,163,175,0.08)'">
+          <div style="font-size: 32px; font-weight: 800; color: #9ca3af; line-height: 1;">
+            <span id="qmZeroMarks">0</span>
+          </div>
+          <div style="font-size: 12px; color: #6b7280; margin-top: 8px; font-weight: 600;"><i class="fas fa-circle" style="margin-right: 6px; color: #9ca3af;"></i>Unattempted</div>
+        </div>
+
+        <!-- Cancelled -->
+        <div style="
+          background: white;
+          padding: 18px;
+          border-radius: 10px;
+          text-align: center;
+          border-left: 4px solid #8b5cf6;
+          box-shadow: 0 2px 8px rgba(139,92,246,0.08);
+          transition: all 0.3s ease;
+          cursor: default;
+        " onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 16px rgba(139,92,246,0.15)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 8px rgba(139,92,246,0.08)'">
+          <div style="font-size: 32px; font-weight: 800; color: #8b5cf6; line-height: 1;">
+            <span id="qmCancelledMarks">0</span>
+          </div>
+          <div style="font-size: 12px; color: #6b7280; margin-top: 8px; font-weight: 600;"><i class="fas fa-clipboard" style="margin-right: 6px; color: #8b5cf6;"></i>Cancelled</div>
+        </div>
+
+        <!-- Accuracy -->
+        <div style="
+          background: white;
+          padding: 18px;
+          border-radius: 10px;
+          text-align: center;
+          border-left: 4px solid #3b82f6;
+          box-shadow: 0 2px 8px rgba(59,130,246,0.08);
+          transition: all 0.3s ease;
+          cursor: default;
+        " onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 16px rgba(59,130,246,0.15)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 8px rgba(59,130,246,0.08)'">
+          <div style="font-size: 32px; font-weight: 800; color: #3b82f6; line-height: 1;">
+            <span id="qmAccuracy">0</span>
+          </div>
+          <div style="font-size: 12px; color: #6b7280; margin-top: 8px; font-weight: 600;"><i class="fas fa-bullseye" style="margin-right: 6px; color: #3b82f6;"></i>Accuracy</div>
+        </div>
+
+        <!-- Total Score - Gradient -->
+        <div style="
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          padding: 18px;
+          border-radius: 10px;
+          text-align: center;
+          border-left: 4px solid #667eea;
+          box-shadow: 0 2px 8px rgba(102,126,234,0.15);
+          transition: all 0.3s ease;
+          cursor: default;
+        " onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 20px rgba(102,126,234,0.25)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 8px rgba(102,126,234,0.15)'">
+          <div style="font-size: 32px; font-weight: 800; color: white; line-height: 1;">
+            <span id="qmTotalScore">0</span>/<span id="qmMaxMarks">0</span>
+          </div>
+          <div style="font-size: 12px; color: rgba(255,255,255,0.9); margin-top: 8px; font-weight: 600;"><i class="fas fa-trophy" style="margin-right: 6px;"></i>Total Score</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- Enhanced Footer -->
     <footer class="main-footer">
