@@ -6031,3 +6031,30 @@ body {
   transform: translateY(-3px) scale(1.03);
   box-shadow: var(--shadow-md);
 }
+
+/* Question Item Analysis Styles */
+.analysis-btn:hover {
+  box-shadow: 0 12px 30px rgba(139, 92, 246, 0.3);
+}
+
+#questionItemAnalysis {
+  width: 1471px;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-left: 0.65cm;
+}
+
+#itemAnalysisExam {
+  padding: 10px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 13px;
+  background: #ffffff;
+  color: #1f2937;
+}
+
+#itemAnalysisExam:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}

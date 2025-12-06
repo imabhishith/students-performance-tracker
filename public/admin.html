@@ -623,6 +623,15 @@
                                 <span class="btn-title">Performance Alerts</span>
                                 <span class="btn-subtitle">Risk Assessment</span>
                             </div>
+                            <button id="itemAnalysisBtn" class="action-btn analysis-btn" onclick="toggleItemAnalysis()">
+                                <div class="btn-icon">
+                                    <i class="fas fa-microscope"></i>
+                                </div>
+                                <div class="btn-content">
+                                    <span class="btn-title">Question Analysis</span>
+                                    <span class="btn-subtitle">Item Difficulty</span>
+                                </div>
+                            </button>
                         </button>
                         <button id="printExportBtn" class="action-btn print-export-btn">
                             <div class="btn-icon">
@@ -1195,154 +1204,266 @@
         </div>
     </div>
 
-   <!-- Question Marks Modal -->
-<!-- PREMIUM MODERN Question Marks Modal -->
-<div id="questionMarksModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,rgba(15,23,42,0.4),rgba(30,41,59,0.3));backdrop-filter:blur(12px);z-index:10000;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;">
-  <div style="background:#ffffff;border-radius:24px;max-width:1200px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.3),0 0 0 1px rgba(0,0,0,0.1);overflow:hidden;animation:slideUp 0.5s ease-out;">
-    
-    <!-- Minimalist Header -->
-    <div style="padding:24px;background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:#ffffff;display:flex;align-items:center;justify-content:space-between;position:relative;">
-      <div style="display:flex;align-items:center;gap:14px;">
-        <div style="width:48px;height:48px;background:rgba(255,255,255,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.3);">
-          <i class="fas fa-graduation-cap"></i>
-        </div>
-        <div>
-          <h1 style="margin:0;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Question Performance</h1>
-          <p style="margin:4px 0 0 0;font-size:12px;opacity:0.85;font-weight:500;">Comprehensive Assessment</p>
-        </div>
-      </div>
-      <button onclick="closeQuestionMarksModal()" style="width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);color:#ffffff;font-size:18px;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.25)';this.style.transform='scale(1.1)'" onmouseout="this.style.background='rgba(255,255,255,0.15)';this.style.transform='scale(1)'">
-        <i class="fas fa-xmark"></i>
-      </button>
-    </div>
+    <!-- Question Marks Modal -->
+    <!-- PREMIUM MODERN Question Marks Modal -->
+    <div id="questionMarksModal"
+        style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,rgba(15,23,42,0.4),rgba(30,41,59,0.3));backdrop-filter:blur(12px);z-index:10000;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;">
+        <div
+            style="background:#ffffff;border-radius:24px;max-width:1200px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.3),0 0 0 1px rgba(0,0,0,0.1);overflow:hidden;animation:slideUp 0.5s ease-out;">
 
-    <!-- Student Info - Horizontal Strip -->
-    <div style="padding:16px 24px;background:linear-gradient(90deg,#f8fafc,#f1f5f9);border-bottom:1px solid #e2e8f0;display:flex;gap:32px;align-items:center;flex-wrap:wrap;">
-      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:200px;">
-        <div style="width:48px;height:48px;background:linear-gradient(135deg,#10b981,#059669);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <i class="fas fa-user-graduate" style="color:#ffffff;font-size:20px;"></i>
-        </div>
-        <div style="min-width:0;">
-          <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;">Student</div>
-          <div id="qmStudentName" style="font-size:16px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:200px;">
-        <div style="width:48px;height:48px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <i class="fas fa-id-badge" style="color:#ffffff;font-size:20px;"></i>
-        </div>
-        <div style="min-width:0;">
-          <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;">Roll</div>
-          <div id="qmStudentRoll" style="font-size:16px;font-weight:800;color:#0f172a;"></div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:200px;">
-        <div style="width:48px;height:48px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <i class="fas fa-book" style="color:#ffffff;font-size:20px;"></i>
-        </div>
-        <div style="min-width:0;">
-          <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;">Exam</div>
-          <div id="qmExam" style="font-size:16px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Content - Two Column Layout -->
-    <div style="flex:1;overflow-y:auto;padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-      
-      <!-- LEFT: Question Grid -->
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-          <div style="width:4px;height:28px;background:linear-gradient(180deg,#2563eb,#1d4ed8);border-radius:2px;"></div>
-          <h3 style="margin:0;font-size:18px;font-weight:900;color:#0f172a;">Questions</h3>
-          <span style="margin-left:auto;font-size:12px;color:#64748b;font-weight:600;background:#f0f9ff;padding:4px 12px;border-radius:6px;">60 Items</span>
-        </div>
-        <div id="questionGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:10px;padding:18px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-radius:16px;border:1.5px solid #e2e8f0;min-height:360px;overflow-y:auto;"></div>
-        
-        <!-- Legend Below Grid -->
-        <div style="padding:14px;background:#f0f9ff;border-radius:12px;border:1px solid #bfdbfe;">
-          <div style="font-size:11px;color:#1e40af;font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Legend</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px;">
-            <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:14px;background:#dcfce7;border:1.5px solid #16a34a;border-radius:3px;"></div><span style="color:#166534;font-weight:600;">Correct</span></div>
-            <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:14px;background:#fee2e2;border:1.5px solid #dc2626;border-radius:3px;"></div><span style="color:#991b1b;font-weight:600;">Wrong</span></div>
-            <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:14px;background:#f3f4f6;border:1.5px solid #6b7280;border-radius:3px;"></div><span style="color:#374151;font-weight:600;">Skipped</span></div>
-            <div style="display:flex;align-items:center;gap:6px;opacity:0.7;"><div style="width:14px;height:14px;background:#e0e7ff;border:1.5px solid #3730a3;border-radius:3px;"></div><span style="color:#1e293b;font-weight:600;">Cancelled</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT: Stats -->
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-          <div style="width:4px;height:28px;background:linear-gradient(180deg,#10b981,#059669);border-radius:2px;"></div>
-          <h3 style="margin:0;font-size:18px;font-weight:900;color:#0f172a;">Performance</h3>
-        </div>
-        
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <!-- Correct -->
-          <div style="padding:20px;background:linear-gradient(135deg,#10b981 0%,#059669 100%);border-radius:14px;color:#ffffff;box-shadow:0 8px 20px rgba(16,185,129,0.3);transition:all 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(16,185,129,0.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 20px rgba(16,185,129,0.3)'">
-            <i class="fas fa-check" style="font-size:20px;margin-bottom:8px;opacity:0.8;display:block;"></i>
-            <div style="font-size:40px;font-weight:900;line-height:1;margin-bottom:4px;" id="qmFullMarks">0</div>
-            <div style="font-size:12px;font-weight:700;">Correct</div>
-          </div>
-
-          <!-- Wrong -->
-          <div style="padding:20px;background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);border-radius:14px;color:#ffffff;box-shadow:0 8px 20px rgba(239,68,68,0.3);transition:all 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(239,68,68,0.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 20px rgba(239,68,68,0.3)'">
-            <i class="fas fa-xmark" style="font-size:20px;margin-bottom:8px;opacity:0.8;display:block;"></i>
-            <div style="font-size:40px;font-weight:900;line-height:1;margin-bottom:4px;" id="qmWrongMarks">0</div>
-            <div style="font-size:12px;font-weight:700;">Wrong</div>
-          </div>
-
-          <!-- Unattempted -->
-          <div style="padding:20px;background:linear-gradient(135deg,#6b7280 0%,#4b5563 100%);border-radius:14px;color:#ffffff;box-shadow:0 8px 20px rgba(107,114,128,0.3);transition:all 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(107,114,128,0.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 20px rgba(107,114,128,0.3)'">
-            <i class="fas fa-circle" style="font-size:20px;margin-bottom:8px;opacity:0.8;display:block;"></i>
-            <div style="font-size:40px;font-weight:900;line-height:1;margin-bottom:4px;" id="qmZeroMarks">0</div>
-            <div style="font-size:12px;font-weight:700;">Unattempted</div>
-          </div>
-
-          <!-- Cancelled -->
-          <div style="padding:20px;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);border-radius:14px;color:#ffffff;box-shadow:0 8px 20px rgba(59,130,246,0.3);transition:all 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(59,130,246,0.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 20px rgba(59,130,246,0.3)'">
-            <i class="fas fa-ban" style="font-size:20px;margin-bottom:8px;opacity:0.8;display:block;"></i>
-            <div style="font-size:40px;font-weight:900;line-height:1;margin-bottom:4px;" id="qmCancelledMarks">0</div>
-            <div style="font-size:12px;font-weight:700;">Cancelled</div>
-          </div>
-        </div>
-
-        <!-- Big Stats Below -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;">
-          <!-- Accuracy -->
-          <div style="padding:22px;background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);border-radius:14px;color:#ffffff;text-align:center;box-shadow:0 8px 20px rgba(245,158,11,0.3);transition:all 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(245,158,11,0.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 20px rgba(245,158,11,0.3)'">
-            <i class="fas fa-bullseye" style="font-size:18px;margin-bottom:8px;opacity:0.8;display:block;"></i>
-            <div style="font-size:44px;font-weight:900;line-height:1;" id="qmAccuracy">0%</div>
-            <div style="font-size:11px;margin-top:4px;font-weight:700;">Accuracy</div>
-          </div>
-
-          <!-- Total Score -->
-          <div style="padding:22px;background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border-radius:14px;color:#ffffff;text-align:center;box-shadow:0 8px 20px rgba(30,41,59,0.4);transition:all 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(30,41,59,0.5)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 20px rgba(30,41,59,0.4)'">
-            <i class="fas fa-trophy" style="font-size:18px;margin-bottom:8px;opacity:0.8;display:block;"></i>
-            <div style="font-size:32px;font-weight:900;line-height:1;margin-bottom:2px;">
-              <span id="qmTotalScore">0</span><span style="font-size:20px;opacity:0.8;"> / <span id="qmMaxMarks">240</span></span>
+            <!-- Minimalist Header -->
+            <div
+                style="padding:24px;background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:#ffffff;display:flex;align-items:center;justify-content:space-between;position:relative;">
+                <div style="display:flex;align-items:center;gap:14px;">
+                    <div
+                        style="width:48px;height:48px;background:rgba(255,255,255,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.3);">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h1 style="margin:0;font-size:22px;font-weight:900;letter-spacing:-0.5px;">Question Performance
+                        </h1>
+                        <p style="margin:4px 0 0 0;font-size:12px;opacity:0.85;font-weight:500;">Comprehensive
+                            Assessment</p>
+                    </div>
+                </div>
+                <button onclick="closeQuestionMarksModal()"
+                    style="width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);color:#ffffff;font-size:18px;cursor:pointer;transition:all 0.3s;"
+                    onmouseover="this.style.background='rgba(255,255,255,0.25)';this.style.transform='scale(1.1)'"
+                    onmouseout="this.style.background='rgba(255,255,255,0.15)';this.style.transform='scale(1)'">
+                    <i class="fas fa-xmark"></i>
+                </button>
             </div>
-            <div style="font-size:11px;margin-top:4px;font-weight:700;">Total Score</div>
-          </div>
+
+            <!-- Student Info - Horizontal Strip -->
+            <div
+                style="padding:16px 24px;background:linear-gradient(90deg,#f8fafc,#f1f5f9);border-bottom:1px solid #e2e8f0;display:flex;gap:32px;align-items:center;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:200px;">
+                    <div
+                        style="width:48px;height:48px;background:linear-gradient(135deg,#10b981,#059669);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fas fa-user-graduate" style="color:#ffffff;font-size:20px;"></i>
+                    </div>
+                    <div style="min-width:0;">
+                        <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;">Student
+                        </div>
+                        <div id="qmStudentName"
+                            style="font-size:16px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:200px;">
+                    <div
+                        style="width:48px;height:48px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fas fa-id-badge" style="color:#ffffff;font-size:20px;"></i>
+                    </div>
+                    <div style="min-width:0;">
+                        <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;">Roll</div>
+                        <div id="qmStudentRoll" style="font-size:16px;font-weight:800;color:#0f172a;"></div>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:200px;">
+                    <div
+                        style="width:48px;height:48px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fas fa-book" style="color:#ffffff;font-size:20px;"></i>
+                    </div>
+                    <div style="min-width:0;">
+                        <div style="font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase;">Exam</div>
+                        <div id="qmExam"
+                            style="font-size:16px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content - Two Column Layout -->
+            <div style="flex:1;overflow-y:auto;padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+
+                <!-- LEFT: Question Grid -->
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <div
+                            style="width:4px;height:28px;background:linear-gradient(180deg,#2563eb,#1d4ed8);border-radius:2px;">
+                        </div>
+                        <h3 style="margin:0;font-size:18px;font-weight:900;color:#0f172a;">Questions</h3>
+                        <span
+                            style="margin-left:auto;font-size:12px;color:#64748b;font-weight:600;background:#f0f9ff;padding:4px 12px;border-radius:6px;">60
+                            Items</span>
+                    </div>
+                    <div id="questionGrid"
+                        style="display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:10px;padding:18px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-radius:16px;border:1.5px solid #e2e8f0;min-height:360px;overflow-y:auto;">
+                    </div>
+
+                    <!-- Legend Below Grid -->
+                    <div style="padding:14px;background:#f0f9ff;border-radius:12px;border:1px solid #bfdbfe;">
+                        <div
+                            style="font-size:11px;color:#1e40af;font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">
+                            Legend</div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px;">
+                            <div style="display:flex;align-items:center;gap:6px;">
+                                <div
+                                    style="width:14px;height:14px;background:#dcfce7;border:1.5px solid #16a34a;border-radius:3px;">
+                                </div><span style="color:#166534;font-weight:600;">Correct</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:6px;">
+                                <div
+                                    style="width:14px;height:14px;background:#fee2e2;border:1.5px solid #dc2626;border-radius:3px;">
+                                </div><span style="color:#991b1b;font-weight:600;">Wrong</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:6px;">
+                                <div
+                                    style="width:14px;height:14px;background:#f3f4f6;border:1.5px solid #6b7280;border-radius:3px;">
+                                </div><span style="color:#374151;font-weight:600;">Skipped</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:6px;opacity:0.7;">
+                                <div
+                                    style="width:14px;height:14px;background:#e0e7ff;border:1.5px solid #3730a3;border-radius:3px;">
+                                </div><span style="color:#1e293b;font-weight:600;">Cancelled</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Stats -->
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <div
+                            style="width:4px;height:28px;background:linear-gradient(180deg,#10b981,#059669);border-radius:2px;">
+                        </div>
+                        <h3 style="margin:0;font-size:18px;font-weight:900;color:#0f172a;">Performance</h3>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <!-- Correct -->
+                        <div style="padding:20px;background:linear-gradient(135deg,#10b981 0%,#059669 100%);border-radius:14px;color:#ffffff;box-shadow:0 8px 20px rgba(16,185,129,0.3);transition:all 0.3s ease;"
+                            onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(16,185,129,0.4)'"
+                            onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 20px rgba(16,185,129,0.3)'">
+                            <i class="fas fa-check"
+                                style="font-size:20px;margin-bottom:8px;opacity:0.8;display:block;"></i>
+                            <div style="font-size:40px;font-weight:900;line-height:1;margin-bottom:4px;"
+                                id="qmFullMarks">0</div>
+                            <div style="font-size:12px;font-weight:700;">Correct</div>
+                        </div>
+
+                        <!-- Wrong -->
+                        <div style="padding:20px;background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);border-radius:14px;color:#ffffff;box-shadow:0 8px 20px rgba(239,68,68,0.3);transition:all 0.3s ease;"
+                            onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(239,68,68,0.4)'"
+                            onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 20px rgba(239,68,68,0.3)'">
+                            <i class="fas fa-xmark"
+                                style="font-size:20px;margin-bottom:8px;opacity:0.8;display:block;"></i>
+                            <div style="font-size:40px;font-weight:900;line-height:1;margin-bottom:4px;"
+                                id="qmWrongMarks">0</div>
+                            <div style="font-size:12px;font-weight:700;">Wrong</div>
+                        </div>
+
+                        <!-- Unattempted -->
+                        <div style="padding:20px;background:linear-gradient(135deg,#6b7280 0%,#4b5563 100%);border-radius:14px;color:#ffffff;box-shadow:0 8px 20px rgba(107,114,128,0.3);transition:all 0.3s ease;"
+                            onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(107,114,128,0.4)'"
+                            onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 20px rgba(107,114,128,0.3)'">
+                            <i class="fas fa-circle"
+                                style="font-size:20px;margin-bottom:8px;opacity:0.8;display:block;"></i>
+                            <div style="font-size:40px;font-weight:900;line-height:1;margin-bottom:4px;"
+                                id="qmZeroMarks">0</div>
+                            <div style="font-size:12px;font-weight:700;">Unattempted</div>
+                        </div>
+
+                        <!-- Cancelled -->
+                        <div style="padding:20px;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);border-radius:14px;color:#ffffff;box-shadow:0 8px 20px rgba(59,130,246,0.3);transition:all 0.3s ease;"
+                            onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(59,130,246,0.4)'"
+                            onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 20px rgba(59,130,246,0.3)'">
+                            <i class="fas fa-ban"
+                                style="font-size:20px;margin-bottom:8px;opacity:0.8;display:block;"></i>
+                            <div style="font-size:40px;font-weight:900;line-height:1;margin-bottom:4px;"
+                                id="qmCancelledMarks">0</div>
+                            <div style="font-size:12px;font-weight:700;">Cancelled</div>
+                        </div>
+                    </div>
+
+                    <!-- Big Stats Below -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;">
+                        <!-- Accuracy -->
+                        <div style="padding:22px;background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);border-radius:14px;color:#ffffff;text-align:center;box-shadow:0 8px 20px rgba(245,158,11,0.3);transition:all 0.3s ease;"
+                            onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(245,158,11,0.4)'"
+                            onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 20px rgba(245,158,11,0.3)'">
+                            <i class="fas fa-bullseye"
+                                style="font-size:18px;margin-bottom:8px;opacity:0.8;display:block;"></i>
+                            <div style="font-size:44px;font-weight:900;line-height:1;" id="qmAccuracy">0%</div>
+                            <div style="font-size:11px;margin-top:4px;font-weight:700;">Accuracy</div>
+                        </div>
+
+                        <!-- Total Score -->
+                        <div style="padding:22px;background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border-radius:14px;color:#ffffff;text-align:center;box-shadow:0 8px 20px rgba(30,41,59,0.4);transition:all 0.3s ease;"
+                            onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(30,41,59,0.5)'"
+                            onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 20px rgba(30,41,59,0.4)'">
+                            <i class="fas fa-trophy"
+                                style="font-size:18px;margin-bottom:8px;opacity:0.8;display:block;"></i>
+                            <div style="font-size:32px;font-weight:900;line-height:1;margin-bottom:2px;">
+                                <span id="qmTotalScore">0</span><span style="font-size:20px;opacity:0.8;"> / <span
+                                        id="qmMaxMarks">240</span></span>
+                            </div>
+                            <div style="font-size:11px;margin-top:4px;font-weight:700;">Total Score</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-</div>
 
-<style>
-@keyframes slideUp {
-  from { opacity:0; transform: translateY(30px); }
-  to { opacity:1; transform: translateY(0); }
-}
-@media (max-width: 900px) {
-  [style*="grid-template-columns: 1fr 1fr"] {
-    grid-template-columns: 1fr !important;
-  }
-}
-</style>
+    <style>
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
 
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 900px) {
+            [style*="grid-template-columns: 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+
+    <!-- Question Item Analysis Panel -->
+    <div id="questionItemAnalysis" class="detail-panel">
+        <div class="panel-header">
+            <h3><i class="fas fa-microscope"></i> Question Item Analysis</h3>
+            <button class="panel-close" onclick="this.parentElement.parentElement.style.display='none'">
+                <i class="fas fa-xmark"></i>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div style="margin-bottom:20px;display:flex;gap:12px;flex-wrap:wrap;">
+                <select id="itemAnalysisExam" class="form-select" style="flex:1;min-width:200px;">
+                    <option value="">Select Exam...</option>
+                </select>
+                <button class="btn btn-primary" onclick="generateItemAnalysis()" style="white-space:nowrap;">
+                    <i class="fas fa-chart-bar"></i> Analyze
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="enhanced-table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-hashtag"></i> Q No</th>
+                            <th><i class="fas fa-percent"></i> Correct </th>
+                            <th><i class="fas fa-user-group"></i> Students </th>
+                            <th><i class="fas fa-chart-line"></i> Difficulty </th>
+                            <th><i class="fas fa-star"></i> Status </th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemAnalysisBody">
+                        <tr>
+                            <td colspan="5" style="text-align:center;color:#999;">Select exam to analyze</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
     <!-- Enhanced Footer -->
     <footer class="main-footer">
