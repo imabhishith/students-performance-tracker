@@ -13,6 +13,437 @@ const subjectNames = {
 };
 
 // ============================================
+// STUDENT GROUPS
+// ============================================
+
+let selectedStudentsForGroup = [];
+let studentGroups = JSON.parse(localStorage.getItem('studentGroups') || '[]');
+
+// Open / close modal
+function openGroupsModal() {
+  console.log('openGroupsModal called');
+  const modal = document.getElementById('groupsModal');
+  if (!modal) {
+    console.error('groupsModal element not found');
+    return;
+  }
+  modal.style.display = 'flex';
+  modal.style.opacity = '1';
+  modal.style.visibility = 'visible';
+  displayExistingGroups();
+}
+
+function closeGroupsModal() {
+  const modal = document.getElementById('groupsModal');
+  if (!modal) return;
+  modal.style.opacity = '0';
+  modal.style.visibility = 'hidden';
+  setTimeout(() => {
+    modal.style.display = 'none';
+  }, 300);
+  const nameInput = document.getElementById('groupName');
+  if (nameInput) nameInput.value = '';
+  selectedStudentsForGroup = [];
+  updateGroupSelectionInfo();
+}
+
+// Open inline student selector
+function selectStudentsForGroup() {
+  if (!Array.isArray(students) || students.length === 0) {
+    alert('No students available');
+    return;
+  }
+
+  const studentsHtml = students
+    .slice()
+    .sort((a, b) => a.roll.localeCompare(b.roll, undefined, { numeric: true }))
+    .map(
+      s => `
+      <label class="student-checkbox">
+        <input type="checkbox" value="${s.roll}" onchange="toggleStudentSelection('${s.roll}')">
+        <span>${s.name} (${s.roll})</span>
+      </label>`
+    )
+    .join('');
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'student-selector-modal';
+  wrapper.innerHTML = `
+    <div class="student-selector-overlay" onclick="this.parentElement.remove()"></div>
+    <div class="student-selector-content">
+      <div class="student-selector-header">
+        <h3>Select Students for Group</h3>
+        <button type="button" class="close-btn" onclick="this.closest('.student-selector-modal').remove()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="student-selector-body">
+        <div style="display:flex; gap:8px; margin-bottom:8px;">
+          <button type="button" class="btn btn-sm btn-secondary" onclick="selectAllStudents()">
+            <i class="fas fa-check-double"></i> Select All
+          </button>
+          <button type="button" class="btn btn-sm btn-secondary" onclick="clearAllStudents()">
+            <i class="fas fa-times"></i> Clear All
+          </button>
+        </div>
+        <div class="students-list">
+          ${studentsHtml}
+        </div>
+      </div>
+      <div class="student-selector-footer">
+        <button type="button" class="btn btn-secondary" onclick="this.closest('.student-selector-modal').remove()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" onclick="confirmStudentSelection()">
+          <i class="fas fa-check"></i> Confirm Selection
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(wrapper);
+
+  // pre-check already selected
+  selectedStudentsForGroup.forEach(roll => {
+    const cb = wrapper.querySelector(`input[value="${roll}"]`);
+    if (cb) cb.checked = true;
+  });
+}
+
+// Selection helpers
+function toggleStudentSelection(roll) {
+  const idx = selectedStudentsForGroup.indexOf(roll);
+  if (idx >= 0) selectedStudentsForGroup.splice(idx, 1);
+  else selectedStudentsForGroup.push(roll);
+  updateGroupSelectionInfo();
+}
+
+function selectAllStudents() {
+  selectedStudentsForGroup = students.map(s => s.roll);
+  document
+    .querySelectorAll('.student-selector-modal input[type="checkbox"]')
+    .forEach(cb => (cb.checked = true));
+  updateGroupSelectionInfo();
+}
+
+function clearAllStudents() {
+  selectedStudentsForGroup = [];
+  document
+    .querySelectorAll('.student-selector-modal input[type="checkbox"]')
+    .forEach(cb => (cb.checked = false));
+  updateGroupSelectionInfo();
+}
+
+function confirmStudentSelection() {
+  const modal = document.querySelector('.student-selector-modal');
+  if (modal) modal.remove();
+  updateGroupSelectionInfo();
+}
+
+// Update info + button state
+function updateGroupSelectionInfo() {
+  const info = document.getElementById('groupSelectionInfo');
+  const btn = document.getElementById('createGroupBtn');
+  if (!info || !btn) return;
+
+  if (selectedStudentsForGroup.length === 0) {
+    info.textContent = 'No students selected';
+    btn.disabled = true;
+  } else {
+    info.textContent = `${selectedStudentsForGroup.length} student(s) selected`;
+    btn.disabled = false;
+  }
+}
+
+// Create group
+function createGroup() {
+  const nameInput = document.getElementById('groupName');
+  if (!nameInput) return;
+  const groupName = nameInput.value.trim();
+
+  if (!groupName) {
+    alert('Please enter a group name');
+    return;
+  }
+  if (selectedStudentsForGroup.length === 0) {
+    alert('Please select at least one student');
+    return;
+  }
+  if (studentGroups.some(g => g.name.toLowerCase() === groupName.toLowerCase())) {
+    alert('Group name already exists');
+    return;
+  }
+
+  const group = {
+    id: Date.now(),
+    name: groupName,
+    studentRolls: [...selectedStudentsForGroup],
+    createdAt: new Date().toISOString()
+  };
+
+  studentGroups.push(group);
+  localStorage.setItem('studentGroups', JSON.stringify(studentGroups));
+
+  nameInput.value = '';
+  selectedStudentsForGroup = [];
+  updateGroupSelectionInfo();
+  displayExistingGroups();
+  alert(`Group "${groupName}" created successfully.`);
+}
+
+// View group details
+function viewGroupDetails(groupId) {
+  const group = studentGroups.find(g => g.id === groupId);
+  if (!group) return;
+
+  const groupStudents = group.studentRolls
+    .map(r => students.find(s => s.roll === r))
+    .filter(Boolean);
+
+ const rows = groupStudents
+  .map((s, i) => {
+    // subjectAverages are strings like "78.23", or may be missing
+    const subj = s.subjectAverages || {};
+
+    const chem =
+      subj.chem && subj.chem !== '0'
+        ? parseFloat(subj.chem).toFixed(2) + '%'
+        : '-';
+    const phy =
+      subj.phy && subj.phy !== '0'
+        ? parseFloat(subj.phy).toFixed(2) + '%'
+        : '-';
+    const bio =
+      subj.bio && subj.bio !== '0'
+        ? parseFloat(subj.bio).toFixed(2) + '%'
+        : '-';
+    const math =
+      subj.math && subj.math !== '0'
+        ? parseFloat(subj.math).toFixed(2) + '%'
+        : '-';
+
+    // totals / exams from existing fields
+    const totalScore = s.cumTotal ?? s.totalScore ?? s.total ?? '-';
+    const maxScore   = s.cumMax   ?? s.maxScore   ?? s.maxTotal ?? '-';
+
+    const examsAtt =
+      s.examsAttempted ??
+      (Array.isArray(s.exams) ? s.exams.length : '-') ??
+      '-';
+
+    // cumPercent is stored as string from toFixed(2) in computeCumulatives
+    let overallPct = '-';
+    if (s.cumPercent != null && s.cumPercent !== '0') {
+      const v = parseFloat(s.cumPercent);
+      overallPct = isNaN(v) ? '-' : v.toFixed(2) + '%';
+    } else if (s.percentage != null) {
+      const v = parseFloat(s.percentage);
+      overallPct = isNaN(v) ? '-' : v.toFixed(2) + '%';
+    }
+
+    return `
+      <tr>
+        <td>
+          <span class="rank-pill">
+            <i class="fas fa-hashtag"></i>${i + 1}
+          </span>
+        </td>
+        <td>
+          <div class="cell-main">
+            <i class="fas fa-id-card-alt"></i>
+            <span>${s.roll}</span>
+          </div>
+        </td>
+        <td>
+          <div class="cell-main">
+            <i class="fas fa-user-graduate"></i>
+            <span>${s.name}</span>
+          </div>
+        </td>
+        <td>
+          <div class="cell-metric chem">
+            <i class="fas fa-flask"></i>
+            <span>${chem}</span>
+          </div>
+        </td>
+        <td>
+          <div class="cell-metric phy">
+            <i class="fas fa-atom"></i>
+            <span>${phy}</span>
+          </div>
+        </td>
+        <td>
+          <div class="cell-metric bio">
+            <i class="fas fa-dna"></i>
+            <span>${bio}</span>
+          </div>
+        </td>
+        <td>
+          <div class="cell-metric math">
+            <i class="fas fa-calculator"></i>
+            <span>${math}</span>
+          </div>
+        </td>
+        <td>
+          <div class="cell-metric exams">
+            <i class="fas fa-clipboard-check"></i>
+            <span>${examsAtt}</span>
+          </div>
+        </td>
+        <td>
+          <div class="cell-metric total">
+            <i class="fas fa-chart-bar"></i>
+            <span>${totalScore} / ${maxScore}</span>
+          </div>
+        </td>
+        <td>
+          <div class="cell-metric overall">
+            <i class="fas fa-percentage"></i>
+            <span>${overallPct}</span>
+          </div>
+        </td>
+      </tr>
+    `;
+  })
+  .join('');
+
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'group-details-modal';
+  wrapper.innerHTML = `
+    <div class="modal-overlay" onclick="this.parentElement.remove()"></div>
+    <div class="modal-content group-details-shell">
+      <div class="modal-header group-details-header">
+        <div class="header-main">
+          <h2>
+            <i class="fas fa-layer-group"></i>
+            <span>${group.name}</span>
+          </h2>
+          <p class="subtitle">
+            <i class="fas fa-users"></i>
+            <span>${groupStudents.length} students · Detailed subject-wise analytics</span>
+          </p>
+        </div>
+        <button type="button" class="modal-close" onclick="this.closest('.group-details-modal').remove()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body group-details-body">
+        <div class="group-summary-row">
+          <div class="summary-chip">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Exams considered:</span>
+            <strong>${typeof examOrder !== 'undefined' && examOrder.length ? examOrder.length : '-'}</strong>
+          </div>
+          <div class="summary-chip">
+            <i class="fas fa-chart-line"></i>
+            <span>View:</span>
+            <strong>All exams cumulative</strong>
+          </div>
+        </div>
+
+        <div class="table-wrapper group-table-wrapper">
+          <table class="data-table group-details-table">
+            <thead>
+              <tr>
+                <th><i class="fas fa-hashtag" style="color:white"></i></th>
+                <th><i class="fas fa-id-card-alt" style="color:white"></i> Roll</th>
+                <th><i class="fas fa-user-graduate" style="color:white"></i> Name</th>
+                <th><i class="fas fa-flask" style="color:white"></i> Chem %</th>
+                <th><i class="fas fa-atom" style="color:white"></i> Phy %</th>
+                <th><i class="fas fa-dna" style="color:white"></i> Bio %</th>
+                <th><i class="fas fa-calculator" style="color:white"></i> Math %</th>
+                <th><i class="fas fa-clipboard-check" style="color:white"></i> Exams</th>
+                <th><i class="fas fa-chart-bar" style="color:white"></i> Total</th>
+                <th><i class="fas fa-percentage" style="color:white"></i> Overall %</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${
+                rows ||
+                '<tr><td colspan="10" class="empty-state">No students in this group</td></tr>'
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(wrapper);
+}
+
+// Delete group
+function deleteGroup(groupId) {
+  if (!confirm('Delete this group?')) return;
+  studentGroups = studentGroups.filter(g => g.id !== groupId);
+  localStorage.setItem('studentGroups', JSON.stringify(studentGroups));
+  displayExistingGroups();
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('groupsContainer')) {
+    displayExistingGroups();
+  }
+});
+
+function displayExistingGroups() {
+  const container = document.getElementById('groupsContainer');
+  const countChip = document.getElementById('groupsCountChip');
+  if (!container) return;
+
+  if (!Array.isArray(studentGroups) || studentGroups.length === 0) {
+    container.innerHTML =
+      '<div class="empty-state">No groups created yet</div>';
+    if (countChip) countChip.textContent = '0 groups';
+    return;
+  }
+
+  if (countChip) {
+    countChip.textContent =
+      studentGroups.length === 1
+        ? '1 group'
+        : `${studentGroups.length} groups`;
+  }
+
+  container.innerHTML = studentGroups
+    .map(g => {
+      const names = g.studentRolls
+        .map(r => {
+          const s = students.find(st => st.roll === r);
+          return s ? `${s.name} (${s.roll})` : r;
+        })
+        .join(', ');
+      const shortNames =
+        names.length > 80 ? names.slice(0, 80) + '…' : names || 'No students';
+
+      return `
+        <div class="group-card">
+          <div class="group-header">
+            <h4>${g.name}</h4>
+            <button type="button" class="btn-icon-small" onclick="deleteGroup(${g.id})" title="Delete group">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+          <div class="group-body">
+            <p class="group-count">
+              <i class="fas fa-users"></i>
+              ${g.studentRolls.length} student(s)
+            </p>
+            <p class="group-students" title="${names}">${shortNames}</p>
+          </div>
+          <div class="group-footer">
+            <button type="button" class="btn btn-sm btn-primary" onclick="viewGroupDetails(${g.id})">
+              <i class="fas fa-eye"></i> View
+            </button>
+          </div>
+        </div>
+      `;
+    })
+    .join('');
+}
+
+// ============================================
 // SIMPLE EXAM ORDERING - FOLLOWS DATA ORDER
 // ============================================
 function generateExamOrderAdvanced() {
@@ -6714,6 +7145,26 @@ function generateItemAnalysis() {
   });
 
   console.log(`✅ Item analysis complete for ${examName}`);
+}
+
+function renderStudentCard(student, isSelected) {
+  const percent = parseFloat(student.cumPercent || student.percent || 0);
+  const color = percent >= 70 ? '#10b981' : percent >= 50 ? '#f59e0b' : '#ef4444';
+
+  return `
+    <div class="student-card" style="border:2px solid ${isSelected? '#2563eb' : '#e5e7eb'};border-radius:12px;padding:10px;display:flex;align-items:center;gap:10px;background:${isSelected?'#eff6ff':'#ffffff'};">
+      <div style="width:40px;height:40px;border-radius:10px;background:${color};display:flex;align-items:center;justify-content:center;color:#fff;">
+        <i class="fas fa-user"></i>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:14px;font-weight:700;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${student.name}</div>
+        <div style="font-size:12px;color:#6b7280;">${student.roll} • ${percent.toFixed(1)}%</div>
+      </div>
+      <div style="font-size:18px;color:${isSelected ? '#2563eb' : '#9ca3af'};">
+        <i class="fas ${isSelected ? 'fa-check-circle' : 'fa-circle'}"></i>
+      </div>
+    </div>
+  `;
 }
 
 // Export all data function
