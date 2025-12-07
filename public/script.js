@@ -199,48 +199,48 @@ function viewGroupDetails(groupId) {
     .map(r => students.find(s => s.roll === r))
     .filter(Boolean);
 
- const rows = groupStudents
-  .map((s, i) => {
-    // subjectAverages are strings like "78.23", or may be missing
-    const subj = s.subjectAverages || {};
+  const rows = groupStudents
+    .map((s, i) => {
+      // subjectAverages are strings like "78.23", or may be missing
+      const subj = s.subjectAverages || {};
 
-    const chem =
-      subj.chem && subj.chem !== '0'
-        ? parseFloat(subj.chem).toFixed(2) + '%'
-        : '-';
-    const phy =
-      subj.phy && subj.phy !== '0'
-        ? parseFloat(subj.phy).toFixed(2) + '%'
-        : '-';
-    const bio =
-      subj.bio && subj.bio !== '0'
-        ? parseFloat(subj.bio).toFixed(2) + '%'
-        : '-';
-    const math =
-      subj.math && subj.math !== '0'
-        ? parseFloat(subj.math).toFixed(2) + '%'
-        : '-';
+      const chem =
+        subj.chem && subj.chem !== '0'
+          ? parseFloat(subj.chem).toFixed(2) + '%'
+          : '-';
+      const phy =
+        subj.phy && subj.phy !== '0'
+          ? parseFloat(subj.phy).toFixed(2) + '%'
+          : '-';
+      const bio =
+        subj.bio && subj.bio !== '0'
+          ? parseFloat(subj.bio).toFixed(2) + '%'
+          : '-';
+      const math =
+        subj.math && subj.math !== '0'
+          ? parseFloat(subj.math).toFixed(2) + '%'
+          : '-';
 
-    // totals / exams from existing fields
-    const totalScore = s.cumTotal ?? s.totalScore ?? s.total ?? '-';
-    const maxScore   = s.cumMax   ?? s.maxScore   ?? s.maxTotal ?? '-';
+      // totals / exams from existing fields
+      const totalScore = s.cumTotal ?? s.totalScore ?? s.total ?? '-';
+      const maxScore = s.cumMax ?? s.maxScore ?? s.maxTotal ?? '-';
 
-    const examsAtt =
-      s.examsAttempted ??
-      (Array.isArray(s.exams) ? s.exams.length : '-') ??
-      '-';
+      const examsAtt =
+        s.examsAttempted ??
+        (Array.isArray(s.exams) ? s.exams.length : '-') ??
+        '-';
 
-    // cumPercent is stored as string from toFixed(2) in computeCumulatives
-    let overallPct = '-';
-    if (s.cumPercent != null && s.cumPercent !== '0') {
-      const v = parseFloat(s.cumPercent);
-      overallPct = isNaN(v) ? '-' : v.toFixed(2) + '%';
-    } else if (s.percentage != null) {
-      const v = parseFloat(s.percentage);
-      overallPct = isNaN(v) ? '-' : v.toFixed(2) + '%';
-    }
+      // cumPercent is stored as string from toFixed(2) in computeCumulatives
+      let overallPct = '-';
+      if (s.cumPercent != null && s.cumPercent !== '0') {
+        const v = parseFloat(s.cumPercent);
+        overallPct = isNaN(v) ? '-' : v.toFixed(2) + '%';
+      } else if (s.percentage != null) {
+        const v = parseFloat(s.percentage);
+        overallPct = isNaN(v) ? '-' : v.toFixed(2) + '%';
+      }
 
-    return `
+      return `
       <tr>
         <td>
           <span class="rank-pill">
@@ -303,8 +303,8 @@ function viewGroupDetails(groupId) {
         </td>
       </tr>
     `;
-  })
-  .join('');
+    })
+    .join('');
 
 
   const wrapper = document.createElement('div');
@@ -359,10 +359,9 @@ function viewGroupDetails(groupId) {
               </tr>
             </thead>
             <tbody>
-              ${
-                rows ||
-                '<tr><td colspan="10" class="empty-state">No students in this group</td></tr>'
-              }
+              ${rows ||
+    '<tr><td colspan="10" class="empty-state">No students in this group</td></tr>'
+    }
             </tbody>
           </table>
         </div>
@@ -7152,7 +7151,7 @@ function renderStudentCard(student, isSelected) {
   const color = percent >= 70 ? '#10b981' : percent >= 50 ? '#f59e0b' : '#ef4444';
 
   return `
-    <div class="student-card" style="border:2px solid ${isSelected? '#2563eb' : '#e5e7eb'};border-radius:12px;padding:10px;display:flex;align-items:center;gap:10px;background:${isSelected?'#eff6ff':'#ffffff'};">
+    <div class="student-card" style="border:2px solid ${isSelected ? '#2563eb' : '#e5e7eb'};border-radius:12px;padding:10px;display:flex;align-items:center;gap:10px;background:${isSelected ? '#eff6ff' : '#ffffff'};">
       <div style="width:40px;height:40px;border-radius:10px;background:${color};display:flex;align-items:center;justify-content:center;color:#fff;">
         <i class="fas fa-user"></i>
       </div>

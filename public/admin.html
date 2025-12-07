@@ -633,15 +633,15 @@
                                 </div>
                             </button>
                         </button>
-<button class="action-btn" onclick="openGroupsModal()">
-  <div class="btn-icon">
-    <i class="fas fa-people-group"></i>
-  </div>
-  <div class="btn-content">
-    <span class="btn-title">Student Groups</span>
-    <span class="btn-subtitle">Manage &amp; Create</span>
-  </div>
-</button>
+                        <button class="action-btn" onclick="openGroupsModal()">
+                            <div class="btn-icon">
+                                <i class="fas fa-people-group"></i>
+                            </div>
+                            <div class="btn-content">
+                                <span class="btn-title">Student Groups</span>
+                                <span class="btn-subtitle">Manage &amp; Create</span>
+                            </div>
+                        </button>
 
                         <button id="printExportBtn" class="action-btn print-export-btn">
                             <div class="btn-icon">
@@ -1474,128 +1474,116 @@
             </div>
         </div>
     </div>
-<div id="groupsModal" class="modal">
-  <div class="modal-overlay" onclick="closeGroupsModal()"></div>
+    <div id="groupsModal" class="modal">
+        <div class="modal-overlay" onclick="closeGroupsModal()"></div>
 
-  <div class="groups-modal-shell">
-    <!-- Header -->
-    <div class="groups-modal-header">
-      <div class="groups-header-main">
-        <div class="groups-header-icon">
-          <i class="fas fa-people-group"></i>
-        </div>
-        <div class="groups-header-text">
-          <h2>Student Groups</h2>
-          <p>Organise students into custom groups for focused analysis and reporting.</p>
-        </div>
-      </div>
-      <button class="groups-close-btn" type="button" onclick="closeGroupsModal()">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-
-    <!-- Body -->
-    <div class="groups-modal-body">
-      <div class="groups-columns">
-        <!-- Left: Create / Edit -->
-        <section class="groups-panel groups-panel-left">
-          <div class="panel-header-line">
-            <span class="section-label">
-              <i class="fas fa-magic"></i> Create / Edit Group
-            </span>
-          </div>
-
-          <div class="field-stack">
-            <label for="groupName" class="field-label">
-              Group name
-              <span class="field-hint">Example: “Top 10”, “Needs Support &lt; 40%”</span>
-            </label>
-            <input
-              type="text"
-              id="groupName"
-              class="form-input groups-input"
-              placeholder="Enter a clear, descriptive group name"
-            />
-          </div>
-
-          <div class="field-stack">
-            <span class="field-label">
-              Students in this group
-              <span class="field-hint">Select one or more students from the master list</span>
-            </span>
-
-            <button
-              type="button"
-              class="btn btn-secondary groups-btn-full"
-              onclick="selectStudentsForGroup()"
-            >
-              <i class="fas fa-user-check"></i>
-              <span>Choose students</span>
-            </button>
-
-            <p id="groupSelectionInfo" class="groups-selection-pill">
-              No students selected
-            </p>
-          </div>
-
-          <div class="groups-actions-row">
-            <button
-              type="button"
-              class="btn btn-primary groups-btn-full"
-              id="createGroupBtn"
-              onclick="createGroup()"
-              disabled
-            >
-              <i class="fas fa-check-circle"></i>
-              <span>Create group</span>
-            </button>
-          </div>
-
-          <div class="groups-helper">
-            <i class="fas fa-lightbulb"></i>
-            <span>
-              Tip: After creating a group, open it to view subject-wise performance and totals
-              for only those students.
-            </span>
-          </div>
-        </section>
-
-        <!-- Right: Existing Groups -->
-        <section class="groups-panel groups-panel-right">
-          <div class="panel-header-line">
-            <span class="section-label">
-              <i class="fas fa-layer-group"></i> Existing groups
-            </span>
-            <span class="section-chip" id="groupsCountChip">0 groups</span>
-          </div>
-
-          <div class="groups-list-toolbar">
-            <div class="groups-list-hint">
-              <i class="fas fa-info-circle"></i>
-              <span>Click “View” on any group to open detailed analytics.</span>
+        <div class="groups-modal-shell">
+            <!-- Header -->
+            <div class="groups-modal-header">
+                <div class="groups-header-main">
+                    <div class="groups-header-icon">
+                        <i class="fas fa-people-group"></i>
+                    </div>
+                    <div class="groups-header-text">
+                        <h2>Student Groups</h2>
+                        <p>Organise students into custom groups for focused analysis and reporting.</p>
+                    </div>
+                </div>
+                <button class="groups-close-btn" type="button" onclick="closeGroupsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-          </div>
 
-          <div id="groupsContainer" class="groups-card-list">
-            <!-- Group cards injected by JS -->
-          </div>
-        </section>
-      </div>
-    </div>
+            <!-- Body -->
+            <div class="groups-modal-body">
+                <div class="groups-columns">
+                    <!-- Left: Create / Edit -->
+                    <section class="groups-panel groups-panel-left">
+                        <div class="panel-header-line">
+                            <span class="section-label">
+                                <i class="fas fa-magic"></i> Create / Edit Group
+                            </span>
+                        </div>
 
-    <!-- Footer -->
-    <div class="groups-modal-footer">
-      <div class="groups-footer-left">
-        <span class="groups-footer-badge">
-          <i class="fas fa-database"></i>
-          <span>Backed by live analytics data</span>
-        </span>
-      </div>
-      <div class="groups-footer-right">
-      </div>
+                        <div class="field-stack">
+                            <label for="groupName" class="field-label">
+                                Group name
+                                <span class="field-hint">Example: “Top 10”, “Needs Support &lt; 40%”</span>
+                            </label>
+                            <input type="text" id="groupName" class="form-input groups-input"
+                                placeholder="Enter a clear, descriptive group name" />
+                        </div>
+
+                        <div class="field-stack">
+                            <span class="field-label">
+                                Students in this group
+                                <span class="field-hint">Select one or more students from the master list</span>
+                            </span>
+
+                            <button type="button" class="btn btn-secondary groups-btn-full"
+                                onclick="selectStudentsForGroup()">
+                                <i class="fas fa-user-check"></i>
+                                <span>Choose students</span>
+                            </button>
+
+                            <p id="groupSelectionInfo" class="groups-selection-pill">
+                                No students selected
+                            </p>
+                        </div>
+
+                        <div class="groups-actions-row">
+                            <button type="button" class="btn btn-primary groups-btn-full" id="createGroupBtn"
+                                onclick="createGroup()" disabled>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Create group</span>
+                            </button>
+                        </div>
+
+                        <div class="groups-helper">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>
+                                Tip: After creating a group, open it to view subject-wise performance and totals
+                                for only those students.
+                            </span>
+                        </div>
+                    </section>
+
+                    <!-- Right: Existing Groups -->
+                    <section class="groups-panel groups-panel-right">
+                        <div class="panel-header-line">
+                            <span class="section-label">
+                                <i class="fas fa-layer-group"></i> Existing groups
+                            </span>
+                            <span class="section-chip" id="groupsCountChip">0 groups</span>
+                        </div>
+
+                        <div class="groups-list-toolbar">
+                            <div class="groups-list-hint">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Click “View” on any group to open detailed analytics.</span>
+                            </div>
+                        </div>
+
+                        <div id="groupsContainer" class="groups-card-list">
+                            <!-- Group cards injected by JS -->
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="groups-modal-footer">
+                <div class="groups-footer-left">
+                    <span class="groups-footer-badge">
+                        <i class="fas fa-database"></i>
+                        <span>Backed by live analytics data</span>
+                    </span>
+                </div>
+                <div class="groups-footer-right">
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
 
     <!-- Enhanced Footer -->
