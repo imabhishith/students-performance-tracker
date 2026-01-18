@@ -3261,6 +3261,25 @@ body {
   color: #3F51B5;
 }
 
+/* Question Analysis */
+.print-option-card:nth-child(8):hover {
+  border-color: red;
+  background: linear-gradient(135deg, var(--color-bg), rgba(63, 81, 181, 0.1));
+}
+
+.print-option-card:nth-child(8) .option-icon {
+  color: red;
+}
+
+/* Detailed Marks Table */
+.print-option-card:nth-child(9):hover {
+  border-color: #ff00f7;
+  background: linear-gradient(135deg, var(--color-bg), rgba(63, 81, 181, 0.1));
+}
+
+.print-option-card:nth-child(9) .option-icon {
+  color: #ff00f7;
+}
 /* Enhanced Icon Styling */
 .option-icon {
   font-size: 2.5rem;

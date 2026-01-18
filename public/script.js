@@ -624,7 +624,6 @@ function filterLast3Ranklist(filterType) {
   document.getElementById('last3WEBtn').classList.toggle('active', filterType === 'WE');
   document.getElementById('last3MTBtn').classList.toggle('active', filterType === 'MT');
 
-  // Repopulate the last 3 ranklist with filtered data
   populateLast3Filtered(filterType);
 }
 
@@ -643,19 +642,16 @@ function getFilteredExamsForOverall(filterType) {
 
 function getFilteredExamsForLast3(filterType) {
   if (filterType === 'all') {
-    return last3Exams; // WE 6, RT 2, WE 7
+    return last3Exams;
   } else if (filterType === 'RT') {
-    // Get last 3 RT exams - but only RT 1 and RT 2 exist
     const rtExams = examOrder.filter(exam => exam.startsWith('RT'));
-    return rtExams; // Will return ['RT 1', 'RT 2'] - all available RTs
+    return rtExams.slice(-3);
   } else if (filterType === 'WE') {
-    // Get last 3 WE exams - WE 5, WE 6, WE 7
     const weExams = examOrder.filter(exam => exam.startsWith('WE'));
-    return weExams.slice(-3); // Last 3 WEs: ['WE 5', 'WE 6', 'WE 7']
+    return weExams.slice(-3);
   } else if (filterType === 'MT') {
-    // Get last 3 MT exams - MT 5, MT 6, MT 7
-    const mtExams = examOrder.filter(exam => exam.startsWith('MT'));  // ✅ FIXED: Added mtExams
-    return mtExams.slice(-3); // Last 3 MTs: ['MT 5', 'MT 6', 'MT 7']
+    const mtExams = examOrder.filter(exam => exam.startsWith('MT'));
+    return mtExams.slice(-3);
   }
   return last3Exams;
 }
@@ -7192,6 +7188,395 @@ document.addEventListener('DOMContentLoaded', function () {
 document.getElementById('comparativeAnalysisBtn')?.addEventListener('click', () => {
   showSection('comparativeAnalysis');
 });
+
+// =========================================================
+// QUESTION ANALYSIS PRINT FEATURE
+// =========================================================
+
+// Track which mode the exam selection dialog is in
+let examSelectionMode = 'ranklist'; // default
+
+// 1. Override the existing openExamSelectionDialog to default to ranklist
+const originalOpenExamDialog = openExamSelectionDialog;
+openExamSelectionDialog = function() {
+    examSelectionMode = 'ranklist';
+    document.querySelector('#examSelectionDialog .modal-header h3').textContent = 'Select Exam to Print';
+    document.querySelector('#examSelectionDialog .modal-content p').textContent = 'Choose an exam to generate its ranklist:';
+    originalOpenExamDialog();
+};
+
+// 2. New function to open dialog for Question Analysis
+function openQuestionAnalysisSelectionDialog() {
+    closePrintExportModal();
+    examSelectionMode = 'analysis';
+    
+    // Update dialog title for context
+    const dialogHeader = document.querySelector('#examSelectionDialog .modal-header h3');
+    const dialogText = document.querySelector('#examSelectionDialog .modal-content p');
+    if(dialogHeader) dialogHeader.textContent = 'Select Exam for Analysis';
+    if(dialogText) dialogText.textContent = 'Choose an exam to generate Question Analysis report:';
+    
+    // Reuse the existing populator logic
+    originalOpenExamDialog();
+}
+
+// 3. Intercept the exam selection action
+// We need to modify selectAndPrintExam to act as a router
+const originalSelectAndPrintExam = selectAndPrintExam;
+selectAndPrintExam = function(examName) {
+    if (examSelectionMode === 'analysis') {
+        closeExamSelectionDialog();
+        printQuestionAnalysisReport(examName);
+    } else {
+        originalSelectAndPrintExam(examName);
+    }
+};
+
+// 4. Generate and Print the Question Analysis Report
+function printQuestionAnalysisReport(examName) {
+    // 1. Calculate Stats
+    const questionData = {};
+    for (let i = 1; i <= 60; i++) {
+        questionData[i] = { correct: 0, wrong: 0, total: 0 };
+    }
+
+    students.forEach(student => {
+        const examData = student.exams.find(ex => ex.exam === examName && ex.maxTotal > 0);
+        if (!examData) return;
+
+        const key = student.roll + examName;
+        const marks = questionMarksData[key]?.marks;
+
+        if (marks) {
+            for (let i = 1; i <= 60; i++) {
+                const qKey = `Q${i}`;
+                const mark = marks[qKey];
+                
+                // Check valid attempts (Not 'N'one, Not 'C'ancelled)
+                if (mark !== 'N' && mark !== undefined && mark !== 'C') {
+                    questionData[i].total++; // Total valid students (denominator)
+                    
+                    if (mark === 4) {
+                        questionData[i].correct++;
+                    } else if (mark === -1) {
+                        // Count as wrong/attempted but not correct
+                        questionData[i].wrong++;
+                    }
+                }
+            }
+        }
+    });
+
+    const rows = [];
+    for (let i = 1; i <= 60; i++) {
+        const total = questionData[i].total;
+        const correct = questionData[i].correct;
+        const wrong = questionData[i].wrong;
+        const attempted = correct + wrong; // Students who actually tried the question
+        
+        const pct = total > 0 ? (correct / total * 100) : 0;
+        
+        if (total > 0) {
+            rows.push({ 
+                q: i, 
+                correct: correct, 
+                wrong: wrong,
+                attempted: attempted,
+                total: total, 
+                pct: pct 
+            });
+        }
+    }
+    
+    // Sort by difficulty (hardest first -> lowest %)
+    rows.sort((a, b) => a.pct - b.pct);
+
+    // 2. Build HTML
+let html = `
+        <style>
+            /* Local overrides for this specific table */
+            .analysis-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+            }
+            .analysis-table th {
+                background-color: #f8fafc;
+                color: #475569;
+                font-weight: 700;
+                padding: 12px 10px;
+                border-bottom: 2px solid #e2e8f0;
+                text-align: center; /* Forces header center */
+            }
+            .analysis-table td {
+                padding: 10px;
+                border-bottom: 1px solid #e2e8f0;
+                vertical-align: middle;
+            }
+            /* Explicitly centering the requested columns */
+            .text-center {
+                text-align: center !important;
+            }
+            /* Removing any special "First 3" styles - making them plain */
+            .analysis-table tr td:first-child {
+                background: none !important;
+                color: #1e293b !important;
+                font-weight: 700;
+            }
+        </style>
+
+        <div class="info-box" style="margin-bottom: 20px;">
+            <p><strong>Exam:</strong> ${examName}</p>
+            <p><strong>Total Questions Analyzed:</strong> ${rows.length}</p>
+        </div>
+
+        <table class="analysis-table">
+            <thead>
+                <tr>
+                    <th style="width: 10%;">Q No</th>
+                    <th style="width: 25%;">Attempted</th>
+                    <th style="width: 25%;">Students (Cor/Tot)</th>
+                    <th style="width: 15%;">Correct %</th>
+                    <th style="width: 25%;">Difficulty</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    rows.forEach(row => {
+        let difficulty, status, color, bg, difficultyIcon;
+
+        if (row.pct >= 70) {
+            difficulty = 'Easy'; status = 'Common'; color = '#16a34a'; bg = '#dcfce7'; difficultyIcon = 'fa-angle-down';
+        } else if (row.pct >= 50) {
+            difficulty = 'Medium'; status = 'Moderate'; color = '#d97706'; bg = '#fef3c7'; difficultyIcon = 'fa-minus';
+        } else if (row.pct >= 30) {
+            difficulty = 'Hard'; status = 'Challenging'; color = '#dc2626'; bg = '#fee2e2'; difficultyIcon = 'fa-angle-up';
+        } else {
+            difficulty = 'Very Hard'; status = 'Critical'; color = '#7f1d1d'; bg = '#fecaca'; difficultyIcon = 'fa-angles-up';
+        }
+
+        html += `
+            <tr>
+                <td class="text-center">Q${row.q}</td>
+                <td class="text-center" style="font-weight: 600; color: #4b5563;">${row.attempted} / ${row.total}</td>
+                <td class="text-center">${row.correct} / ${row.total}</td>
+                <td class="text-center" style="font-weight: 700;">${row.pct.toFixed(1)}%</td>
+                <td style="font-weight: 600; color: ${color};">
+                    <i class="fas ${difficultyIcon}" style="margin-right: 4px;"></i> ${difficulty}
+                </td>
+            </tr>
+        `;
+    });
+
+    html += `</tbody></table>`;
+
+    // 3. Open Print Window (Uses the same header/footer logic as Exam Details)
+    openPrintWindow(`${examName} - QUESTION ANALYSIS`, html);
+}
+
+// Ensure this variable exists at the top of your script
+let currentPrintMode = 'ranklist'; 
+
+function openExamSelectionWithMode(mode) {
+    currentPrintMode = mode;
+    
+    // Close the initial options modal
+    if (typeof closePrintExportModal === 'function') {
+        closePrintExportModal();
+    }
+    
+    // 1. SELECT THE CORRECT ELEMENTS FROM YOUR HTML
+    const modal = document.getElementById('examSelectionDialog');
+    const gridContainer = document.getElementById('examSelectionGrid'); // MATCHED TO YOUR HTML
+    const title = modal ? modal.querySelector('h3') : null;
+    
+    if (!modal || !gridContainer) {
+        console.error("CRITICAL: Modal elements not found. Expected 'examSelectionDialog' and 'examSelectionGrid'.");
+        return;
+    }
+
+    // 2. Update the header text based on what the user clicked
+    if (title) {
+        if (mode === 'analysis') title.textContent = "Question Analysis Report";
+        else if (mode === 'detailed') title.textContent = "Detailed Marks Matrix";
+        else title.textContent = "Select Exam to Print";
+    }
+
+    // 3. Clear and Populate the Grid
+    gridContainer.innerHTML = '';
+    
+    // Get unique exam names from your students data
+    const allExams = new Set();
+    students.forEach(s => {
+        if (s.exams) s.exams.forEach(e => { if (e.exam) allExams.add(e.exam) });
+    });
+    
+    if (allExams.size === 0) {
+        gridContainer.innerHTML = '<div style="grid-column: 1/-1; padding: 20px; text-align: center; color: #64748b;">No exam data found.</div>';
+    }
+
+    allExams.forEach(examName => {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-secondary'; // Using your existing CSS class
+        btn.style.width = '100%';
+        btn.style.textAlign = 'left';
+        btn.style.padding = '12px 15px';
+        btn.innerHTML = `<i class="fas fa-file-alt" style="margin-right:10px"></i> ${examName}`;
+        
+        btn.onclick = () => {
+            closeExamSelectionDialog();
+            
+            // Route to the correct print function based on mode
+            if (currentPrintMode === 'analysis') {
+                printQuestionAnalysisReport(examName);
+            } else if (currentPrintMode === 'detailed') {
+                printDetailedMarksReport(examName);
+            } else {
+                // Your existing default function
+                if (typeof generateExamPrint === 'function') generateExamPrint(examName);
+            }
+        };
+        gridContainer.appendChild(btn);
+    });
+    
+    // 4. Show the modal
+    modal.style.display = 'flex';
+}
+
+function printDetailedMarksReport(examName) {
+    // 1. Filter students who attended
+    const activeStudents = students.filter(s => {
+        const ex = s.exams.find(e => e.exam === examName);
+        return ex && (ex.total !== 0 || ex.maxTotal > 0);
+    }).sort((a, b) => {
+        const aT = a.exams.find(e => e.exam === examName)?.total || 0;
+        const bT = b.exams.find(e => e.exam === examName)?.total || 0;
+        return bT - aT;
+    });
+
+    if (activeStudents.length === 0) {
+        alert("No student data found for this exam.");
+        return;
+    }
+
+    // 2. Identify active questions (Exclude those that are 'N' for everyone)
+    const activeQuestions = [];
+    for (let i = 1; i <= 60; i++) {
+        const hasData = activeStudents.some(s => {
+            const m = questionMarksData[s.roll + examName]?.marks?.[`Q${i}`];
+            return m !== undefined && m !== 'N';
+        });
+        if (hasData) activeQuestions.push(i);
+    }
+
+    let html = `
+    <style>
+        @page { size: A4 portrait; margin: 8mm; }
+        
+        .master-table { width: 100%; border-collapse: collapse; font-family: 'Inter', sans-serif; }
+        
+        /* Ensures the student's info and their 40/60 questions don't split across pages */
+        .student-row { 
+            page-break-inside: avoid; 
+            break-inside: avoid;
+            border-bottom: 2px solid #475569;
+        }
+        
+        .info-cell { width: 155px; padding: 10px; background: #f8fafc; border: 1px solid #cbd5e1; vertical-align: top; }
+        .info-roll { font-weight: 800; color: #64748b; font-size: 8pt; }
+        .info-name { font-weight: 700; color: #1e293b; font-size: 9.5pt; text-transform: uppercase; margin: 3px 0; line-height: 1.2; }
+        .info-total { display: inline-block; padding: 2px 8px; background: #1e293b; color: white; border-radius: 4px; font-size: 9pt; margin-top: 5px; font-weight: 700; }
+
+        .response-cell { padding: 6px; border: 1px solid #cbd5e1; vertical-align: middle; }
+        
+        /* Force exactly 20 columns as requested */
+        .grid-container { 
+            display: grid; 
+            grid-template-columns: repeat(20, 1fr); 
+            gap: 2px;
+        }
+        
+        .q-box { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 4px 0;
+            border: 1px solid #f1f5f9;
+            background: #ffffff;
+        }
+        .q-num { font-size: 5.5pt; color: #94a3b8; font-weight: 700; margin-bottom: 1px; }
+        .q-mark { font-size: 10.5pt; line-height: 1; }
+
+        /* Icon Colors */
+        .fa-check-circle { color: #16a34a; }    /* Green */
+        .fa-times-circle { color: #dc2626; }    /* Red */
+        .fa-minus-circle { color: #94a3b8; }    /* Grey */
+        .fa-copyright { color: #eab308; }       /* Yellow */
+        .cancelled-text { font-size: 4.5pt; font-weight: 900; color: #eab308; display: block; margin-top: -1px; }
+    </style>
+
+    <div class="info-box" style="margin-bottom: 15px; border-left: 4px solid #1e293b; padding-left: 15px;">
+        <h2 style="margin:0; font-size: 13pt; color: #1e293b;">Student Performance Matrix</h2>
+        <p style="margin:3px 0; font-size: 9pt;"><strong>Exam:</strong> ${examName} | <strong>Questions:</strong> ${activeQuestions.length}</p>
+        <div style="font-size: 7.5pt; color: #475569; display: flex; gap: 12px; margin-top: 5px;">
+            <span><i class="fas fa-check-circle"></i> Correct</span>
+            <span><i class="fas fa-times-circle"></i> Wrong</span>
+            <span><i class="fas fa-minus-circle"></i> Unattempted</span>
+            <span><i class="fas fa-copyright"></i> Cancelled</span>
+        </div>
+    </div>
+
+    <table class="master-table">
+        <tbody>`;
+
+    activeStudents.forEach(s => {
+        const ex = s.exams.find(e => e.exam === examName);
+        const marksData = (questionMarksData[s.roll + examName]?.marks) || {};
+
+        html += `
+        <tr class="student-row">
+            <td class="info-cell">
+                <div class="info-roll">ROLL NO: ${s.roll}</div>
+                <div class="info-name">${s.name}</div>
+                <div class="info-total">SCORE: ${ex.total}</div>
+            </td>
+            <td class="response-cell">
+                <div class="grid-container">`;
+
+        activeQuestions.forEach(qNum => {
+            let m = marksData[`Q${qNum}`];
+            let iconContent = '';
+            
+            if (m === 'C') {
+                iconContent = '<i class="fas fa-copyright"></i><span class="cancelled-text">CANCEL</span>';
+            } else if (m === 4) {
+                iconContent = '<i class="fas fa-check-circle"></i>';
+            } else if (m < 0) {
+                iconContent = '<i class="fas fa-times-circle"></i>';
+            } else if (m === 0 || m === '0') {
+                iconContent = '<i class="fas fa-minus-circle"></i>';
+            } else {
+                // Should not happen with activeQuestions logic, but for safety:
+                iconContent = '<span style="color:#f1f5f9;">—</span>';
+            }
+
+            html += `
+                <div class="q-box">
+                    <span class="q-num">${qNum}</span>
+                    <span class="q-mark">${iconContent}</span>
+                </div>`;
+        });
+
+        html += `
+                </div>
+            </td>
+        </tr>`;
+    });
+
+    html += `</tbody></table>`;
+    openPrintWindow(`${examName} - DETAILED RESPONSE`, html);
+}
 
 /* -------------------------------------------------
    AUTO-START IN LIGHT THEME (WHITE)

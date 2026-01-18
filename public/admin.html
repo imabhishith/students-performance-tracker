@@ -1121,6 +1121,22 @@
                             <p>Select students for progress</p>
                         </div>
                     </div>
+                    <div class="print-option-card" onclick="openQuestionAnalysisSelectionDialog()">
+                        <div class="option-icon">
+                            <i class="fas fa-microscope"></i>
+                        </div>
+                        <div class="option-content">
+                            <h4>Question Analysis</h4>
+                            <p>Print item difficulty report</p>
+                        </div>
+                    </div>
+                    <div class="print-option-card" onclick="openExamSelectionWithMode('detailed')">
+                        <div class="option-icon"><i class="fas fa-table"></i></div>
+                        <div class="option-content">
+                            <h4>Detailed Marks Table</h4>
+                            <p>All students Q1-Q60 responses</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1294,9 +1310,6 @@
                             style="width:4px;height:28px;background:linear-gradient(180deg,#2563eb,#1d4ed8);border-radius:2px;">
                         </div>
                         <h3 style="margin:0;font-size:18px;font-weight:900;color:#0f172a;">Questions</h3>
-                        <span
-                            style="margin-left:auto;font-size:12px;color:#64748b;font-weight:600;background:#f0f9ff;padding:4px 12px;border-radius:6px;">60
-                            Items</span>
                     </div>
                     <div id="questionGrid"
                         style="display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:10px;padding:18px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-radius:16px;border:1.5px solid #e2e8f0;min-height:360px;overflow-y:auto;">
@@ -1570,7 +1583,7 @@
                     </section>
                 </div>
             </div>
-
+            
             <!-- Footer -->
             <div class="groups-modal-footer">
                 <div class="groups-footer-left">
