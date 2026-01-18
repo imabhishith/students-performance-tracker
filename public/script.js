@@ -7549,7 +7549,7 @@ function printDetailedMarksReport(examName) {
             let iconContent = '';
             
             if (m === 'C') {
-                iconContent = '<i class="fas fa-copyright"></i><span class="cancelled-text">CANCEL</span>';
+                iconContent = '<i class="fas fa-copyright"></i>';
             } else if (m === 4) {
                 iconContent = '<i class="fas fa-check-circle"></i>';
             } else if (m < 0) {
