@@ -1182,7 +1182,7 @@ function calculateQuestionStatistics(marks) {
   }
 
   const maxPossible = validQuestions * 4;
-  const accuracy = maxPossible > 0 ? (totalScore / maxPossible * 100).toFixed(1) : '0.0';
+  const accuracy = maxPossible > 0 ? (fullMarks / (fullMarks+wrongMarks) * 100).toFixed(1) : '0.0';
 
   document.getElementById('qmFullMarks').textContent = fullMarks;
   document.getElementById('qmWrongMarks').textContent = wrongMarks;
@@ -1207,68 +1207,6 @@ function debugQuestionData(marks) {
     }
   }
   console.log(`Total questions: ${count}`);
-}
-
-// Calculate statistics (exclude C and N from count)
-function calculateQuestionStatistics(marks) {
-  let fullMarks = 0;      // 4
-  let partialMarks = 0;   // 1-3
-  let wrongMarks = 0;     // -1
-  let zeroMarks = 0;      // 0
-  let cancelledMarks = 0; // C (NEW)
-  let totalScore = 0;
-  let validQuestions = 0; // Questions (exclude C and N)
-
-  for (let i = 1; i <= 60; i++) {
-    const qKey = `Q${i}`;
-    const mark = marks[qKey];
-
-    // Count cancelled separately (NEW)
-    if (mark === 'C') {
-      cancelledMarks++;
-      continue;
-    }
-
-    // Skip N (No Question)
-    if (mark === 'N') {
-      continue;
-    }
-
-    // Skip undefined marks
-    if (mark === undefined) {
-      continue;
-    }
-
-    validQuestions++;
-    const numMark = isNaN(mark) ? null : Number(mark);
-
-    if (numMark === 4) {
-      fullMarks++;
-      totalScore += 4;
-    } else if (numMark === -1) {
-      wrongMarks++;
-      totalScore -= 1;
-    } else if (numMark > 0 && numMark < 4) {
-      partialMarks++;
-      totalScore += numMark;
-    } else if (numMark === 0) {
-      zeroMarks++;
-      // 0 doesn't add to score
-    }
-  }
-
-  // Calculate max possible marks (only valid questions, not C or N)
-  const maxPossible = validQuestions * 4;
-  const accuracy = maxPossible > 0 ? ((totalScore / maxPossible) * 100).toFixed(1) : 0;
-
-  document.getElementById('qmFullMarks').textContent = fullMarks;
-  document.getElementById('qmWrongMarks').textContent = wrongMarks;
-  document.getElementById('qmZeroMarks').textContent = zeroMarks;
-  document.getElementById('qmCancelledMarks').textContent = cancelledMarks;
-  document.getElementById('qmAccuracy').textContent = accuracy + '%';
-  document.getElementById('qmTotalScore').textContent = totalScore;
-  document.getElementById('qmMaxMarks').textContent = maxPossible;
-
 }
 
 
